@@ -2,7 +2,7 @@
 // feature from a passing recipe. It is not itself run by the framework;
 // delete it once real specs exist, or leave it as a locator-style reference.
 //
-// Rules this file demonstrates (see skills/test-codegen/references/js.md):
+// Rules this file demonstrates (see skills/codegen/references/js.md):
 //   - getByRole/getByLabel/getByTestId locators, never CSS or XPath
 //   - storage state reused, never a login performed in the spec
 //   - the case id stamped as the first token of the test title

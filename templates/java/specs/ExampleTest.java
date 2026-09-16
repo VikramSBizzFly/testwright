@@ -2,7 +2,7 @@
 // feature from a passing recipe. Delete it once real specs exist, or keep it
 // as a locator-style reference.
 //
-// Rules this file demonstrates (see skills/test-codegen/references/java.md):
+// Rules this file demonstrates (see skills/codegen/references/java.md):
 //   - getByRole/getByLabel/getByTestId locators, never CSS or XPath
 //   - storage state reused via PlaywrightBase, never a login in the test
 //   - the case id encoded in the method name (INV-014 -> INV_014, the

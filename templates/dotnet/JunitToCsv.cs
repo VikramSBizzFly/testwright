@@ -17,7 +17,7 @@ if (args.Length != 2)
     return 1;
 }
 
-// skills/test-codegen/references/dotnet.md's naming convention: a case id
+// skills/codegen/references/dotnet.md's naming convention: a case id
 // like INV-014 is encoded in the method name as INV_014 (hyphen ->
 // underscore, since a hyphen is not a legal C# identifier).
 // Multi-segment prefixes are real: `tf.sh rbac` emits RBAC-USER-002,

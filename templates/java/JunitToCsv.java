@@ -15,7 +15,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class JunitToCsv {
-    // skills/test-codegen/references/java.md's naming convention: a case id
+    // skills/codegen/references/java.md's naming convention: a case id
     // like INV-014 is encoded in the method name as INV_014 (hyphen ->
     // underscore, since a hyphen is not a legal Java identifier).
     // Multi-segment prefixes are real: `tf.sh rbac` emits RBAC-USER-002,

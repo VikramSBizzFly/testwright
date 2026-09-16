@@ -1,6 +1,6 @@
 # Opt-in CI for Tier 1/2 Python projects. Copied in, never auto-enabled --
 # commit it yourself once you're ready for the native suite to run in CI.
-name: test-framework (native)
+name: testwright (native)
 
 on:
   workflow_dispatch:
