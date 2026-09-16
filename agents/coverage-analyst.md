@@ -26,7 +26,7 @@ rank by risk — highest first:
 3. touches money, payroll, or personal data
 4. everything else
 
-Say *why* a route is ranked where it is, in a clause, not a paragraph. A route
+Say _why_ a route is ranked where it is, in a clause, not a paragraph. A route
 that is uncovered and boring should be one line at the bottom, or a count.
 
 Distinguish **uncovered** (no case at all) from **thin** (a case exists but only

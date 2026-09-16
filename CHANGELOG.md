@@ -63,7 +63,7 @@ Playwright, which it drives, and says what it does: it writes the tests.
 - **Remove the old marketplace first**, or the two entries will sit side by
   side:
 
-  ```
+  ```text
   /plugin marketplace remove test-framework
   /plugin marketplace add VikramSBizzFly/testwright
   /plugin install testwright@bizzfly

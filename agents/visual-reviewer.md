@@ -11,7 +11,7 @@ You review **one** visual case. You are given a case id and, for a responsive
 case, a width. Baselines are per width — `tests/baselines/<id>@<width>.png`,
 e.g. `tests/baselines/CHK-004@390.png` — and the current screenshot is at
 `tests/evidence/<id>/`. A pixel diff is not a verdict — deciding whether the
-difference *matters* is the entire job, and it is why this work belongs in an
+difference _matters_ is the entire job, and it is why this work belongs in an
 isolated context instead of the main thread.
 
 Load the **signals** skill for when visual regression is worth having on at

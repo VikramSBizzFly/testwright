@@ -44,7 +44,7 @@ banner) — never as a substitute for splitting the case.
 
 ## Worked example
 
-Case `AUTH-014`: *"a valid login lands on the dashboard"*, who `normal
+Case `AUTH-014`: _"a valid login lands on the dashboard"_, who `normal
 user`, route `/login`.
 
 ```
@@ -55,7 +55,7 @@ click button:Sign in
 expect url /dashboard
 ```
 
-Case `INV-009`: *"an invoice amount under the minimum is rejected"*,
+Case `INV-009`: _"an invoice amount under the minimum is rejected"_,
 who `normal user`, route `/invoices/new`.
 
 ```
@@ -70,8 +70,8 @@ that exists only to navigate. That is the whole target.
 
 ## Worked example — a rendered permission refusal
 
-Case `PERM-ADM-003`: *"log in as normal user and open the admin settings
-page — should not open, I am not allowed to see this"*, who `normal user`,
+Case `PERM-ADM-003`: _"log in as normal user and open the admin settings
+page — should not open, I am not allowed to see this"_, who `normal user`,
 route `/admin/settings`. A curl status check would miss this if the app
 serves the settings page at 200 with an "Access denied" body, or guards it
 client-side after the shell has already loaded:
@@ -99,7 +99,7 @@ Translate mechanically:
   becomes one `fill`/`click` line per segment, in order
 - a field's boundary constraint (`minlen=8`, `required`, `type=email`) is
   what justifies a boundary case's `fill` value — pull the value from the
-  case row, not from the page model; the model only tells you *which*
+  case row, not from the page model; the model only tells you _which_
   constraint is being tested
 - **Expected Result** becomes the trailing `expect` line(s); pick
   `expect url` for navigation, `expect text`/`expect not-text` for a

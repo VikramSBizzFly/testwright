@@ -7,15 +7,15 @@
 //   - storage state reused, never a login performed in the spec
 //   - the case id stamped as the first token of the test title
 //   - one describe block per feature
-import { test, expect } from '@playwright/test';
+import { test, expect } from "@playwright/test";
 
-test.describe('invoice', () => {
-  test.use({ storageState: 'tests/.auth/admin.json' });
+test.describe("invoice", () => {
+  test.use({ storageState: "tests/.auth/admin.json" });
 
-  test('INV-014 create an invoice', async ({ page }) => {
-    await page.goto('/invoices/new');
-    await page.getByLabel('Amount').fill('100');
-    await page.getByRole('button', { name: 'Save' }).click();
+  test("INV-014 create an invoice", async ({ page }) => {
+    await page.goto("/invoices/new");
+    await page.getByLabel("Amount").fill("100");
+    await page.getByRole("button", { name: "Save" }).click();
     await expect(page).toHaveURL(/\/invoices\/\d+/);
   });
 });

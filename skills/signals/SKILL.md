@@ -20,6 +20,7 @@ The Playwright MCP returns an accessibility tree with every snapshot you
 already take for a `ui` case. Asserting on it costs no extra navigation.
 
 Assert:
+
 - every form input has an accessible name (label, `aria-label`, or
   `aria-labelledby`) — a missing one blocks a screen-reader user outright
 - every interactive control (button, link, custom widget) is reachable in the

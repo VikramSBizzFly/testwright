@@ -14,7 +14,7 @@ the same bug.
 
 - **FAIL** — the other account's data renders.
 - **PASS** — a refusal, a 404, or a redirect to the role's own scope.
-- Evidence: the route, the role, and *which field* proved it was the wrong
+- Evidence: the route, the role, and _which field_ proved it was the wrong
   record's data. Not the field's value.
 
 ## 2. Forced browsing — the route with no link

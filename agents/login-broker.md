@@ -14,10 +14,10 @@ credential rules, and `references/login-flows.md` has the procedure in detail.
 
 Two consumers need two different files, and both must exist when you finish:
 
-| File | Read by |
-| --- | --- |
-| `tests/.auth/<role>.cookies` | `tf.sh run-api`, `tf.sh preflight` — curl |
-| `tests/.auth/<role>.json` | `page-modeler`, `test-runner`, every browser case |
+| File                         | Read by                                           |
+| ---------------------------- | ------------------------------------------------- |
+| `tests/.auth/<role>.cookies` | `tf.sh run-api`, `tf.sh preflight` — curl         |
+| `tests/.auth/<role>.json`    | `page-modeler`, `test-runner`, every browser case |
 
 A role with a cookie jar but no storage state looks logged in to the API pass
 and logged out to the browser pass — every browser case then "passes" because a

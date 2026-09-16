@@ -47,7 +47,7 @@ elevated roles, one per line, to `tests/.cache/privileged.txt`. Then
 `tf.sh rbac tests/.cache/routes.txt tests/.cache/privileged.txt > /tmp/rbac.csv
 && tf.sh merge /tmp/rbac.csv`. Without that list `tf.sh rbac` falls back to a
 name heuristic and says so — this cheap pass makes hundreds of free
-permission cases *correct*, not guessed.
+permission cases _correct_, not guessed.
 
 ## Step 4, delegation, and never
 

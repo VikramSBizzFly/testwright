@@ -5,16 +5,16 @@ pytest-playwright` during Tier 1 detection — never `pip install` it here).
 
 ## Recipe verb -> Playwright call
 
-| recipe | Playwright (sync API) |
-| --- | --- |
-| `nav <route>` | `page.goto("<route>")` |
-| `fill <kind:Name> <value>` | `page.get_by_role("<kind>", name="Name").fill("<value>")` |
-| `click <kind:Name>` | `page.get_by_role("<kind>", name="Name").click()` |
-| `check <kind:Name>` | `page.get_by_role("checkbox", name="Name").check()` |
-| `select <kind:Name> <value>` | `page.get_by_label("Name").select_option("<value>")` |
-| `expect url <path>` | `expect(page).to_have_url(re.compile("<path>"))` |
+| recipe                           | Playwright (sync API)                                                    |
+| -------------------------------- | ------------------------------------------------------------------------ |
+| `nav <route>`                    | `page.goto("<route>")`                                                   |
+| `fill <kind:Name> <value>`       | `page.get_by_role("<kind>", name="Name").fill("<value>")`                |
+| `click <kind:Name>`              | `page.get_by_role("<kind>", name="Name").click()`                        |
+| `check <kind:Name>`              | `page.get_by_role("checkbox", name="Name").check()`                      |
+| `select <kind:Name> <value>`     | `page.get_by_label("Name").select_option("<value>")`                     |
+| `expect url <path>`              | `expect(page).to_have_url(re.compile("<path>"))`                         |
 | `expect text <kind:Name> <text>` | `expect(page.get_by_role("<kind>", name="Name")).to_have_text("<text>")` |
-| `expect visible <kind:Name>` | `expect(page.get_by_role("<kind>", name="Name")).to_be_visible()` |
+| `expect visible <kind:Name>`     | `expect(page.get_by_role("<kind>", name="Name")).to_be_visible()`        |
 
 `kind:Name` maps straight to the ARIA role; fall back to `get_by_label` when
 there's a visible label but no role match, and `get_by_test_id` only as a

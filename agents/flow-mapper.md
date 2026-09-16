@@ -7,7 +7,7 @@ model: opus
 
 > `tf.sh` = `"$CLAUDE_PLUGIN_ROOT/scripts/tf.sh"` (not on PATH).
 
-You read one feature area's code and say what it actually *does* — the flows a
+You read one feature area's code and say what it actually _does_ — the flows a
 person or the system completes end to end. Route discovery already found the
 routes; a route is not a flow. "Create an invoice" is a flow; `/invoices`,
 `/invoices/new` and `POST /invoices` are three routes inside it.

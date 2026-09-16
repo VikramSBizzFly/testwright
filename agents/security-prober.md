@@ -32,8 +32,8 @@ example and the required evidence for each of the four probes below.
 
 **Judge on what the page renders, never on the status code.** A refusal can be
 served as HTTP 200 with "Access denied" in the body, and a leak can be served as
-HTTP 200 with every salary in the body. The question is always: *did the
-protected content actually render?* If it did, that is the finding — regardless
+HTTP 200 with every salary in the body. The question is always: _did the
+protected content actually render?_ If it did, that is the finding — regardless
 of what the response code said.
 
 Generate cases with `tags=security`, so `tf.sh summary` pins them above
@@ -49,7 +49,7 @@ visitor can read payroll is not a passing run.
   without `allow_remote`, and so do you.
 - Never act on a finding: do not delete, modify or export the data you reached.
 - Evidence of a crossed boundary goes to `tests/evidence/<id>/`, **redacted** —
-  record *that* salaries rendered, never the salaries.
+  record _that_ salaries rendered, never the salaries.
 
 ## Output contract
 

@@ -43,7 +43,7 @@ Open `tests/credentials.json` and fill in test accounts:
   "base_url": "http://localhost:3000",
   "roles": {
     "admin": { "username": "admin@example.com", "password": "..." },
-    "user":  { "username": "user@example.com",  "password": "..." }
+    "user": { "username": "user@example.com", "password": "..." }
   },
   "login": { "path": "/login", "success_indicator": "/dashboard" }
 }
@@ -82,15 +82,15 @@ the last run went).
 
 The Test Cases tab uses the columns a QA team works in: Test Case ID, Module,
 Test Scenario, Test Description, Preconditions, Test Case Steps, Test Data,
-Expected Result, Actual Result, and Status. **Status** is one of *Not Run*,
-*Pass*, *Fail*, *Blocked* (it couldn't be checked — usually the app wasn't
-answering), *Flaky* or *Skipped*. **Actual Result** is filled in for you: it's
+Expected Result, Actual Result, and Status. **Status** is one of _Not Run_,
+_Pass_, _Fail_, _Blocked_ (it couldn't be checked — usually the app wasn't
+answering), _Flaky_ or _Skipped_. **Actual Result** is filled in for you: it's
 what the check really saw.
 
 When a check fails because of a **real bug in your app**, it's also written into
 **`tests/bug-report.xlsx`** — with the steps, what should and did happen, a
 severity, and a link to the page. A failure caused by an out-of-date test or a
-server that was down is *not* recorded as a bug. Run it again and the same bug
+server that was down is _not_ recorded as a bug. Run it again and the same bug
 is updated, not copied.
 
 You can edit both. In Test Cases, change anything or type a new row and leave
@@ -113,21 +113,21 @@ Comment columns as the bug moves along — the next run keeps your changes.
   → /testwright:report --bug RBAC-USER-002
 ```
 
-| Word | Meaning |
-| --- | --- |
-| **pass** | Worked. |
-| **fail** | Did not work. Something is wrong. |
-| **error** | Could not even try. Usually the app was down. |
-| **skip** | On purpose. Usually a test that deletes things. |
+| Word      | Meaning                                                                                                              |
+| --------- | -------------------------------------------------------------------------------------------------------------------- |
+| **pass**  | Worked.                                                                                                              |
+| **fail**  | Did not work. Something is wrong.                                                                                    |
+| **error** | Could not even try. Usually the app was down.                                                                        |
+| **skip**  | On purpose. Usually a test that deletes things.                                                                      |
 | **flaky** | Passes sometimes and fails other times, with nothing changed. Listed on its own, and not counted for or against you. |
 
 Headings that can appear underneath:
 
-| Heading | Meaning |
-| --- | --- |
-| **SECURITY** | Someone can open a page they should not. Fix this first. |
-| **REGRESSED** | This used to work and now it does not. You just broke it. |
-| **FIXED** | This used to fail and now it works. |
+| Heading                 | Meaning                                                                |
+| ----------------------- | ---------------------------------------------------------------------- |
+| **SECURITY**            | Someone can open a page they should not. Fix this first.               |
+| **REGRESSED**           | This used to work and now it does not. You just broke it.              |
+| **FIXED**               | This used to fail and now it works.                                    |
 | **ran with no session** | The login didn't work, so those results mean nothing. Not a real pass. |
 
 The last line always tells you what to do next.
@@ -151,7 +151,7 @@ again. Do not ignore it, or the browser checks will run logged out and look like
 they passed.
 
 **"ran with no session"** — read this one carefully. The tests ran while logged
-out. Logged-out users are blocked from everything anyway, so the tests *look* like
+out. Logged-out users are blocked from everything anyway, so the tests _look_ like
 they passed but proved nothing. Fix the login and run again.
 
 **Runs feel slow or costly** — expected. Most checks click through a real browser.
@@ -172,37 +172,37 @@ it everything still works — your tests just stay in
 
 ## All the commands
 
-| Command | What it does |
-| --- | --- |
-| `/testwright:setup` | Set up a project: detect the stack, create `tests/`, log in as each role |
-| `/testwright:setup --ci` | The same, and write a workflow so the tests run on every pull request |
-| `/testwright:run` | Find pages, write the tests, run them, show the result |
-| `/testwright:report` | Show the last result again |
-| `/testwright:report --coverage` | Show what has no tests |
-| `/testwright:report --flakes` | Show the tests that keep changing their mind |
-| `/testwright:report --bug AUTH-003` | Write a failure into the bug report |
-| `/testwright:report --publish` | Put the last result on a page you can share |
+| Command                             | What it does                                                             |
+| ----------------------------------- | ------------------------------------------------------------------------ |
+| `/testwright:setup`                 | Set up a project: detect the stack, create `tests/`, log in as each role |
+| `/testwright:setup --ci`            | The same, and write a workflow so the tests run on every pull request    |
+| `/testwright:run`                   | Find pages, write the tests, run them, show the result                   |
+| `/testwright:report`                | Show the last result again                                               |
+| `/testwright:report --coverage`     | Show what has no tests                                                   |
+| `/testwright:report --flakes`       | Show the tests that keep changing their mind                             |
+| `/testwright:report --bug AUTH-003` | Write a failure into the bug report                                      |
+| `/testwright:report --publish`      | Put the last result on a page you can share                              |
 
 **How much to run.** Pick one; it uses `--changed` if you say nothing:
 
-| Flag | What it runs |
-| --- | --- |
-| `--changed` | Only what your last commit touched |
-| `--all` | Everything |
-| `--feature invoices` | One area of the app |
-| `--only-failing` | Just what failed last time |
+| Flag                 | What it runs                       |
+| -------------------- | ---------------------------------- |
+| `--changed`          | Only what your last commit touched |
+| `--all`              | Everything                         |
+| `--feature invoices` | One area of the app                |
+| `--only-failing`     | Just what failed last time         |
 
 **Anything else you want it to do:**
 
-| Flag | What it adds |
-| --- | --- |
-| `--headed` | Opens a visible browser so you can watch |
-| `--crawl` | Clicks around the app to find pages the code didn't mention |
-| `--a11y` | Checks each page can be used with a screen reader |
-| `--responsive` | Checks each page on a phone, a tablet and a desktop screen |
-| `--security` | Tries harder to get at pages you shouldn't be able to see |
-| `--allow-destructive` | Also runs the tests that delete things |
-| `--fresh` | Rewrites the tests even if nothing changed |
+| Flag                  | What it adds                                                |
+| --------------------- | ----------------------------------------------------------- |
+| `--headed`            | Opens a visible browser so you can watch                    |
+| `--crawl`             | Clicks around the app to find pages the code didn't mention |
+| `--a11y`              | Checks each page can be used with a screen reader           |
+| `--responsive`        | Checks each page on a phone, a tablet and a desktop screen  |
+| `--security`          | Tries harder to get at pages you shouldn't be able to see   |
+| `--allow-destructive` | Also runs the tests that delete things                      |
+| `--fresh`             | Rewrites the tests even if nothing changed                  |
 
 `--headed` is the one to reach for when a test fails and you can't tell why from
 the result box.
@@ -211,11 +211,11 @@ the result box.
 
 ## Seeing what your software does
 
-Ask it to *"map the flows"* and it reads your code and writes down what the
+Ask it to _"map the flows"_ and it reads your code and writes down what the
 software actually does — log in, create an invoice, run payroll — with the steps,
 what each one saves, and how each one can fail. That goes in the **Flows** tab.
 
-The column worth looking at is **status**. A flow marked *not covered* is
+The column worth looking at is **status**. A flow marked _not covered_ is
 something your software does that nothing tests.
 
 ---
@@ -230,13 +230,13 @@ it reads something the browser already handed over.
 **`--responsive`** opens each page at phone, tablet and desktop size and looks
 for things that are actually broken — a page that scrolls sideways, text cut off
 or written over itself, a button pushed off the screen, a menu that never turns
-into a hamburger, tap targets too small for a thumb. A page *rearranging* itself
+into a hamburger, tap targets too small for a thumb. A page _rearranging_ itself
 on a phone is not a bug, and it won't report one.
 
 **`--security`** goes looking for pages you should not be able to open: someone
 else's record by changing a number in the address, a page missing from your menu
 but still reachable, a session that still works after you log out. It only ever
-*looks*. It never deletes, changes or takes anything, and it never attacks your
+_looks_. It never deletes, changes or takes anything, and it never attacks your
 login.
 
 Both are optional. Ask for them when you want them:
@@ -251,8 +251,8 @@ Both are optional. Ask for them when you want them:
 
 ## You can just ask
 
-You don't have to remember the commands. Say what you want — *"find bugs in my
-app"*, *"can a normal user see the payroll page?"*, *"what isn't tested?"* — and
+You don't have to remember the commands. Say what you want — _"find bugs in my
+app"_, _"can a normal user see the payroll page?"_, _"what isn't tested?"_ — and
 it works out the rest.
 
 It does the quick, free checks straight away, then tells you how long the slow

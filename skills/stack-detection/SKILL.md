@@ -22,7 +22,7 @@ file rather than re-detecting. Delegate the detection itself to the
    **Tier 0**.
 2. **Never install anything.** Not npm, not pip, not a Playwright browser
    binary. If a stack is present but its Playwright binding is missing, say what
-   the user *could* install to reach Tier 1, then proceed at Tier 0. The
+   the user _could_ install to reach Tier 1, then proceed at Tier 0. The
    framework works fine there.
 
 Full manifest/runtime/runner table and the exact `framework.json` shape are in
@@ -31,7 +31,7 @@ Full manifest/runtime/runner table and the exact `framework.json` shape are in
 ## Tiers
 
 - **Tier 0** — no project dependencies at all. Cases run via curl (`tf.sh
-  run-api`) and, for browser cases, replayed recipes through the Playwright
+run-api`) and, for browser cases, replayed recipes through the Playwright
   MCP. This is the default and it is fully supported, not a degraded mode.
 - **Tier 1** — the stack's Playwright binding is installed, so passing browser
   cases are promoted to native specs and re-run by the project's own runner.
@@ -44,6 +44,6 @@ Full manifest/runtime/runner table and the exact `framework.json` shape are in
 it, and that refusal is a feature. Only set it when the user confirms the
 target is a disposable test environment.
 
-Report the tier and *why* — "no `node` on PATH, so Tier 0; install Node and
+Report the tier and _why_ — "no `node` on PATH, so Tier 0; install Node and
 `@playwright/test` to promote passing cases to native specs" is useful. "Tier 0"
 alone is not.

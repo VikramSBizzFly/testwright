@@ -20,13 +20,13 @@ the project doesn't use** — that is the entire reason this is Tier 1/2 only.
 `tests/framework.json.stack` picks exactly one reference below. Load only
 that one — a Python project must never see the Java rules, and vice versa.
 
-| stack | reference |
-| --- | --- |
-| `js` | `references/js.md` |
-| `python` | `references/python.md` |
-| `java` | `references/java.md` |
-| `dotnet` | `references/dotnet.md` |
-| `none` | **stop.** Tier 0 has no native runner to write for. |
+| stack    | reference                                           |
+| -------- | --------------------------------------------------- |
+| `js`     | `references/js.md`                                  |
+| `python` | `references/python.md`                              |
+| `java`   | `references/java.md`                                |
+| `dotnet` | `references/dotnet.md`                              |
+| `none`   | **stop.** Tier 0 has no native runner to write for. |
 
 ## Universal rules, every stack
 

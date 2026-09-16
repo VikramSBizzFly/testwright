@@ -28,8 +28,8 @@ next command — laid out, aligned and colour-aware.
 **Print that output verbatim as your final message. Add nothing.**
 
 Re-narrating it in prose costs more tokens than the entire run did, and says
-less. `run-api` already prints it, so in the normal path you say *nothing at
-all* after the run — the panel is the answer.
+less. `run-api` already prints it, so in the normal path you say _nothing at
+all_ after the run — the panel is the answer.
 
 Add a sentence of your own only when you know something the panel cannot: an
 app that would not start, a login that failed, a case you chose to skip.

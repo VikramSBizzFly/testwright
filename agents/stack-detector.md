@@ -23,7 +23,7 @@ for the manifest/runtime/runner table and the exact JSON shape.
    `pip show pytest-playwright`, the dependency in `pom.xml`/`*.csproj`).
    Manifest without runtime, or runtime without binding, is **Tier 0**.
 2. **Never install anything.** Not npm, not pip, not a browser binary. If a
-   stack is present but its binding is missing, name what the user *could*
+   stack is present but its binding is missing, name what the user _could_
    install to reach Tier 1 and stop there. Tier 0 is fully supported, not a
    degraded mode.
 

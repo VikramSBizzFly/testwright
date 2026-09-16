@@ -6,16 +6,16 @@ the dependency yourself and never run `mvn install` to fetch it).
 
 ## Recipe verb -> Playwright call
 
-| recipe | Playwright (Java) |
-| --- | --- |
-| `nav <route>` | `page.navigate("<route>");` |
-| `fill <kind:Name> <value>` | `page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name")).fill("<value>");` |
-| `click <kind:Name>` | `page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name")).click();` |
-| `check <kind:Name>` | `page.getByRole(AriaRole.CHECKBOX, new Page.GetByRoleOptions().setName("Name")).check();` |
-| `select <kind:Name> <value>` | `page.getByLabel("Name").selectOption("<value>");` |
-| `expect url <path>` | `assertThat(page).hasURL(Pattern.compile("<path>"));` |
+| recipe                           | Playwright (Java)                                                                                             |
+| -------------------------------- | ------------------------------------------------------------------------------------------------------------- |
+| `nav <route>`                    | `page.navigate("<route>");`                                                                                   |
+| `fill <kind:Name> <value>`       | `page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name")).fill("<value>");`               |
+| `click <kind:Name>`              | `page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name")).click();`                       |
+| `check <kind:Name>`              | `page.getByRole(AriaRole.CHECKBOX, new Page.GetByRoleOptions().setName("Name")).check();`                     |
+| `select <kind:Name> <value>`     | `page.getByLabel("Name").selectOption("<value>");`                                                            |
+| `expect url <path>`              | `assertThat(page).hasURL(Pattern.compile("<path>"));`                                                         |
 | `expect text <kind:Name> <text>` | `assertThat(page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name"))).hasText("<text>");` |
-| `expect visible <kind:Name>` | `assertThat(page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name"))).isVisible();` |
+| `expect visible <kind:Name>`     | `assertThat(page.getByRole(AriaRole.<KIND>, new Page.GetByRoleOptions().setName("Name"))).isVisible();`       |
 
 `kind:Name` maps to the `AriaRole` enum constant (`button:Sign in` ->
 `AriaRole.BUTTON`). Fall back to `getByLabel` for a visible label with no role

@@ -24,13 +24,13 @@ are not worth a case until something asserts on them.
 
 Five state columns, written alongside `type` and `route` in the scratch TSV:
 
-| column | what | example |
-| --- | --- | --- |
-| `method` | HTTP method; **always write it**, even `GET` | `POST` |
-| `body` | inline text, or `@path` relative to `tests/` | `{"name": "x"}` · `@api/bodies/ITEM-004.json` |
-| `headers` | `Name: value` pairs, separated by `\|` | `X-Signature: {{hmac-sha256:webhook}}` |
+| column        | what                                                     | example                                        |
+| ------------- | -------------------------------------------------------- | ---------------------------------------------- |
+| `method`      | HTTP method; **always write it**, even `GET`             | `POST`                                         |
+| `body`        | inline text, or `@path` relative to `tests/`             | `{"name": "x"}` · `@api/bodies/ITEM-004.json`  |
+| `headers`     | `Name: value` pairs, separated by `\|`                   | `X-Signature: {{hmac-sha256:webhook}}`         |
 | `expect_code` | the status that settles the verdict; **always write it** | `201` · `2xx` · `4xx` · `401\|403` · `refused` |
-| `repeat` | send N times, judge the last response | `6` |
+| `repeat`      | send N times, judge the last response                    | `6`                                            |
 
 `refused` means 401, 403, 404, 302, 303 or 307 — never a 2xx. A JSON body gets
 `Content-Type: application/json` unless `headers` sets one. Bodies longer than a
@@ -68,7 +68,7 @@ Per endpoint, deliberately, not one per field:
 And, where the contract has them:
 
 - **Signed webhooks** — one correctly signed (`X-Signature:
-  {{hmac-sha256:webhook}}`, `expect_code=2xx`), one signed with the wrong secret
+{{hmac-sha256:webhook}}`, `expect_code=2xx`), one signed with the wrong secret
   (`expect_code=401|403`), one unsigned.
 - **Brute-force limits** (login, 2FA, password reset) — a wrong code with
   `repeat` one past the documented limit and `expect_code=429` (or `423`). Tag it

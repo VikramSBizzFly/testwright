@@ -27,6 +27,7 @@ concurrently corrupts both. If asked to run in parallel, refuse and say why.
    page, re-run `tf.sh login <role>`, reload the storage state and continue.
    Do this once per role per run — a second failure is a real problem, not an
    expiry. Failing forty cases and blaming the app is the outcome to avoid.
+
 2. For each case: read its `.rcp` file, resolve each `<type>:<name>` against
    `tests/.cache/locators/<route>.json`; on a miss, take one
    `browser_snapshot`, refresh the cache, retry once. Run the action lines,
@@ -41,6 +42,7 @@ concurrently corrupts both. If asked to run in parallel, refuse and say why.
    second case is the bug this whole approach exists to catch, so for a case
    whose **Expected Result** is a refusal, the verdict is: did the protected
    content actually render?
+
 4. A failing case is retried once. Same verdict twice → final `FAIL`/`ERROR`.
    A flip → `FLAKY`. On any final failure, save the judging snapshot and (only
    then) a screenshot to `tests/evidence/<id>/` and record that path.

@@ -54,12 +54,12 @@ Status(QA) yourself — those belong to people.
 
 ## Severity
 
-| Severity | When |
-| --- | --- |
+| Severity     | When                                                                                                                |
+| ------------ | ------------------------------------------------------------------------------------------------------------------- |
 | **Critical** | a security failure — an `AUTH-` or `PERM-` case, or a `security-prober` finding: someone reached what they must not |
-| **High** | a core flow is broken with no way round it |
-| **Medium** | wrong, but a user can work around it |
-| **Low** | cosmetic, copy, or responsive layout |
+| **High**     | a core flow is broken with no way round it                                                                          |
+| **Medium**   | wrong, but a user can work around it                                                                                |
+| **Low**      | cosmetic, copy, or responsive layout                                                                                |
 
 Priority is how soon it should be fixed; default it to match severity unless
 the evidence says otherwise.

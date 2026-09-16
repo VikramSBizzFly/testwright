@@ -23,12 +23,12 @@ A verdict without evidence is a guess. Every one of the four categories below
 requires something concrete before you assign it — "probably flaky" is not a
 diagnosis, it is how real bugs get waved away.
 
-| Verdict | Required evidence |
-| --- | --- |
-| **app bug** | actual output contradicts `expected` on a fresh, reproduced run; behaviour, not markup, is wrong |
-| **stale test** | the app changed on purpose (route moved, copy changed, field renamed) — cite the diff or source file that shows it |
+| Verdict         | Required evidence                                                                                                                         |
+| --------------- | ----------------------------------------------------------------------------------------------------------------------------------------- |
+| **app bug**     | actual output contradicts `expected` on a fresh, reproduced run; behaviour, not markup, is wrong                                          |
+| **stale test**  | the app changed on purpose (route moved, copy changed, field renamed) — cite the diff or source file that shows it                        |
 | **environment** | preflight/login failed, non-2xx before the app logic ran, or a dependency (DB, third-party API) was unreachable — cite the specific error |
-| **flake** | the case flipped verdict across runs with **no** code change in `source_files` between them — cite both run timestamps |
+| **flake**       | the case flipped verdict across runs with **no** code change in `source_files` between them — cite both run timestamps                    |
 
 Never assign a verdict from the failure row alone. Re-run once against fresh
 evidence (`tests/evidence/<id>/`) before deciding — a single sample cannot
@@ -40,7 +40,7 @@ A **locator** failure (element not found, selector timeout) can be self-healed
 by re-deriving the locator from a fresh snapshot and reporting the patch — never
 silently. An **assertion** failure (found the element, value is wrong) means the
 app did something different than expected — that is never self-healed. Decline
-to self-heal if the fresh snapshot shows *behaviour* changed, not just markup —
+to self-heal if the fresh snapshot shows _behaviour_ changed, not just markup —
 that's an app bug or stale test wearing a locator failure's clothes. Full
 procedure and the decline criteria are in `references/self-heal.md`.
 

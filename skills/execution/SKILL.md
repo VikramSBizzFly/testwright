@@ -36,14 +36,14 @@ credential rules are owned by the **auth** skill.
 
 `tf.sh select --type page --cols id,role,route,status,spec_file`.
 
-| `status` | `spec_file` | action |
-| --- | --- | --- |
-| `Not Run` | empty | not compiled — send to `testwright:compilation` first |
-| `Not Run` | set | compiled, never run — replay it (or native runner) |
-| `Pass` | set | native runner |
-| `Pass` | empty | replay it |
-| `Fail` / `Blocked` | any | replay again; still counts toward the circuit breaker |
-| `skipped` | any | destructive, or opted out — skip unless `--allow-destructive` |
+| `status`           | `spec_file` | action                                                        |
+| ------------------ | ----------- | ------------------------------------------------------------- |
+| `Not Run`          | empty       | not compiled — send to `testwright:compilation` first         |
+| `Not Run`          | set         | compiled, never run — replay it (or native runner)            |
+| `Pass`             | set         | native runner                                                 |
+| `Pass`             | empty       | replay it                                                     |
+| `Fail` / `Blocked` | any         | replay again; still counts toward the circuit breaker         |
+| `skipped`          | any         | destructive, or opted out — skip unless `--allow-destructive` |
 
 `--headed` shows the browser instead of headless.
 

@@ -14,12 +14,12 @@ copied in, never auto-enabled.
 
 ## The exit code is the verdict
 
-| exit | meaning | the job should |
-| --- | --- | --- |
-| `0` | all pass | pass |
-| `1` | test failures | fail |
-| `2` | **a privilege boundary was crossed** | fail, and say so distinctly |
-| `3` | could not run — app down, no session, guard refused | fail as **infrastructure** |
+| exit | meaning                                             | the job should              |
+| ---- | --------------------------------------------------- | --------------------------- |
+| `0`  | all pass                                            | pass                        |
+| `1`  | test failures                                       | fail                        |
+| `2`  | **a privilege boundary was crossed**                | fail, and say so distinctly |
+| `3`  | could not run — app down, no session, guard refused | fail as **infrastructure**  |
 
 Never re-derive the verdict from parsed output; `tf.sh summary` already decided
 it. Keeping `2` and `3` distinct from `1` is the whole point: a security failure

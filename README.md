@@ -92,8 +92,8 @@ specs written into your project.
 ## It starts on its own
 
 You don't have to remember the commands. Ask for what you want in plain
-language — *"find bugs in my app"*, *"can a normal user see the payroll page?"*,
-*"test my API"*, *"what isn't tested?"* — and the plugin picks it up, works out
+language — _"find bugs in my app"_, _"can a normal user see the payroll page?"_,
+_"test my API"_, _"what isn't tested?"_ — and the plugin picks it up, works out
 whether the project is set up yet, and routes to the right command.
 
 **What it does without asking:** check the app is up, detect the stack, discover
@@ -120,18 +120,18 @@ open.
 
 **`tests/testcases.xlsx`** — three sheets:
 
-| Sheet | What's in it |
-| --- | --- |
-| **Flows** | what the software actually does, end to end: the journey, the code path behind it, what it writes, how it can fail, and which cases cover it |
-| **Test Cases** | every case, in the columns a QA team works in |
-| **Results** | the last run, case by case |
+| Sheet          | What's in it                                                                                                                                 |
+| -------------- | -------------------------------------------------------------------------------------------------------------------------------------------- |
+| **Flows**      | what the software actually does, end to end: the journey, the code path behind it, what it writes, how it can fail, and which cases cover it |
+| **Test Cases** | every case, in the columns a QA team works in                                                                                                |
+| **Results**    | the last run, case by case                                                                                                                   |
 
 The **Test Cases** sheet has exactly these ten columns:
 
-| Test Case ID | Module | Test Scenario | Test Description | Preconditions | Test Case Steps | Test Data | Expected Result | Actual Result | Status |
-| --- | --- | --- | --- | --- | --- | --- | --- | --- | --- |
-| AUTH-002 | payroll | Logged-out visitor opens /payroll | | Not logged in | Open /payroll | | Sends me to the login page | HTTP 200, payroll rendered | Fail |
-| PERM-USER-001 | payroll | A normal user opens /payroll | | Logged in as normal user | Open /payroll | | Refused | | Not Run |
+| Test Case ID  | Module  | Test Scenario                     | Test Description | Preconditions            | Test Case Steps | Test Data | Expected Result            | Actual Result              | Status  |
+| ------------- | ------- | --------------------------------- | ---------------- | ------------------------ | --------------- | --------- | -------------------------- | -------------------------- | ------- |
+| AUTH-002      | payroll | Logged-out visitor opens /payroll |                  | Not logged in            | Open /payroll   |           | Sends me to the login page | HTTP 200, payroll rendered | Fail    |
+| PERM-USER-001 | payroll | A normal user opens /payroll      |                  | Logged in as normal user | Open /payroll   |           | Refused                    |                            | Not Run |
 
 **Status** is `Not Run`, `Pass`, `Fail`, `Blocked` (the run could not judge it —
 the app never answered), `Flaky` or `Skipped`. A case goes `Flaky` only after it
@@ -205,12 +205,12 @@ That costs tokens. Three things keep it bounded:
   without opening a browser again.
 - **Each stage runs in its own agent.** Snapshots, DOM, evidence files and
   credentials never enter the main conversation, so the expensive context stays
-  small. That isolation *is* the cost model.
+  small. That isolation _is_ the cost model.
 - **If your project has Playwright installed**, passing cases are promoted into
   real spec files in your own runner — after that the suite re-runs headless for
   zero tokens. `/api/*` cases already run at zero cost, on plain `curl`.
 
-Cost scales with the number of *pages*, not the number of tests.
+Cost scales with the number of _pages_, not the number of tests.
 
 ## What else it can check
 
@@ -235,11 +235,11 @@ Three optional passes ride on browser cases you are already running:
 Detected automatically at `/testwright:setup`. **Nothing is ever installed for
 you.**
 
-| Tier | When | Browser re-runs | Added to your project |
-| --- | --- | --- | --- |
-| **0** | no test runtime | replayed via the MCP | **nothing** |
-| **1** | your stack's Playwright binding is installed | your own runner | specs + config, in your language |
-| **2** | Tier 1 + JUnit XML | your own runner | Tier 1 + a results adapter |
+| Tier  | When                                         | Browser re-runs      | Added to your project            |
+| ----- | -------------------------------------------- | -------------------- | -------------------------------- |
+| **0** | no test runtime                              | replayed via the MCP | **nothing**                      |
+| **1** | your stack's Playwright binding is installed | your own runner      | specs + config, in your language |
+| **2** | Tier 1 + JUnit XML                           | your own runner      | Tier 1 + a results adapter       |
 
 Tier 0 is the default and fully supported, not a degraded mode. A Python or Go
 project never gets Node forced on it. In CI, Tier 0 runs the `curl` pass only —
@@ -299,22 +299,22 @@ Above the engine sit **14 skills** — the rules for each stage, loaded only whe
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
 on — and **20 agents**, one per stage:
 
-| Stage | Agent |
-| --- | --- |
-| detect the stack | `stack-detector` |
-| map the flows through the code | `flow-mapper` |
-| log in, both session formats | `login-broker` |
-| group routes into features | `test-explorer` |
-| find routes a glob missed | `route-crawler` |
-| write the cases | `case-author`, `api-case-author` |
-| model a route, once | `page-modeler` |
-| compile cases to recipes, no browser | `test-compiler` |
-| replay in a browser | `test-runner` |
+| Stage                                            | Agent                                                                      |
+| ------------------------------------------------ | -------------------------------------------------------------------------- |
+| detect the stack                                 | `stack-detector`                                                           |
+| map the flows through the code                   | `flow-mapper`                                                              |
+| log in, both session formats                     | `login-broker`                                                             |
+| group routes into features                       | `test-explorer`                                                            |
+| find routes a glob missed                        | `route-crawler`                                                            |
+| write the cases                                  | `case-author`, `api-case-author`                                           |
+| model a route, once                              | `page-modeler`                                                             |
+| compile cases to recipes, no browser             | `test-compiler`                                                            |
+| replay in a browser                              | `test-runner`                                                              |
 | accessibility, responsive, visual, authorization | `a11y-auditor`, `responsive-auditor`, `visual-reviewer`, `security-prober` |
-| diagnose a failure | `test-triager`, `flake-analyst` |
-| promote to native specs | `spec-writer` |
-| report | `bug-reporter`, `coverage-analyst` |
-| CI | `ci-wirer` |
+| diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
+| promote to native specs                          | `spec-writer`                                                              |
+| report                                           | `bug-reporter`, `coverage-analyst`                                         |
+| CI                                               | `ci-wirer`                                                                 |
 
 Every agent returns a fixed, terse block — verdict rows, file paths, counts —
 never a snapshot or a file's contents.
@@ -323,7 +323,7 @@ never a snapshot or a file's contents.
 
 The version lives in `.claude-plugin/plugin.json`; `tf.sh version` prints it,
 and [CHANGELOG.md](CHANGELOG.md) says what changed. Semver, where "breaking"
-means *your existing suite stops running*:
+means _your existing suite stops running_:
 
 - **MAJOR** — you have to do something: the `testcases.csv` schema changed, a
   `tf.sh` subcommand or flag was removed or renamed, a command or skill was

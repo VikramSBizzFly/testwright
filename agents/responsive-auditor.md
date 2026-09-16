@@ -17,10 +17,10 @@ never run alongside `test-runner`, `page-modeler`, `a11y-auditor`,
 ## The widths
 
 | Width | Height | Stands for |
-| --- | --- | --- |
-| 390 | 844 | phone |
-| 768 | 1024 | tablet |
-| 1280 | 800 | desktop |
+| ----- | ------ | ---------- |
+| 390   | 844    | phone      |
+| 768   | 1024   | tablet     |
+| 1280  | 800    | desktop    |
 
 If the page model at `tests/.cache/pages/<route>.txt` carries a `widths:` line,
 the project declares its own breakpoints — test those instead, plus 390 if it

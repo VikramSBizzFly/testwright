@@ -7,17 +7,17 @@ Tab, not pipe: `steps` and `code path` are pipe-separated lists themselves.
 id <TAB> name <TAB> actor <TAB> trigger <TAB> steps <TAB> code path <TAB> writes <TAB> branches <TAB> cases
 ```
 
-| Field | Rule |
-| --- | --- |
-| `id` | `FLOW-<PREFIX>-NNN`, from the featuremap's prefix. Stable forever; never renumber. |
-| `name` | What a person would call it, lowercase. Prefix `[priv] ` if it crosses a privilege boundary. |
-| `actor` | The role that can start it: `nobody`, `normal user`, `admin`, or the project's own role name. |
-| `trigger` | What starts it: a nav click, a form submit, a cron, a webhook, a redirect from elsewhere. |
-| `steps` | The ordered path, `\|`-separated. Routes and actions, not prose. |
-| `code path` | `\|`-separated hops, each `path:line symbol`, ending at the data layer or the outbound call. |
-| `writes` | What changes: tables, files, queues, emails, third-party calls. `-` if it only reads. |
-| `branches` | `\|`-separated failure and alternate paths, each citing `path:line`. `-` if there genuinely are none. |
-| `cases` | Comma-separated case ids covering this flow. Left empty by `flow-mapper`; filled by `case-author`. |
+| Field       | Rule                                                                                                  |
+| ----------- | ----------------------------------------------------------------------------------------------------- |
+| `id`        | `FLOW-<PREFIX>-NNN`, from the featuremap's prefix. Stable forever; never renumber.                    |
+| `name`      | What a person would call it, lowercase. Prefix `[priv] ` if it crosses a privilege boundary.          |
+| `actor`     | The role that can start it: `nobody`, `normal user`, `admin`, or the project's own role name.         |
+| `trigger`   | What starts it: a nav click, a form submit, a cron, a webhook, a redirect from elsewhere.             |
+| `steps`     | The ordered path, `\|`-separated. Routes and actions, not prose.                                      |
+| `code path` | `\|`-separated hops, each `path:line symbol`, ending at the data layer or the outbound call.          |
+| `writes`    | What changes: tables, files, queues, emails, third-party calls. `-` if it only reads.                 |
+| `branches`  | `\|`-separated failure and alternate paths, each citing `path:line`. `-` if there genuinely are none. |
+| `cases`     | Comma-separated case ids covering this flow. Left empty by `flow-mapper`; filled by `case-author`.    |
 
 ## Worked example — a login flow
 
@@ -32,7 +32,7 @@ branches — both cited.
 ## Worked example — a flow nobody tests
 
 ```
-FLOW-PAY-002	[priv] run payroll	admin	clicks Run on /payroll	/payroll|POST /payroll/run|/payroll?done=1	payroll.py:40 run_payroll|payroll.py:61 Ledger.post	ledger, emails to staff	no funds -> payroll.py:55 aborts and flashes|already run this month -> payroll.py:47	
+FLOW-PAY-002	[priv] run payroll	admin	clicks Run on /payroll	/payroll|POST /payroll/run|/payroll?done=1	payroll.py:40 run_payroll|payroll.py:61 Ledger.post	ledger, emails to staff	no funds -> payroll.py:55 aborts and flashes|already run this month -> payroll.py:47
 ```
 
 `cases` is empty, so this rolls up as **not covered** in the workbook — an admin

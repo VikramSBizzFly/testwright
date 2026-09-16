@@ -16,13 +16,13 @@ defects in the app — recording them trains a team to stop reading the sheet.
 
 ## Who fills in what
 
-| Column | Filled by |
-| --- | --- |
-| Bug No, Module, Steps to Reproduce, Expected Result, Actual Result, Test data | the engine, from the case |
-| Status(QA) | the engine, `Open`, when the bug is raised |
-| Reporter, Environment, Access Link, found date | the engine: git user, base URL host, base URL + route, today |
-| **Bug Description, Severity, Priority, QA Comments** | **the agent** — this is the judgement |
-| Bug Link, Dev Comment, later changes to Status(QA) | **people** |
+| Column                                                                        | Filled by                                                    |
+| ----------------------------------------------------------------------------- | ------------------------------------------------------------ |
+| Bug No, Module, Steps to Reproduce, Expected Result, Actual Result, Test data | the engine, from the case                                    |
+| Status(QA)                                                                    | the engine, `Open`, when the bug is raised                   |
+| Reporter, Environment, Access Link, found date                                | the engine: git user, base URL host, base URL + route, today |
+| **Bug Description, Severity, Priority, QA Comments**                          | **the agent** — this is the judgement                        |
+| Bug Link, Dev Comment, later changes to Status(QA)                            | **people**                                                   |
 
 ```sh
 tf.sh bug from <id> \
@@ -43,12 +43,12 @@ tf.sh bug from <id> \
 
 ## Severity
 
-| Severity | When |
-| --- | --- |
+| Severity     | When                                                                            |
+| ------------ | ------------------------------------------------------------------------------- |
 | **Critical** | a security failure — an `AUTH-` or `PERM-` case, or a `security-prober` finding |
-| **High** | a core flow is broken with no workaround |
-| **Medium** | wrong, but a user can work around it |
-| **Low** | cosmetic, copy, or responsive layout |
+| **High**     | a core flow is broken with no workaround                                        |
+| **Medium**   | wrong, but a user can work around it                                            |
+| **Low**      | cosmetic, copy, or responsive layout                                            |
 
 ## Filing it
 
@@ -74,5 +74,5 @@ safe; usernames, passwords, tokens, cookie values and the records a leak exposed
 are not.
 
 If the evidence cannot be quoted without leaking, describe it and cite the path.
-For a security finding, say *that* protected content rendered and which field
+For a security finding, say _that_ protected content rendered and which field
 proved it, never the value.

@@ -19,12 +19,12 @@ Read `tests/framework.json` for `stack` and `runner`, then adapt
 
 `tf.sh summary` already decides the verdict; the job must not re-derive it:
 
-| exit | meaning | job |
-| --- | --- | --- |
-| `0` | all pass | green |
-| `1` | failures | red |
-| `2` | **security failure** | red, and called out in the job name or summary |
-| `3` | could not run | red, distinct from `1` — this is infrastructure |
+| exit | meaning              | job                                             |
+| ---- | -------------------- | ----------------------------------------------- |
+| `0`  | all pass             | green                                           |
+| `1`  | failures             | red                                             |
+| `2`  | **security failure** | red, and called out in the job name or summary  |
+| `3`  | could not run        | red, distinct from `1` — this is infrastructure |
 
 Run with `--json` or `--quiet` and `--no-color`; the live progress bar is for a
 terminal, and CI should get `TF_PROGRESS` in its throttled mode.
@@ -32,7 +32,7 @@ terminal, and CI should get `TF_PROGRESS` in its throttled mode.
 ## Rules
 
 - **Never install anything into the project** as part of this. The workflow may
-  install what it needs *inside the runner*; the repo's own dependencies are not
+  install what it needs _inside the runner_; the repo's own dependencies are not
   yours to change.
 - **Never write a credential into a workflow file.** Roles come from repository
   secrets, referenced by name, and `tests/credentials.json` is built in the job

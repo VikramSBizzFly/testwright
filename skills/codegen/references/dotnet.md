@@ -6,16 +6,16 @@ package` it yourself).
 
 ## Recipe verb -> Playwright call
 
-| recipe | Playwright (C#) |
-| --- | --- |
-| `nav <route>` | `await Page.GotoAsync("<route>");` |
-| `fill <kind:Name> <value>` | `await Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" }).FillAsync("<value>");` |
-| `click <kind:Name>` | `await Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" }).ClickAsync();` |
-| `check <kind:Name>` | `await Page.GetByRole(AriaRole.Checkbox, new() { Name = "Name" }).CheckAsync();` |
-| `select <kind:Name> <value>` | `await Page.GetByLabel("Name").SelectOptionAsync("<value>");` |
-| `expect url <path>` | `await Expect(Page).ToHaveURLAsync(new Regex("<path>"));` |
+| recipe                           | Playwright (C#)                                                                                     |
+| -------------------------------- | --------------------------------------------------------------------------------------------------- |
+| `nav <route>`                    | `await Page.GotoAsync("<route>");`                                                                  |
+| `fill <kind:Name> <value>`       | `await Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" }).FillAsync("<value>");`              |
+| `click <kind:Name>`              | `await Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" }).ClickAsync();`                      |
+| `check <kind:Name>`              | `await Page.GetByRole(AriaRole.Checkbox, new() { Name = "Name" }).CheckAsync();`                    |
+| `select <kind:Name> <value>`     | `await Page.GetByLabel("Name").SelectOptionAsync("<value>");`                                       |
+| `expect url <path>`              | `await Expect(Page).ToHaveURLAsync(new Regex("<path>"));`                                           |
 | `expect text <kind:Name> <text>` | `await Expect(Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" })).ToHaveTextAsync("<text>");` |
-| `expect visible <kind:Name>` | `await Expect(Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" })).ToBeVisibleAsync();` |
+| `expect visible <kind:Name>`     | `await Expect(Page.GetByRole(AriaRole.<Kind>, new() { Name = "Name" })).ToBeVisibleAsync();`        |
 
 `kind:Name` maps to the `AriaRole` enum member (`button:Sign in` ->
 `AriaRole.Button`). Fall back to `GetByLabel` for a visible label with no role

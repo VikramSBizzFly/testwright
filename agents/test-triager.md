@@ -22,7 +22,7 @@ without evidence.
    evidence in **testwright:triage**.
 4. If the failure is a **locator** miss (not an assertion), attempt one
    self-heal: re-derive the locator from the fresh snapshot, patch the
-   recipe/spec file, re-run once. If the underlying *behaviour* changed
+   recipe/spec file, re-run once. If the underlying _behaviour_ changed
    instead of the markup, decline and classify as app bug.
 5. Never run a `destructive`-tagged case as part of reproduction.
 

@@ -27,9 +27,21 @@ tf.sh storage-state <role>
 Rewrites the jar as Playwright storage state at `tests/.auth/<role>.json`:
 
 ```json
-{ "cookies": [ { "name": "...", "value": "...", "domain": "...", "path": "/",
-  "expires": -1, "httpOnly": false, "secure": false, "sameSite": "Lax" } ],
-  "origins": [] }
+{
+  "cookies": [
+    {
+      "name": "...",
+      "value": "...",
+      "domain": "...",
+      "path": "/",
+      "expires": -1,
+      "httpOnly": false,
+      "secure": false,
+      "sameSite": "Lax"
+    }
+  ],
+  "origins": []
+}
 ```
 
 Prefer this over reading cookies out of a browser: the jar carries `HttpOnly`

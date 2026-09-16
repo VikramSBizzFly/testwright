@@ -16,7 +16,7 @@ Self-heal procedure, locator failures only:
 4. **Always report the patch** — old locator, new locator, spec file changed.
    Never a silent pass. A silently-patched test is a test nobody can trust.
 
-**Decline to self-heal** if the fresh snapshot shows the *behaviour* changed —
+**Decline to self-heal** if the fresh snapshot shows the _behaviour_ changed —
 the control is gone, disabled, or the flow now requires an extra step. That is
 an app bug (or a stale test, if intended) wearing a locator failure's clothes.
 When in doubt, decline and report; a wrongly-healed test hides a regression

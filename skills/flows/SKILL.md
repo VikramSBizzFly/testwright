@@ -7,7 +7,7 @@ description: Map what a web app actually does end to end - the user journeys and
 
 > `tf.sh` = `"$CLAUDE_PLUGIN_ROOT/scripts/tf.sh"` (not on PATH).
 
-A route list tells you where the app can go. A flow tells you what it is *for*.
+A route list tells you where the app can go. A flow tells you what it is _for_.
 Test cases written per route check pages; test cases written per flow check that
 the software does its job — and a bug that only appears at step four of five is
 invisible to any per-page test.

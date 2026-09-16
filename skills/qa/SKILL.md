@@ -22,30 +22,30 @@ the word "test" gets uninstalled.
 
 ## 2. Work out where this project already is
 
-| State | What to do |
-| --- | --- |
-| no `tests/framework.json` | first time here — run `/testwright:setup`, then continue |
-| no `tests/.cache/flows.txt` and they asked about flows | `flow-mapper` per feature, then `tf.sh xlsx` |
-| suite exists, no `tests/results/` | run `/testwright:run` |
-| results exist and the question is about them | `/testwright:report` — do not re-run to answer a question you already have the answer to |
-| `tests/credentials.json` still has empty roles | ask them to fill it in; without a login every permission case is meaningless |
+| State                                                  | What to do                                                                               |
+| ------------------------------------------------------ | ---------------------------------------------------------------------------------------- |
+| no `tests/framework.json`                              | first time here — run `/testwright:setup`, then continue                                 |
+| no `tests/.cache/flows.txt` and they asked about flows | `flow-mapper` per feature, then `tf.sh xlsx`                                             |
+| suite exists, no `tests/results/`                      | run `/testwright:run`                                                                    |
+| results exist and the question is about them           | `/testwright:report` — do not re-run to answer a question you already have the answer to |
+| `tests/credentials.json` still has empty roles         | ask them to fill it in; without a login every permission case is meaningless             |
 
 ## 3. Match the request to the right entry
 
-| They said | You run |
-| --- | --- |
-| "test my app", "write tests", "QA this" | `/testwright:setup` if needed, then `/testwright:run` |
-| "map the flows", "what are the user journeys" | the `flow-mapper` agent, then `tf.sh xlsx` |
-| "is it broken on mobile", "check responsive" | `/testwright:run --responsive` |
-| "open/update the test cases file" | `tf.sh xlsx` — the workbook is `tests/testcases.xlsx` |
-| "find bugs", "is anything broken" | `/testwright:run` |
-| "is it secure", "can a user see someone else's data" | `/testwright:run --security` |
-| "test my API", "check the endpoints" | `/testwright:run` — `api` cases run on curl, free |
-| "does it work for screen readers" | `/testwright:run --a11y` |
-| "what isn't tested" | `/testwright:report --coverage` |
-| "why does this keep failing" | `/testwright:report --flakes` |
-| "file a bug for that" | `/testwright:report --bug <id>` |
-| "run it in CI" | `/testwright:setup --ci` |
+| They said                                            | You run                                               |
+| ---------------------------------------------------- | ----------------------------------------------------- |
+| "test my app", "write tests", "QA this"              | `/testwright:setup` if needed, then `/testwright:run` |
+| "map the flows", "what are the user journeys"        | the `flow-mapper` agent, then `tf.sh xlsx`            |
+| "is it broken on mobile", "check responsive"         | `/testwright:run --responsive`                        |
+| "open/update the test cases file"                    | `tf.sh xlsx` — the workbook is `tests/testcases.xlsx` |
+| "find bugs", "is anything broken"                    | `/testwright:run`                                     |
+| "is it secure", "can a user see someone else's data" | `/testwright:run --security`                          |
+| "test my API", "check the endpoints"                 | `/testwright:run` — `api` cases run on curl, free     |
+| "does it work for screen readers"                    | `/testwright:run --a11y`                              |
+| "what isn't tested"                                  | `/testwright:report --coverage`                       |
+| "why does this keep failing"                         | `/testwright:report --flakes`                         |
+| "file a bug for that"                                | `/testwright:report --bug <id>`                       |
+| "run it in CI"                                       | `/testwright:setup --ci`                              |
 
 ## 4. Do the free work now, then ask
 

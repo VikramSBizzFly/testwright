@@ -14,8 +14,8 @@ than running it logged out.
 One browser session per route group: navigate/login once, then replay every
 case for that route+role before moving to the next group. Switching route
 inside a session just means another `nav` — the session and storage state
-stay open. This is what keeps the MCP call count near *(routes × roles)*,
-not *(cases)*.
+stay open. This is what keeps the MCP call count near _(routes × roles)_,
+not _(cases)_.
 
 ## The locator cache
 

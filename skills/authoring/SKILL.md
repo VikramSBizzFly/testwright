@@ -38,11 +38,10 @@ sees.** Everything a user can see, including a permission check, is `page`.
 Why: a permission refusal is often a page served with HTTP 200 and the text
 "Access denied" — a status code misses it, and a client-side guard doesn't
 exist for curl to hit. Only a rendered page proves a refusal actually
-refuses. When in doubt: *is this a `/api/*` call, or does it render?* Table:
-`references/schema.md`. RBAC/auth sweeps are generated — run `tf.sh rbac`.
+refuses. When in doubt: _is this a `/api/_`call, or does it render?* Table:`references/schema.md`. RBAC/auth sweeps are generated — run `tf.sh rbac`.
 Why a status code cannot decide this, and the probes the sweep cannot express:
-the **security** skill. Generating `api` cases from an OpenAPI/Swagger
-contract: `references/api-contracts.md`.
+the **security** skill. Generating `api`cases from an OpenAPI/Swagger
+contract:`references/api-contracts.md`.
 
 ## Schema
 

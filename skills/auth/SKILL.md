@@ -16,10 +16,10 @@ only thing that should touch a credential.
 
 ## Two artifacts, and a run needs both
 
-| File | Written by | Read by |
-| --- | --- | --- |
-| `tests/.auth/<role>.cookies` | `tf.sh login <role>` | `tf.sh run-api`, `tf.sh preflight` — curl |
-| `tests/.auth/<role>.json` | `tf.sh storage-state <role>` | `page-modeler`, `test-runner`, every browser case |
+| File                         | Written by                   | Read by                                           |
+| ---------------------------- | ---------------------------- | ------------------------------------------------- |
+| `tests/.auth/<role>.cookies` | `tf.sh login <role>`         | `tf.sh run-api`, `tf.sh preflight` — curl         |
+| `tests/.auth/<role>.json`    | `tf.sh storage-state <role>` | `page-modeler`, `test-runner`, every browser case |
 
 A role with the jar but no storage state looks logged in to the API pass and
 logged out to the browser pass. Always produce both; `tf.sh storage-state`

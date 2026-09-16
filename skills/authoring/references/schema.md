@@ -7,12 +7,12 @@
 `type` lives in `tests/.cache/state.csv`, set with `tf.sh set <id> type=...`,
 and is exactly two values.
 
-| Ask | `type` | Cost |
-| --- | --- | --- |
-| Does clicking Save show the new row in the table? | `page` | browser |
-| Does the page render at 375px without breaking layout? | `page` | browser |
-| Does opening this URL as the wrong role show a login page or a refusal? | `page` | browser |
-| Does a `GET`/`POST` to `/api/...` (with a body, headers, a signature) return the right status? | `api` | free |
+| Ask                                                                                            | `type` | Cost    |
+| ---------------------------------------------------------------------------------------------- | ------ | ------- |
+| Does clicking Save show the new row in the table?                                              | `page` | browser |
+| Does the page render at 375px without breaking layout?                                         | `page` | browser |
+| Does opening this URL as the wrong role show a login page or a refusal?                        | `page` | browser |
+| Does a `GET`/`POST` to `/api/...` (with a body, headers, a signature) return the right status? | `api`  | free    |
 
 The old `ui`/`rbac`/`auth`/`visual`/`a11y`/`perf` type values are gone.
 Everything a person can navigate to and look at — including a permission
@@ -48,7 +48,7 @@ shell quoting: `id module scenario description preconditions steps data
 expected actual status`.
 
 - **Test Case ID** (`id`) -- `AREA-NNN`, allocated with `tf.sh next-id
-  <PREFIX>`. **Stable forever.** Never renumber; results, specs and bugs are
+<PREFIX>`. **Stable forever.** Never renumber; results, specs and bugs are
   keyed on it.
 - **Module** (`module`) -- the feature this case belongs to.
 - **Test Scenario** (`scenario`) -- one line naming what is being tested, as a
@@ -104,7 +104,7 @@ semicolon-separated, from discovery, and powers `--changed`.
 
 ```
 id	module	scenario	preconditions	steps	data	expected	type	route	tags
-INV-004	invoice	Admin saves an invoice with a zero amount	Logged in as admin	Open /invoices/new | fill Amount | click Save	Amount: 0	An error says the amount must be greater than zero	page	/invoices/new	
+INV-004	invoice	Admin saves an invoice with a zero amount	Logged in as admin	Open /invoices/new | fill Amount | click Save	Amount: 0	An error says the amount must be greater than zero	page	/invoices/new
 ```
 
 ## What a feature needs

@@ -8,11 +8,12 @@ Set up testing here. Arguments: `$ARGUMENTS` (`--tier 0` forces browser-only,
 `--ci` also writes a CI workflow).
 
 **1. Work out what this project is.** Delegate to the `stack-detector` agent.
-It probes manifests *and* runtimes — a `package.json` does not prove Node is
+It probes manifests _and_ runtimes — a `package.json` does not prove Node is
 installed — and writes `tests/framework.json`. It returns six lines; use its
 `TIER`/`STACK`/`WHY`. **Never install anything**, and do not re-detect here.
 
 **2. Scaffold**, without overwriting anything that exists:
+
 - `tf.sh init-csv` — creates `tests/`, the suite files and the supporting
   folders in one go
 - `tf.sh xlsx` — creates `tests/testcases.xlsx`, the workbook holding flows,
