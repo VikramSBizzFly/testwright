@@ -160,7 +160,7 @@ cmd_summary() {
     esac
   done
   [ -n "$res" ] || res="$(cmd_latest 1)"
-  [ -n "$res" ] && [ -f "$res" ] || { echo "summary: no results yet -- run /test-run first" >&2; return 3; }
+  [ -n "$res" ] && [ -f "$res" ] || { echo "summary: no results yet -- run /testwright:run first" >&2; return 3; }
 
   # Diff against the previous run only when summarising the newest one.
   prev=""
@@ -384,7 +384,7 @@ cmd_summary() {
       sect(""); warned = 1
       sect(sprintf("  \034\014  %d case%s ran with no session for [%s]\030", unver, (unver==1?"":"s"), nosession))
       sect("     \035logged-out requests are denied anyway, so these verdicts are\030")
-      sect("     \035unverified, not passed - run /test-setup to fix\030")
+      sect("     \035unverified, not passed - run /testwright:setup to fix\030")
     }
     if (NUNJ > 0) {
       if (!warned) sect(""); warned = 1
@@ -403,11 +403,11 @@ cmd_summary() {
     # ---- exactly one next action, chosen by outcome
     sect("")
     sect(sprintf("  \035\017 %s\030", RESF))
-    if (NSEC > 0)          nxt = "/test-report --bug " SECID[1]
-    else if (nosession != "") nxt = "/test-setup"
-    else if (nreg > 0)     nxt = "/test-run --only-failing"
-    else if (FAILN > 0)    nxt = "/test-report"
-    else                   nxt = "/test-report --publish"
+    if (NSEC > 0)          nxt = "/testwright:report --bug " SECID[1]
+    else if (nosession != "") nxt = "/testwright:setup"
+    else if (nreg > 0)     nxt = "/testwright:run --only-failing"
+    else if (FAILN > 0)    nxt = "/testwright:report"
+    else                   nxt = "/testwright:report --publish"
     sect(sprintf("  \037\017 %s\030", nxt))
 
     for (i = 1; i <= NL; i++) print LINES[i]

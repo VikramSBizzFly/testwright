@@ -4,7 +4,7 @@
 # Sourced by scripts/tf.sh; defines functions only. See tf.sh for the paths
 # and schema variables these rely on.
 
-need_csv() { [ -f "$CSV" ] || die "no $CSV (run /test-setup first)"; }
+need_csv() { [ -f "$CSV" ] || die "no $CSV (run /testwright:setup first)"; }
 
 # ====================================================================== CSV ops
 

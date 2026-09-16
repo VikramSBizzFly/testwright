@@ -13,7 +13,7 @@
 #   2. every non-owner role against every restricted page
 #
 # Which pages are restricted cannot be derived from a glob, so the caller may
-# supply a list -- /test-run has the model produce one ONCE from the guards,
+# supply a list -- /testwright:run has the model produce one ONCE from the guards,
 # which is a single cheap pass rather than per-case work. With no list, a
 # conservative name heuristic is used and says so.
 #
@@ -42,7 +42,7 @@ cmd_rbac() {
 
   # HEADER plus the state columns merge needs; merge routes each to its file.
   # Every generated case is a permission boundary, so every one is tagged
-  # `smoke`: that tag is what a bare /test-run falls back to.
+  # `smoke`: that tag is what a bare /testwright:run falls back to.
   printf '%s,type,route,tags,role,method,expect_code\n' "$HEADER"
   n=0; m=0
   while IFS= read -r route; do

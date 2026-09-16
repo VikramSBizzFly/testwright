@@ -93,7 +93,7 @@ _tf_migrate_03() {
 #
 # `who` also becomes state `role` -- the runner still needs to know which
 # session to use -- and `priority=high` becomes the `smoke` tag, which is what
-# a bare /test-run now falls back to. Priority itself is gone from the sheet.
+# a bare /testwright:run now falls back to. Priority itself is gone from the sheet.
 _tf_migrate_04() {
   # Keep the oldest backup. A 0.3 suite reaches here already converted once, and
   # its .old is the user's real original -- replacing it with the 0.4 midpoint
@@ -214,7 +214,7 @@ tf_adopt_workbook() {
 
 # cache-check <srcdir> -- is the discovery cache still valid?
 #
-# Exit 0 means unchanged, so /test-run can reuse the cached feature map and
+# Exit 0 means unchanged, so /testwright:run can reuse the cached feature map and
 # page models for free. Exit 1 means the source moved and they must be rebuilt.
 # This was previously only an instruction in a skill, which meant a model that
 # skipped the instruction silently re-paid full price.
