@@ -225,10 +225,41 @@ Three optional passes ride on browser cases you are already running:
   sidebar is the design working.
 - **`--security`** — the boundaries a role-by-route sweep can't express: opening
   another account's record by id, reaching an unlinked route, reusing a session
-  after logout, and open redirects. **Authorization probing only** — never
-  injection, brute force or anything destructive.
+  after logout, open redirects, and whether a rule the browser enforces exists
+  on the server at all (`maxlength` is one devtools edit away). **Authorization
+  probing only** — never injection, brute force or anything destructive.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
+
+## What it knows about a field
+
+A page tells you a field exists and what the DOM admits to — `required`,
+`minlength`, `type=email`. It doesn't tell you what the field *is*, and that's
+where the interesting cases live.
+
+So the plugin carries a **field library**: match a discovered field to a kind —
+person name, money, OTP, file upload, date range — and it knows what that kind
+needs tested beyond what the markup declares. An email that must reject a
+duplicate. An OTP that must stop working after one use. A price that must
+refuse three decimals. A postal code that must keep its leading zero. A file
+whose extension says `.png` while its bytes say otherwise.
+
+Two rules keep it honest:
+
+- **Defaults propose, they never enforce.** Your app's requirement always wins.
+  Where the library disagrees with the app and nothing written down settles it,
+  that's recorded as a decision someone needs to make — not a failure.
+- **Expected results describe the rule, not the wording.** A case asserts that
+  the form refused and nothing was saved, not that the app said
+  `Full Name cannot be less than 2 characters.` Asserting someone else's error
+  copy is how a perfectly good app gets a red run.
+
+Alongside it sits a **336-checkpoint QA checklist** in 42 categories, used as a
+prompt when writing cases and as the denominator for `--coverage`. It also
+records what this tool *can't* do — real-device testing, native mobile,
+install and upgrade, backup and failover, UAT, post-deployment — so those stop
+being counted as coverage gaps. A shorter honest number beats a longer
+meaningless one.
 
 ## Tiers
 

@@ -32,7 +32,14 @@ claims to support, which is why this is worth one line.
 
 Every interactive element: its accessible role and name, a stable
 identifier, its type, and any validation constraint visible in the DOM
-(`required`, `type=email`, `minlength`, `pattern`, a max on a counter). Also
+(`required`, `type=email`, `minlength`, `pattern`, a max on a counter). For an
+input, add its **kind** — the one- or two-word noun a QA lead would use:
+`person name`, `email`, `password`, `otp`, `money`, `date range`, `file
+upload`. Take it from the accessible name first, the control type second. It
+costs a word and it is what lets authoring look up the cases that kind needs
+(the **authoring** skill's `references/field-library.md`) without reopening the
+page. When the name is ambiguous, write what the label says rather than
+guessing a kind — a wrong kind is worse than none. Also
 record: where success/failure states land (a redirect URL, an error message's
 exact text) if a single snapshot makes that obvious — do not click anything
 to find out; that is compilation's job, not yours.

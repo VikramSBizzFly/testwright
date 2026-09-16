@@ -38,10 +38,11 @@ sees.** Everything a user can see, including a permission check, is `page`.
 Why: a permission refusal is often a page served with HTTP 200 and the text
 "Access denied" — a status code misses it, and a client-side guard doesn't
 exist for curl to hit. Only a rendered page proves a refusal actually
-refuses. When in doubt: _is this a `/api/_`call, or does it render?* Table:`references/schema.md`. RBAC/auth sweeps are generated — run `tf.sh rbac`.
+refuses. When in doubt: _is this an `/api/` call, or does it render?_ Table:
+`references/schema.md`. RBAC/auth sweeps are generated — run `tf.sh rbac`.
 Why a status code cannot decide this, and the probes the sweep cannot express:
-the **security** skill. Generating `api`cases from an OpenAPI/Swagger
-contract:`references/api-contracts.md`.
+the **security** skill. Generating `api` cases from an OpenAPI/Swagger
+contract: `references/api-contracts.md`.
 
 ## Schema
 
@@ -68,6 +69,23 @@ regeneration is always safe.
 Never write `testcases.csv` or `state.csv` directly, with any tool — a hook
 blocks it. `tf.sh check` says whether the store parses; `tf.sh restore` puts
 back the last version that did.
+
+## Knowing what a field is worth testing for
+
+A page model says a field exists and what the DOM admits to. It does not say
+what the field *is*. Match it to a kind in `references/field-library.md` and you
+get the cases that kind actually needs — and the traps, like a `Min`/`Max` that
+is a value range rather than a length, or a "unique" that is only unique per
+tenant. What a rejection should look like, and why **Expected Result** describes
+the rule rather than quoting the app's wording: `references/validation-rules.md`.
+
+These are defaults to propose, never truths to enforce. Where the library and
+the app disagree and no project rule settles it, that is a `Decision needed`
+note (**triage**, `references/classification.md`) — not a `Fail`.
+
+For what a QA lead would expect covered that a route list never suggests, and
+for the categories this tool honestly cannot cover:
+`references/qa-checklist.md`.
 
 ## Destructive cases, and before finishing
 

@@ -44,6 +44,15 @@ to self-heal if the fresh snapshot shows _behaviour_ changed, not just markup â€
 that's an app bug or stale test wearing a locator failure's clothes. Full
 procedure and the decline criteria are in `references/self-heal.md`.
 
+## Findings that are not a failing case
+
+The four verdicts explain why a case failed. They do not cover the finding with
+no verdict yet, the check that could not run, or the disagreement that is
+nobody's bug â€” a proposed bound the app does not have, with no project rule
+saying which is right, is a **Decision needed**, not a `Fail`. Those
+dispositions, and why severity (observed impact) and priority (when it gets
+fixed) are two separate judgements: `references/classification.md`.
+
 ## Flake quarantine
 
 A case that flips PASS/FAIL across runs with no matching change in its

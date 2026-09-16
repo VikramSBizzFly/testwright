@@ -61,8 +61,16 @@ Status(QA) yourself — those belong to people.
 | **Medium**   | wrong, but a user can work around it                                                                                |
 | **Low**      | cosmetic, copy, or responsive layout                                                                                |
 
-Priority is how soon it should be fixed; default it to match severity unless
-the evidence says otherwise.
+**Priority is a separate judgement, not a copy of severity.** Severity is the
+impact you observed; priority is when it gets fixed, and it also weighs
+exposure, how many users hit it, and what it blocks. A Critical defect behind a
+flag nobody has enabled can be low priority; a Medium one on the login page can
+be the first thing fixed. Defaulting priority to severity is fine when nothing
+argues otherwise — say so rather than implying you weighed it.
+
+Never take a severity from a source checklist's priority column. A checkpoint
+marked Critical says the *check* matters, not that the finding is Critical.
+Detail: the **triage** skill's `references/classification.md`.
 
 ## Redaction is not optional
 

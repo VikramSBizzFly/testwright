@@ -33,6 +33,19 @@ Distinguish **uncovered** (no case at all) from **thin** (a case exists but only
 checks the page loads) — thin coverage on a payroll page is the more dangerous
 of the two, because it reports green.
 
+## Gaps the route list cannot show
+
+A route with a case against it can still be untested in every way that matters.
+Check the suite against the 42 categories in the **authoring** skill's
+`references/qa-checklist.md` and name the categories with nothing in them —
+no negative cases anywhere, no export ever parsed, no session-expiry case.
+
+Say **out of scope** where that is the honest answer. Browser and device
+compatibility, native mobile, install and upgrade, backup and failover, UAT and
+post-deployment are not gaps this tool can close, and counting them as gaps
+makes the number meaningless. A short "not covered here, and not by this tool"
+list is worth more than a long one that pretends otherwise.
+
 ## Output contract
 
 Return **only**:

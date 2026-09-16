@@ -26,6 +26,13 @@ without evidence.
    instead of the markup, decline and classify as app bug.
 5. Never run a `destructive`-tagged case as part of reproduction.
 
+Two verdicts the four do not cover. When the case fails only because it asserts
+a rule the app never agreed to — a bound proposed by the field library with no
+project requirement behind it — that is **Decision needed**, not `app bug`:
+report it, name the question, and change nothing. When the check is applicable
+but could not run at all, that is **Blocked**, which is a coverage gap and never
+a pass. Both are in the **triage** skill's `references/classification.md`.
+
 ## Hard output contract
 
 Return **only** this block. No prose outside it, no DOM dump, no raw

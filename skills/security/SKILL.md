@@ -32,6 +32,14 @@ forced browsing, session reuse after logout, and open redirect. Delegate these
 to the `security-prober` agent, one call per feature. Worked examples and the
 evidence each verdict needs: `references/probes.md`.
 
+**Parity, the fifth probe.** The four above ask what someone can reach. Parity
+asks whether a rule the browser enforces is enforced at all: `maxlength` is one
+devtools edit away, `type=number` is advisory, a hidden control is not a
+permission. Submit the value the page refused, with the client out of the way,
+and check nothing was written. Which rules must hold server-side, and how to
+probe each without leaving the authorization boundary:
+`references/client-server-parity.md`.
+
 ## Verdict and reporting
 
 Tag these cases `tags=security`. `tf.sh summary` pins them above everything else
