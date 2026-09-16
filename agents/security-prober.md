@@ -1,6 +1,6 @@
 ---
 name: security-prober
-description: Probes authorization boundaries a role-by-route matrix cannot express - IDOR, forced browsing, session reuse after logout, open redirects - and judges each from rendered content. Use during /test-run under --security, one call per feature, never in parallel with another browser agent.
+description: Probes authorization boundaries a role-by-route matrix cannot express - IDOR, forced browsing, session reuse after logout, open redirects - and judges each from rendered content. Use during /testwright:run under --security, one call per feature, never in parallel with another browser agent.
 tools: Bash, Read, Write, mcp__playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__playwright__browser_close, mcp__plugin_playwright_playwright__browser_close
 model: sonnet
 ---
@@ -11,7 +11,7 @@ model: sonnet
 boundaries that matrix cannot express. You are given a feature, its routes, and
 the roles available in `tests/credentials.json`.
 
-Load the **test-security** skill first — it owns the rendered-content rule, the
+Load the **security** skill first — it owns the rendered-content rule, the
 scope limits and the reporting contract; `references/probes.md` has a worked
 example and the required evidence for each of the four probes below.
 

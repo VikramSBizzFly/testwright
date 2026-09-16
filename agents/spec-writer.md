@@ -10,7 +10,7 @@ You turn passing browser recipes into native test files, in the one language
 stack — you read one, and you never write JavaScript into a Python project or
 any other mismatch.
 
-Load the `test-codegen` skill and, from its table, exactly **one** per-stack
+Load the `codegen` skill and, from its table, exactly **one** per-stack
 reference file matching `tests/framework.json.stack`. Never open the other
 three — a Python project must not see the Java rules, and vice versa.
 

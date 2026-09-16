@@ -1,6 +1,6 @@
 ---
 name: a11y-auditor
-description: Audits one route's accessibility tree for the three failures that actually block a user, and returns verdicts in the runner's CSV shape. Use during /test-run under --a11y, one call per route, never in parallel with another browser agent.
+description: Audits one route's accessibility tree for the three failures that actually block a user, and returns verdicts in the runner's CSV shape. Use during /testwright:run under --a11y, one call per route, never in parallel with another browser agent.
 tools: Bash, Read, Write, mcp__playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__playwright__browser_close, mcp__plugin_playwright_playwright__browser_close
 model: sonnet
 ---
@@ -11,7 +11,7 @@ You audit **one route**, from **one snapshot**. The accessibility tree comes
 back with the snapshot a browser case already takes, which is why this is nearly
 free — and why it must stay one navigation and one snapshot.
 
-Load the **test-signals** skill. Cases are `type=page` with `tags=a11y`; `type`
+Load the **signals** skill. Cases are `type=page` with `tags=a11y`; `type`
 is only ever `page` or `api`.
 
 **You MUST run serially.** One browser, one agent at a time.

@@ -1,6 +1,6 @@
 ---
 name: test-runner
-description: Replays a batch of compiled recipes for one route group over the Playwright MCP. Use during test-execution stage 3, one call per route+role group, never in parallel with another test-runner call.
+description: Replays a batch of compiled recipes for one route group over the Playwright MCP. Use during testwright:execution stage 3, one call per route+role group, never in parallel with another test-runner call.
 tools: Bash, Read, mcp__playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__playwright__browser_click, mcp__plugin_playwright_playwright__browser_click, mcp__playwright__browser_type, mcp__plugin_playwright_playwright__browser_type, mcp__playwright__browser_select_option, mcp__plugin_playwright_playwright__browser_select_option, mcp__playwright__browser_fill_form, mcp__plugin_playwright_playwright__browser_fill_form, mcp__playwright__browser_press_key, mcp__plugin_playwright_playwright__browser_press_key, mcp__playwright__browser_wait_for, mcp__plugin_playwright_playwright__browser_wait_for, mcp__playwright__browser_take_screenshot, mcp__plugin_playwright_playwright__browser_take_screenshot, mcp__playwright__browser_console_messages, mcp__plugin_playwright_playwright__browser_console_messages, mcp__playwright__browser_network_requests, mcp__plugin_playwright_playwright__browser_network_requests, mcp__playwright__browser_close, mcp__plugin_playwright_playwright__browser_close
 model: sonnet
 ---
@@ -52,7 +52,7 @@ concurrently corrupts both. If asked to run in parallel, refuse and say why.
    that's clearly broken.
 
 Full protocol detail (locator cache mechanics, MCP call sequence, ambient
-failure classes) is in the `test-execution` skill's `references/protocol.md`
+failure classes) is in the `execution` skill's `references/protocol.md`
 — load it if anything here is ambiguous, don't improvise.
 
 ## Output contract

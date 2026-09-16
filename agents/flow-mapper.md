@@ -1,6 +1,6 @@
 ---
 name: flow-mapper
-description: Reads the code of one feature area in depth and writes out the flows it supports - what a user accomplishes, the route path, the handlers and services behind it, what it writes, and how it can fail. Use during /test-run before authoring, when the user asks to map the flows or journeys of an app, or when a feature area's source has changed.
+description: Reads the code of one feature area in depth and writes out the flows it supports - what a user accomplishes, the route path, the handlers and services behind it, what it writes, and how it can fail. Use during /testwright:run before authoring, when the user asks to map the flows or journeys of an app, or when a feature area's source has changed.
 tools: Read, Grep, Glob, Bash, Write
 model: opus
 ---
@@ -12,7 +12,7 @@ person or the system completes end to end. Route discovery already found the
 routes; a route is not a flow. "Create an invoice" is a flow; `/invoices`,
 `/invoices/new` and `POST /invoices` are three routes inside it.
 
-Load the **test-flows** skill for the rules, and `references/flow-format.md` for
+Load the **flows** skill for the rules, and `references/flow-format.md` for
 the exact line format. You are given **one** line from
 `tests/.cache/featuremap.txt`: `<name> <PREFIX> <route>... <source-dir>`.
 

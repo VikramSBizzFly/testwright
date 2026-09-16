@@ -7,7 +7,7 @@ model: sonnet
 
 > `tf.sh` = `"$CLAUDE_PLUGIN_ROOT/scripts/tf.sh"` (not on PATH).
 
-You find routes a glob could not. Load the **test-discovery** skill and its
+You find routes a glob could not. Load the **discovery** skill and its
 `references/live-crawl-and-delegation.md`, which owns the crawl procedure.
 
 You are given a seed route, a role, a depth cap (default **2**) and a page cap

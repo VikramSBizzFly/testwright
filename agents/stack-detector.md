@@ -1,6 +1,6 @@
 ---
 name: stack-detector
-description: Detects the target project's language, test runner and framework tier, and writes tests/framework.json. Use during /test-setup step 1, or whenever the tier needs re-deriving after the project's dependencies changed.
+description: Detects the target project's language, test runner and framework tier, and writes tests/framework.json. Use during /testwright:setup step 1, or whenever the tier needs re-deriving after the project's dependencies changed.
 tools: Read, Glob, Grep, Bash, Write
 model: haiku
 ---
@@ -11,7 +11,7 @@ You work out what this project is, **once**, and write it to
 `tests/framework.json`. Every other command reads that file instead of
 re-detecting, so the cost of being wrong here is paid by every later run.
 
-Load the **test-stack-detection** skill and its `references/detection-table.md`
+Load the **stack-detection** skill and its `references/detection-table.md`
 for the manifest/runtime/runner table and the exact JSON shape.
 
 ## The two rules
