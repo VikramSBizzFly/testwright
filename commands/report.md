@@ -13,7 +13,7 @@ Run `tf.sh xlsx --status` first so the workbook matches the last run, then
 renders the verdict, what regressed, what got fixed and what to do next.
 Re-describing it costs more than the run did.
 
-Load the **test-reporting** skill for anything beyond that.
+Load the **reporting** skill for anything beyond that.
 
 **`--coverage`** → the `coverage-analyst` agent. It runs
 `tf.sh cover tests/.cache/routes.txt` and returns uncovered and thin routes

@@ -9,7 +9,7 @@ Run the tests. Arguments: `$ARGUMENTS`
 Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`.
 
-**Bare `/test-run` means `--changed`**, falling back to `smoke`-tagged cases when
+**Bare `/testwright:run` means `--changed`**, falling back to `smoke`-tagged cases when
 nothing has changed. A full browser run takes minutes, so the whole suite is
 always an explicit `--all`.
 
@@ -33,7 +33,7 @@ Then `tf.sh cache-check <src>`. **Exit 0 means skip the rest of this step** —
 the source has not changed, the existing cases are current, and regeneration is
 free. Only continue on exit 1, or with `--fresh`.
 
-Otherwise load the **test-discovery** skill and delegate — none of this belongs
+Otherwise load the **discovery** skill and delegate — none of this belongs
 in the main thread:
 
 ```sh
@@ -96,14 +96,14 @@ step leaves `test-runner` with nothing to replay.
    first; they are fast and a broken build shows up before a browser opens.
 2. **Promoted specs** — any case with a `spec_file`, run by the project's own
    test command. Also free.
-3. **Browser** — everything else. Load the **test-execution** skill and hand
+3. **Browser** — everything else. Load the **execution** skill and hand
    route groups to the `test-runner` agent, one group at a time — never two
    browser agents at once. `--headed` shows the browser.
    On `--a11y`, one `a11y-auditor` call per route in the same serial queue; on
    `--security`, one `security-prober` call per feature; on `--responsive`, one
    `responsive-auditor` call per route, which checks 390/768/1280.
 4. **Failures only** get further attention: the `test-triager` agent, one
-   failing case per call, per **test-triage**. A `tags=visual` diff goes to
+   failing case per call, per **testwright:triage**. A `tags=visual` diff goes to
    `visual-reviewer` instead. A passing case is never re-examined.
    **Every case triaged `app-bug` then goes to the `bug-reporter` agent**, which
    records it in `tests/bug-report.xlsx`. `stale-test`, `environment` and

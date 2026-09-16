@@ -40,7 +40,7 @@ jar looks logged in to the API pass and logged out to every browser case.
 
 It returns `OK`, `FAIL` or `MANUAL`. On `MANUAL` there is a 2FA prompt or a
 CAPTCHA: relay what the person has to do and wait — **never try to solve or
-bypass one yourself.** Do not start `/test-run` with a role still unresolved.
+bypass one yourself.** Do not start `/testwright:run` with a role still unresolved.
 
 **Never print a password or cookie into the transcript.** The agent does not
 return them; do not go looking for them either.
@@ -49,4 +49,4 @@ return them; do not go looking for them either.
 `templates/<stack>/ci/github-actions.yml` and wires the `0/1/2/3` exit codes.
 Skip this step entirely without the flag.
 
-Finish by telling the user the tier, why, and to run `/test-run`.
+Finish by telling the user the tier, why, and to run `/testwright:run`.
