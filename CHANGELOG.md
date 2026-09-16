@@ -9,6 +9,71 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.0.0] - 2026-09-16
+
+A **major** release: the plugin, its commands and its skills are renamed.
+Nothing about how the plugin works changed, but every command you type and
+every skill you address by name is spelled differently, so under README's
+**Versioning** this is MAJOR.
+
+`test-framework` was a category, not a name — it described a shelf rather than
+the thing on it. It was also the marketplace's name, so
+`test-framework@test-framework` stuttered — and collided with any other local
+marketplace someone had given the same obvious name. `testwright` echoes
+Playwright, which it drives, and says what it does: it writes the tests.
+
+### Renamed
+
+- **The plugin is `testwright`**, published from the **`bizzfly`** marketplace.
+  The pairing reads as `testwright@bizzfly`: who made it, and what it is.
+- **The GitHub repository is `VikramSBizzFly/testwright`** (was
+  `VikramSBizzFly/test-framework-plugin`). GitHub redirects the old URL, so an
+  existing clone or marketplace entry keeps resolving — but the redirect is a
+  courtesy, not a promise, and the new name is the one to write down.
+
+### Changed
+
+- **The three commands are namespaced**: `/testwright:setup`,
+  `/testwright:run` and `/testwright:report` (were `/test-setup`, `/test-run`
+  and `/test-report`). The files behind them are `commands/setup.md`,
+  `commands/run.md` and `commands/report.md`; Claude Code supplies the
+  `testwright:` prefix from the plugin name. Every flag is unchanged.
+- **The thirteen `test-*` skills dropped the prefix**: `discovery`,
+  `authoring`, `codegen`, `compilation`, `execution`, `triage`, `reporting`,
+  `signals`, `stack-detection`, `flows`, `auth`, `security`, `ci`. Addressed in
+  full they are `testwright:discovery` and so on, so the plugin namespace was
+  already saying "test" twice. The `qa` entry-point skill keeps its name — it is
+  what plain-language requests land on, and it was never prefixed.
+- **Agent names are unchanged.** `stack-detector`, `login-broker`,
+  `route-crawler`, `case-author` and the rest are addressed the same way they
+  always were.
+
+### Fixed
+
+- **The language templates told you to run a command that never existed.** When
+  a role had no saved session, `templates/dotnet/PlaywrightBase.cs`,
+  `templates/java/PlaywrightBase.java` and `templates/python/conftest.py` all
+  skipped the test with `run /test-auth <role>`. There has never been a
+  `/test-auth` command — sessions come from the engine — so all three now say
+  `run: tf.sh login <role>`. The js template has no such guard and needed no
+  change.
+
+### Migration
+
+- **Remove the old marketplace first**, or the two entries will sit side by
+  side:
+
+  ```
+  /plugin marketplace remove test-framework
+  /plugin marketplace add VikramSBizzFly/testwright
+  /plugin install testwright@bizzfly
+  ```
+
+- **Nothing in your project changes.** `tests/` is untouched: the workbook, the
+  suites, the credentials, the sessions, the results and the bug report all
+  carry over exactly as they are. There is no schema change and no converter to
+  run — only the names you type.
+
 ## [1.0.0] - 2026-09-15
 
 A **major** release: the visible test case columns change. Under the rules in

@@ -1,6 +1,6 @@
 ---
 name: bug-reporter
-description: Records one confirmed app bug in tests/bug-report.xlsx through tf.sh bug from, supplying the judgement the engine cannot - description, severity, priority, reasoning - and offers a ready gh issue command. Use after triage calls a failure an app bug, or for /test-report --bug <id>.
+description: Records one confirmed app bug in tests/bug-report.xlsx through tf.sh bug from, supplying the judgement the engine cannot - description, severity, priority, reasoning - and offers a ready gh issue command. Use after triage calls a failure an app bug, or for /testwright:report --bug <id>.
 tools: Read, Glob, Grep, Bash
 model: sonnet
 ---
@@ -10,7 +10,7 @@ model: sonnet
 You record the bug for **one** case, so the evidence files never reach the main
 conversation. You are given a case id, and usually its triage verdict.
 
-Load the **test-reporting** skill and its `references/bug-reports.md` — the
+Load the **reporting** skill and its `references/bug-reports.md` — the
 severity rule, the `gh issue create` hand-off and the redaction rules live there.
 
 ## Only an app bug becomes a bug

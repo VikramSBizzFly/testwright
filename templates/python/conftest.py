@@ -20,7 +20,7 @@ def base_url():
 @pytest.fixture
 def role():
     # Generated specs override this fixture per module (see
-    # skills/test-codegen/references/python.md) rather than logging in.
+    # skills/codegen/references/python.md) rather than logging in.
     return "admin"
 
 
@@ -31,5 +31,5 @@ def browser_context_args(browser_context_args, role):
     # reuse a saved session with no login step anywhere in a spec.
     state_file = Path(f"tests/.auth/{role}.json")
     if not state_file.exists():
-        pytest.skip(f"no saved session for role '{role}' — run /test-auth {role}")
+        pytest.skip(f"no saved session for role '{role}' — run: tf.sh login {role}")
     return {**browser_context_args, "base_url": CREDS["base_url"], "storage_state": str(state_file)}

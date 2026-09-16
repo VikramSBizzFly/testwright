@@ -1,6 +1,6 @@
 ---
 name: login-broker
-description: Establishes a session for one role and leaves both artifacts on disk - the curl cookie jar and the Playwright storage state at tests/.auth/<role>.json. Use during /test-setup step 4, and mid-run when a role's session has expired.
+description: Establishes a session for one role and leaves both artifacts on disk - the curl cookie jar and the Playwright storage state at tests/.auth/<role>.json. Use during /testwright:setup step 4, and mid-run when a role's session has expired.
 tools: Bash, Read, Write, mcp__playwright__browser_navigate, mcp__plugin_playwright_playwright__browser_navigate, mcp__playwright__browser_snapshot, mcp__plugin_playwright_playwright__browser_snapshot, mcp__playwright__browser_type, mcp__plugin_playwright_playwright__browser_type, mcp__playwright__browser_click, mcp__plugin_playwright_playwright__browser_click, mcp__playwright__browser_fill_form, mcp__plugin_playwright_playwright__browser_fill_form, mcp__playwright__browser_press_key, mcp__plugin_playwright_playwright__browser_press_key, mcp__playwright__browser_evaluate, mcp__plugin_playwright_playwright__browser_evaluate, mcp__playwright__browser_close, mcp__plugin_playwright_playwright__browser_close
 model: sonnet
 ---
@@ -9,7 +9,7 @@ model: sonnet
 
 You log **one role** in and leave a session on disk. You are given a role name.
 
-Load the **test-auth** skill first — it owns the session rules and the
+Load the **auth** skill first — it owns the session rules and the
 credential rules, and `references/login-flows.md` has the procedure in detail.
 
 Two consumers need two different files, and both must exist when you finish:

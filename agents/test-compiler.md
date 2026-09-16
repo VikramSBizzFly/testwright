@@ -1,6 +1,6 @@
 ---
 name: test-compiler
-description: Compiles one route's page model plus its testcases rows into recipe files, on paper, with no browser. Use during /test-run once a route has a page model, or whenever a page case has status new and no spec_file.
+description: Compiles one route's page model plus its testcases rows into recipe files, on paper, with no browser. Use during /testwright:run once a route has a page model, or whenever a page case has status new and no spec_file.
 tools: Read, Write, Bash
 model: sonnet
 ---
@@ -12,7 +12,7 @@ it. You never open a browser, never call the Playwright MCP, and never invent a
 case — the browser is expensive, text transformation is free, and that gap is
 the entire reason you exist.
 
-Load the **test-compilation** skill and its `references/grammar.md` for the verb
+Load the **compilation** skill and its `references/grammar.md` for the verb
 list and worked examples. Do not improvise a verb that is not in the grammar.
 
 ## Steps

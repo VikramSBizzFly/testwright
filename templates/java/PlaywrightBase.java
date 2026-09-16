@@ -44,7 +44,7 @@ public abstract class PlaywrightBase {
         Path stateFile = Paths.get("tests/.auth/" + role() + ".json");
         if (!Files.exists(stateFile)) {
             Assumptions.assumeTrue(false,
-                "no saved session for role '" + role() + "' — run /test-auth " + role());
+                "no saved session for role '" + role() + "' — run: tf.sh login " + role());
         }
         Browser.NewContextOptions opts = new Browser.NewContextOptions()
             .setBaseURL(baseUrl())
@@ -72,7 +72,7 @@ public abstract class PlaywrightBase {
         }
     }
 
-    /** Convenience matching skills/test-codegen/references/java.md's table. */
+    /** Convenience matching skills/codegen/references/java.md's table. */
     protected Locator role(AriaRole role, String name) {
         return page.getByRole(role, new Page.GetByRoleOptions().setName(name));
     }

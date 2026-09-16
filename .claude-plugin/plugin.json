@@ -1,8 +1,10 @@
 {
-  "name": "test-framework",
-  "version": "1.0.0",
-  "description": "Point Claude at any web app: it maps the routes, generates a CSV test suite, and runs it. Most cases execute with zero model tokens.",
-  "author": { "name": "rahul" },
-  "homepage": "https://github.com/VikramSBizzFly/test-framework-plugin",
-  "repository": "https://github.com/VikramSBizzFly/test-framework-plugin"
+  "name": "testwright",
+  "version": "2.0.0",
+  "description": "Point Claude at any web app: it maps the routes, writes a QA test suite into an Excel workbook, and runs it in a real browser and with curl. Most cases execute with zero model tokens.",
+  "author": {
+    "name": "rahul"
+  },
+  "homepage": "https://github.com/VikramSBizzFly/testwright",
+  "repository": "https://github.com/VikramSBizzFly/testwright"
 }

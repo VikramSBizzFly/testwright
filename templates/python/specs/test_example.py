@@ -2,7 +2,7 @@
 # feature from a passing recipe. Delete it once real specs exist, or keep it
 # as a locator-style reference.
 #
-# Rules this file demonstrates (see skills/test-codegen/references/python.md):
+# Rules this file demonstrates (see skills/codegen/references/python.md):
 #   - get_by_role/get_by_label/get_by_test_id locators, never CSS or XPath
 #   - storage state reused via the `role`/`context` fixtures, never a login
 #   - the case id encoded in the function name (INV-014 -> INV__014, the

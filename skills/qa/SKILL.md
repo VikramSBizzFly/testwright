@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Test a running web app and find real bugs in it - map its flows, generate test cases into an Excel workbook, check pages in a real browser, hit API endpoints with curl, verify permissions, responsive layout and accessibility, and report what failed. Use whenever someone asks to test an app or site, write or generate test cases, do QA, find bugs, check whether something is broken, look for regressions, map the flows or user journeys of the software, verify a user cannot see what they shouldn't, test an API or endpoints, check whether a page breaks on mobile or at a small screen, run Playwright or browser tests, check accessibility, open or update the test cases workbook, ask what has no test coverage, or ask why a test keeps failing. This is the entry point - start here and route to /test-setup, /test-run or /test-report. Not for unit-testing a single function, questions about a test library the project already uses, or projects with no web app.
+description: Test a running web app and find real bugs in it - map its flows, generate test cases into an Excel workbook, check pages in a real browser, hit API endpoints with curl, verify permissions, responsive layout and accessibility, and report what failed. Use whenever someone asks to test an app or site, write or generate test cases, do QA, find bugs, check whether something is broken, look for regressions, map the flows or user journeys of the software, verify a user cannot see what they shouldn't, test an API or endpoints, check whether a page breaks on mobile or at a small screen, run Playwright or browser tests, check accessibility, open or update the test cases workbook, ask what has no test coverage, or ask why a test keeps failing. This is the entry point - start here and route to /testwright:setup, /testwright:run or /testwright:report. Not for unit-testing a single function, questions about a test library the project already uses, or projects with no web app.
 ---
 
 # QA — start here
@@ -24,28 +24,28 @@ the word "test" gets uninstalled.
 
 | State | What to do |
 | --- | --- |
-| no `tests/framework.json` | first time here — run `/test-setup`, then continue |
+| no `tests/framework.json` | first time here — run `/testwright:setup`, then continue |
 | no `tests/.cache/flows.txt` and they asked about flows | `flow-mapper` per feature, then `tf.sh xlsx` |
-| suite exists, no `tests/results/` | run `/test-run` |
-| results exist and the question is about them | `/test-report` — do not re-run to answer a question you already have the answer to |
+| suite exists, no `tests/results/` | run `/testwright:run` |
+| results exist and the question is about them | `/testwright:report` — do not re-run to answer a question you already have the answer to |
 | `tests/credentials.json` still has empty roles | ask them to fill it in; without a login every permission case is meaningless |
 
 ## 3. Match the request to the right entry
 
 | They said | You run |
 | --- | --- |
-| "test my app", "write tests", "QA this" | `/test-setup` if needed, then `/test-run` |
+| "test my app", "write tests", "QA this" | `/testwright:setup` if needed, then `/testwright:run` |
 | "map the flows", "what are the user journeys" | the `flow-mapper` agent, then `tf.sh xlsx` |
-| "is it broken on mobile", "check responsive" | `/test-run --responsive` |
+| "is it broken on mobile", "check responsive" | `/testwright:run --responsive` |
 | "open/update the test cases file" | `tf.sh xlsx` — the workbook is `tests/testcases.xlsx` |
-| "find bugs", "is anything broken" | `/test-run` |
-| "is it secure", "can a user see someone else's data" | `/test-run --security` |
-| "test my API", "check the endpoints" | `/test-run` — `api` cases run on curl, free |
-| "does it work for screen readers" | `/test-run --a11y` |
-| "what isn't tested" | `/test-report --coverage` |
-| "why does this keep failing" | `/test-report --flakes` |
-| "file a bug for that" | `/test-report --bug <id>` |
-| "run it in CI" | `/test-setup --ci` |
+| "find bugs", "is anything broken" | `/testwright:run` |
+| "is it secure", "can a user see someone else's data" | `/testwright:run --security` |
+| "test my API", "check the endpoints" | `/testwright:run` — `api` cases run on curl, free |
+| "does it work for screen readers" | `/testwright:run --a11y` |
+| "what isn't tested" | `/testwright:report --coverage` |
+| "why does this keep failing" | `/testwright:report --flakes` |
+| "file a bug for that" | `/testwright:report --bug <id>` |
+| "run it in CI" | `/testwright:setup --ci` |
 
 ## 4. Do the free work now, then ask
 

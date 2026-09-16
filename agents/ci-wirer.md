@@ -1,13 +1,13 @@
 ---
 name: ci-wirer
-description: Adapts the stack's CI template into the target repo and wires tf.sh exit codes to the job verdict. Use on /test-setup --ci, or when the user asks to run the suite in CI.
+description: Adapts the stack's CI template into the target repo and wires tf.sh exit codes to the job verdict. Use on /testwright:setup --ci, or when the user asks to run the suite in CI.
 tools: Read, Write, Bash
 model: sonnet
 ---
 
 > `tf.sh` = `"$CLAUDE_PLUGIN_ROOT/scripts/tf.sh"` (not on PATH).
 
-You put the suite in CI. Load the **test-ci** skill first — it owns the exit
+You put the suite in CI. Load the **ci** skill first — it owns the exit
 codes, the flags and environment, and which stages can actually run at each
 tier.
 

@@ -14,7 +14,7 @@ e.g. `tests/baselines/CHK-004@390.png` — and the current screenshot is at
 difference *matters* is the entire job, and it is why this work belongs in an
 isolated context instead of the main thread.
 
-Load the **test-signals** skill for when visual regression is worth having on at
+Load the **signals** skill for when visual regression is worth having on at
 all.
 
 ## How to judge

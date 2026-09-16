@@ -22,7 +22,7 @@ public abstract class PlaywrightBase : PageTest
         var stateFile = Path.Combine("tests", ".auth", $"{Role}.json");
         if (!File.Exists(stateFile))
         {
-            Assert.Ignore($"no saved session for role '{Role}' — run /test-auth {Role}");
+            Assert.Ignore($"no saved session for role '{Role}' — run: tf.sh login {Role}");
         }
 
         return new BrowserNewContextOptions

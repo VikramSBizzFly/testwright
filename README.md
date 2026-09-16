@@ -1,19 +1,22 @@
-# test-framework
+# testwright
 
-A QA framework for Claude Code. Point it at any web app: it finds the pages,
-writes a plain-English test suite, and runs it — in a real browser for anything
-a user would click through, and with `curl` for `/api/*` endpoints.
+testwright writes the tests for you. Point it at any web app and it finds the
+pages, turns them into a plain-English test suite, and runs it — driving a real
+browser through Playwright for anything a user would click through, and `curl`
+for `/api/*` endpoints.
 
 Works with any stack. Nothing is installed into your project.
 
 ## Install
 
 ```
-/plugin marketplace add VikramSBizzFly/test-framework-plugin
-/plugin install test-framework@test-framework
+/plugin marketplace add VikramSBizzFly/testwright
+/plugin install testwright@bizzfly
 ```
 
-Restart Claude Code. To update later: `/plugin marketplace update test-framework`
+`bizzfly` is the marketplace; `testwright` is the plugin inside it.
+
+Restart Claude Code. To update later: `/plugin marketplace update bizzfly`
 
 Browser tests need the **Playwright MCP**. A bundled `.mcp.json` declares it —
 delete that file if you already have the Playwright MCP plugin, so you don't run
@@ -21,20 +24,44 @@ two copies.
 
 New here? **[TRY-IT.md](TRY-IT.md)** walks through it in plain language.
 
+## Upgrading from test-framework 1.x
+
+The plugin was called `test-framework` and lived in a marketplace of the same
+name. Drop the old one first, then install the new:
+
+```
+/plugin marketplace remove test-framework
+/plugin marketplace add VikramSBizzFly/testwright
+/plugin install testwright@bizzfly
+```
+
+Your project is untouched by the rename — the `tests/` workbooks, suites,
+credentials and cached CSVs all carry over as they are, and nothing needs
+migrating.
+
+What changed is what you type. The `/test-setup`, `/test-run` and `/test-report`
+commands are gone; use `/testwright:setup`, `/testwright:run` and
+`/testwright:report`. Skills dropped their `test-` prefix too — `test-discovery`
+is now `testwright:discovery`, and so on.
+
 ## Commands
 
+Type them qualified, as below. Claude Code also accepts the bare `/setup`,
+`/run` and `/report`, but those can sit beside another plugin's commands of the
+same name, and `/testwright:` never does.
+
 ```
-/test-setup                 detect the stack, create tests/, log in as each role
-/test-setup --ci            the same, plus a CI workflow for your project
-/test-run                   find pages, write tests, run them, show the result
-/test-report                show the last result again
-/test-report --coverage     what has no tests
-/test-report --flakes       cases that flip verdict without a code change
-/test-report --bug <id>     record a failure in tests/bug-report.xlsx
-/test-report --publish      the last result as a shareable page
+/testwright:setup              detect the stack, create tests/, log in per role
+/testwright:setup --ci         the same, plus a CI workflow for your project
+/testwright:run                find pages, write tests, run them, show the result
+/testwright:report             show the last result again
+/testwright:report --coverage  what has no tests
+/testwright:report --flakes    cases that flip verdict without a code change
+/testwright:report --bug <id>  record a failure in tests/bug-report.xlsx
+/testwright:report --publish   the last result as a shareable page
 ```
 
-**What `/test-run` runs** — one of these, `--changed` if you say nothing:
+**What `/testwright:run` runs** — one of these, `--changed` if you say nothing:
 
 ```
 --changed           only what your last commit touched
@@ -59,8 +86,8 @@ A full browser run takes minutes, so the whole suite is always an explicit
 `--all`. Use `--headed` to watch the browser when a test fails and the log
 doesn't say why.
 
-`/test-setup --tier 0` forces the browser-only tier if you don't want specs
-written into your project.
+`/testwright:setup --tier 0` forces the browser-only tier if you don't want
+specs written into your project.
 
 ## It starts on its own
 
@@ -153,7 +180,7 @@ machine; without it the framework falls back to plain CSV and says so.
   ⚠  SECURITY - privilege boundary crossed
      RBAC-USER-002   user      → /payroll               200
 
-  → /test-report --bug RBAC-USER-002
+  → /testwright:report --bug RBAC-USER-002
 ```
 
 A clean run is three lines and a next step. Security failures are pinned at the
@@ -205,7 +232,8 @@ Three optional passes ride on browser cases you are already running:
 
 ## Tiers
 
-Detected automatically at `/test-setup`. **Nothing is ever installed for you.**
+Detected automatically at `/testwright:setup`. **Nothing is ever installed for
+you.**
 
 | Tier | When | Browser re-runs | Added to your project |
 | --- | --- | --- | --- |
@@ -242,9 +270,9 @@ execution, regression diffing, report rendering.
 It is one entry point and a handful of modules under `scripts/lib/`, one per
 concern: `store.sh` (the case store), `integrity.sh` (validation, backups,
 `check`/`restore`), `auth.sh` (sessions), `api.sh` (`run-api`),
-`discovery.sh`, `generate.sh`, `report.sh`, `migrate.sh`, `xlsx.sh`, and the
-shared `core.sh`/`progress.sh`. Always call `tf.sh`; the modules are not
-commands.
+`discovery.sh`, `generate.sh`, `report.sh`, `bugs.sh` (the bug store),
+`migrate.sh`, `xlsx.sh`, and the shared `core.sh`/`progress.sh`. Always call
+`tf.sh`; the modules are not commands.
 
 ```sh
 tf.sh select --status "Not Run" --tag smoke --cols id,steps --format plain
@@ -267,8 +295,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **12 skills** — the rules for each stage, loaded only when
-that stage runs — and **18 agents**, one per stage:
+Above the engine sit **14 skills** — the rules for each stage, loaded only when
+that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
+on — and **20 agents**, one per stage:
 
 | Stage | Agent |
 | --- | --- |
@@ -297,11 +326,15 @@ and [CHANGELOG.md](CHANGELOG.md) says what changed. Semver, where "breaking"
 means *your existing suite stops running*:
 
 - **MAJOR** — you have to do something: the `testcases.csv` schema changed, a
-  `tf.sh` subcommand or flag was removed or renamed, or your suite needs
-  `tf.sh migrate` before it runs again.
+  `tf.sh` subcommand or flag was removed or renamed, a command or skill was
+  renamed so what you type changes, or your suite needs `tf.sh migrate` before
+  it runs again.
 - **MINOR** — new agents, commands, skills, flags or subcommands. Existing
   suites keep working untouched.
 - **PATCH** — fixes and wording. No new surface.
+
+`2.0.0` is a MAJOR for the rename reason only: moving to testwright changed
+every command and skill name. No workbook, suite or stored file changed.
 
 ## Status
 

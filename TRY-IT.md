@@ -1,4 +1,4 @@
-# How to install and use this
+# How to install and use testwright
 
 You do **not** need to install Node, Python, npm, or anything else.
 
@@ -9,11 +9,15 @@ You do **not** need to install Node, Python, npm, or anything else.
 In Claude Code:
 
 ```
-/plugin marketplace add VikramSBizzFly/test-framework-plugin
-/plugin install test-framework@test-framework
+/plugin marketplace add VikramSBizzFly/testwright
+/plugin install testwright@bizzfly
 ```
 
-Restart Claude Code. You now have the `/test-*` commands.
+Restart Claude Code. You now have the `/testwright:` commands.
+
+If you used this before it was renamed, remove the old one first with
+`/plugin marketplace remove test-framework`. Your `tests/` folder is untouched by
+any of this.
 
 ---
 
@@ -22,7 +26,7 @@ Restart Claude Code. You now have the `/test-*` commands.
 Open your project and run:
 
 ```
-/test-setup
+/testwright:setup
 ```
 
 It looks at your project, works out what language it is, and creates a `tests/`
@@ -49,8 +53,8 @@ Use **test** accounts, never real customer ones. This file is gitignored
 automatically, so it won't be committed.
 
 Add one entry per kind of user you have — the more roles you list, the more
-permission problems it can find. Then run `/test-setup` again so it can log in
-with the accounts you just added.
+permission problems it can find. Then run `/testwright:setup` again so it can log
+in with the accounts you just added.
 
 ---
 
@@ -59,11 +63,11 @@ with the accounts you just added.
 With your app running:
 
 ```
-/test-run
+/testwright:run
 ```
 
-It finds your pages, writes test cases into `tests/testcases.csv`, runs them, and
-prints a result box.
+It finds your pages, writes test cases into `tests/.cache/testcases.csv`, runs
+them, and prints a result box.
 
 Most checks open a real browser in the background and click through your app like
 a real user would. That takes minutes, not seconds, and costs some model usage. In
@@ -106,7 +110,7 @@ Comment columns as the bug moves along — the next run keeps your changes.
   ⚠  SECURITY - privilege boundary crossed
      RBAC-USER-002   user  → /payroll        200
 
-  → /test-report --bug RBAC-USER-002
+  → /testwright:report --bug RBAC-USER-002
 ```
 
 | Word | Meaning |
@@ -138,29 +142,31 @@ The last line always tells you what to do next.
 unless you allow otherwise. Never point it at a live site with real customers.
 
 **"login failed"** — check `path` and `success_indicator` in
-`tests/credentials.json`, then run `/test-setup` again. It logs in through a real
-browser, so most login pages work even if they need JavaScript.
+`tests/credentials.json`, then run `/testwright:setup` again. It logs in through a
+real browser, so most login pages work even if they need JavaScript.
 
 **"has a cookie jar but no browser session"** — the login half-worked: good
-enough for simple checks, not for the browser ones. Run `/test-setup` again. Do
-not ignore it, or the browser checks will run logged out and look like they
-passed.
+enough for simple checks, not for the browser ones. Run `/testwright:setup`
+again. Do not ignore it, or the browser checks will run logged out and look like
+they passed.
 
 **"ran with no session"** — read this one carefully. The tests ran while logged
 out. Logged-out users are blocked from everything anyway, so the tests *look* like
 they passed but proved nothing. Fix the login and run again.
 
 **Runs feel slow or costly** — expected. Most checks click through a real browser.
-Two things keep it in hand: once the framework understands a page it saves that and
-never re-figures it out; and if your project already has Playwright installed, your
-tests become real test files that run for free, headless, every time after that.
+Two things keep it in hand: once testwright understands a page it saves that and
+never re-figures it out; and if your project already has Playwright installed,
+your tests become real test files that run for free, headless, every time after
+that.
 
 **Had a test suite from an older version?** Nothing to do. The first time you
 run anything it converts itself to the Excel workbook, keeps all your tests,
 statuses and notes, and leaves a backup of the old file beside it.
 
 **No Excel file appeared?** Writing one needs Python on your computer. Without
-it everything still works — your tests just stay in `tests/testcases.csv`.
+it everything still works — your tests just stay in
+`tests/.cache/testcases.csv`.
 
 ---
 
@@ -168,14 +174,14 @@ it everything still works — your tests just stay in `tests/testcases.csv`.
 
 | Command | What it does |
 | --- | --- |
-| `/test-setup` | Set up a project: detect the stack, create `tests/`, log in as each role |
-| `/test-setup --ci` | The same, and write a workflow so the tests run on every pull request |
-| `/test-run` | Find pages, write the tests, run them, show the result |
-| `/test-report` | Show the last result again |
-| `/test-report --coverage` | Show what has no tests |
-| `/test-report --flakes` | Show the tests that keep changing their mind |
-| `/test-report --bug AUTH-003` | Write a failure into the bug report |
-| `/test-report --publish` | Put the last result on a page you can share |
+| `/testwright:setup` | Set up a project: detect the stack, create `tests/`, log in as each role |
+| `/testwright:setup --ci` | The same, and write a workflow so the tests run on every pull request |
+| `/testwright:run` | Find pages, write the tests, run them, show the result |
+| `/testwright:report` | Show the last result again |
+| `/testwright:report --coverage` | Show what has no tests |
+| `/testwright:report --flakes` | Show the tests that keep changing their mind |
+| `/testwright:report --bug AUTH-003` | Write a failure into the bug report |
+| `/testwright:report --publish` | Put the last result on a page you can share |
 
 **How much to run.** Pick one; it uses `--changed` if you say nothing:
 
@@ -236,9 +242,9 @@ login.
 Both are optional. Ask for them when you want them:
 
 ```
-/test-run --a11y
-/test-run --responsive
-/test-run --security
+/testwright:run --a11y
+/testwright:run --responsive
+/testwright:run --security
 ```
 
 ---
@@ -264,7 +270,7 @@ that page behaves and saves it. Every run after reuses what it learned.
 You have to ask for them:
 
 ```
-/test-run --allow-destructive
+/testwright:run --allow-destructive
 ```
 
 ---
@@ -272,5 +278,5 @@ You have to ask for them:
 ## Want something to practise on?
 
 `example/demo-app.py` is a tiny web app with a permission bug hidden in it. Point
-the framework at it and see if it finds the bug. (The demo needs Python; the
-framework itself does not.)
+testwright at it and see if it finds the bug. (The demo needs Python; testwright
+itself does not.)

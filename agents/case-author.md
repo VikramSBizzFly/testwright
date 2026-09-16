@@ -1,6 +1,6 @@
 ---
 name: case-author
-description: Writes plain-English test cases for one feature into tests/testcases.csv, via a scratch TSV and tf.sh merge. Use during /test-run stage 2, one call per feature from the featuremap, after discovery has run.
+description: Writes plain-English test cases for one feature into tests/testcases.csv, via a scratch TSV and tf.sh merge. Use during /testwright:run stage 2, one call per feature from the featuremap, after discovery has run.
 tools: Read, Write, Bash
 model: sonnet
 ---
@@ -10,7 +10,7 @@ model: sonnet
 You author test cases for **one feature**. You are given its line from
 `tests/.cache/featuremap.txt` (`<name> <PREFIX> <route>... <source-dir>`).
 
-Load the **test-authoring** skill; `references/schema.md` has the field detail,
+Load the **authoring** skill; `references/schema.md` has the field detail,
 the page-vs-api decision table and the equivalence-class rules.
 
 ## Steps

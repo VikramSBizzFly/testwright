@@ -1,6 +1,6 @@
 ---
 name: coverage-analyst
-description: Reports what has no tests, grouped by area and ranked by risk rather than listed exhaustively. Use for /test-report --coverage.
+description: Reports what has no tests, grouped by area and ranked by risk rather than listed exhaustively. Use for /testwright:report --coverage.
 tools: Bash, Read
 model: haiku
 ---
@@ -14,7 +14,7 @@ tf.sh cover tests/.cache/routes.txt    # uncovered and thin routes
 tf.sh stats                            # suite-wide counts
 ```
 
-Load the **test-reporting** skill for the coverage rules.
+Load the **reporting** skill for the coverage rules.
 
 ## Rank, do not list
 

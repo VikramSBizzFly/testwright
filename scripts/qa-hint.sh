@@ -1,5 +1,5 @@
 #!/bin/sh
-# qa-hint.sh -- UserPromptSubmit hook for the test-framework plugin.
+# qa-hint.sh -- UserPromptSubmit hook for the testwright plugin.
 #
 # Reads the hook payload on stdin, and when the prompt looks like a QA request
 # prints one line of additionalContext pointing at the `qa` skill. Prints
@@ -93,6 +93,6 @@ fi
 [ "$match" -eq 1 ] || exit 0
 
 cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"The test-framework plugin is installed in this session. If this request is about a running web app -- testing it, finding bugs, mapping its flows or user journeys, checking permissions or access control, checking API endpoints, responsive or mobile layout, accessibility, or the test cases workbook -- load its `qa` skill first: it routes to /test-setup, /test-run or /test-report, runs the free checks immediately, and asks before anything slow or destructive. If the request is a unit test for a single function, a question about the project's own test library, or not about a web app, ignore this note entirely."}}
+{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"The testwright plugin is installed in this session. If this request is about a running web app -- testing it, finding bugs, mapping its flows or user journeys, checking permissions or access control, checking API endpoints, responsive or mobile layout, accessibility, or the test cases workbook -- load its `qa` skill first: it routes to /testwright:setup, /testwright:run or /testwright:report, runs the free checks immediately, and asks before anything slow or destructive. If the request is a unit test for a single function, a question about the project's own test library, or not about a web app, ignore this note entirely."}}
 JSON
 exit 0

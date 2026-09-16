@@ -44,7 +44,7 @@ cmd_preflight() {
   fi
   die3 "preflight: no working session for:$bad
     Cases for these roles would run logged out and prove nothing. Log them in
-    (the login-broker agent, or /test-setup), then run preflight again."
+    (the login-broker agent, or /testwright:setup), then run preflight again."
 }
 
 # The page a role's session is proved against: the role's own probe, the
@@ -224,7 +224,7 @@ _pf_expiry() {
 #
 # Classic form-post logins work here, which covers most server-rendered apps and
 # many SPAs. When it fails (JS-only login, 2FA, CAPTCHA) fall back to
-# /test-setup, which drives a real browser. Without a session the permission cases are
+# /testwright:setup, which drives a real browser. Without a session the permission cases are
 # meaningless -- they would all "pass" by virtue of being logged out.
 cmd_login() {
   role="${1:?login: role required}"
@@ -271,7 +271,7 @@ cmd_login() {
     2*) echo "login: $role authenticated (session -> $jar)" ;;
     *)  rm -f "$jar"
         die "login: $role failed -- $base$ok returned $code.
-    The app likely uses a JavaScript login, SSO, or 2FA. Run /test-setup to
+    The app likely uses a JavaScript login, SSO, or 2FA. Run /testwright:setup to
     log in through a real browser instead." ;;
   esac
 }

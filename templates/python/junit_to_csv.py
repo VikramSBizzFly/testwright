@@ -12,7 +12,7 @@ import re
 import sys
 import xml.etree.ElementTree as ET
 
-# skills/test-codegen/references/python.md's naming convention: a case id
+# skills/codegen/references/python.md's naming convention: a case id
 # like INV-014 is encoded in the test function name as INV__014 (hyphen ->
 # double underscore, since a hyphen is not a legal Python identifier). This
 # reverses it.

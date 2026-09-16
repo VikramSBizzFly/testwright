@@ -1,6 +1,6 @@
 ---
 name: test-explorer
-description: Maps one slice of an unknown web app - grouping routes into named features and identifying which ones are privileged. Read-only. Use during /test-run when a project has many feature areas.
+description: Maps one slice of an unknown web app - grouping routes into named features and identifying which ones are privileged. Read-only. Use during /testwright:run when a project has many feature areas.
 tools: Read, Grep, Glob, Bash
 model: haiku
 ---

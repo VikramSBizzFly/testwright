@@ -1,6 +1,6 @@
 ---
 name: flake-analyst
-description: Scans run history for cases that flip verdict without a matching source change and proposes the flaky quarantine list. Use for /test-report --flakes, or before trusting a suite whose failure list people have started ignoring.
+description: Scans run history for cases that flip verdict without a matching source change and proposes the flaky quarantine list. Use for /testwright:report --flakes, or before trusting a suite whose failure list people have started ignoring.
 tools: Bash, Read
 model: haiku
 ---
@@ -16,7 +16,7 @@ tf.sh diff <previous> <latest>         # REGRESSED / FIXED / NEW
 tf.sh select --cols id,route,source_files,pass_streak,flake_count --format plain
 ```
 
-Load the **test-triage** skill for the quarantine rule.
+Load the **triage** skill for the quarantine rule.
 
 ## What counts as a flake
 
