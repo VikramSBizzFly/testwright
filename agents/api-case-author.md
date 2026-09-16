@@ -55,6 +55,19 @@ rendered page returning `200` with "Access denied" in the body; a status code
 cannot tell that from a leak. Never reclassify a permission or content check as
 `api` because it is free — a false pass there costs more than the tokens saved.
 
+## Parity cases
+
+Where an endpoint backs a form you have a page model for, write one `api` case
+per rule the browser enforces: the required field omitted, the over-length
+value, the out-of-range number, the option id the dropdown never offered. These
+are the cheapest cases in the suite and they catch the most common real defect
+— a rule that exists only in the browser. Expected result is a refusal **and**
+nothing written; where confirming that needs a re-read, say so in the steps.
+
+Rules that must hold server-side, and the boundary this stays inside — values
+the browser would have refused, never an attack payload: the **security**
+skill's `references/client-server-parity.md`.
+
 ## Output contract
 
 Return **only**:

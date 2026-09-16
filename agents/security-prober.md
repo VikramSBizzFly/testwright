@@ -27,6 +27,11 @@ example and the required evidence for each of the four probes below.
    storage state against a protected route. It must be refused.
 4. **Open redirect** — a `?next=` / `?return_to=` / `?redirect=` parameter
    pointed at an off-origin URL. It must not follow.
+5. **Client-server parity** — a rule the page enforces, submitted with the
+   client out of the way: the required field omitted, the over-length value,
+   the option id the dropdown never offered. It must be refused **and** nothing
+   written — re-read the record to confirm; a `200` settles nothing. Which
+   rules must hold server-side: `references/client-server-parity.md`.
 
 ## The rule that decides every verdict
 

@@ -48,7 +48,14 @@ actually understands:
 1. **Every interactive element in the page model gets at least one case** — the
    happy path for what it does, plus one case per validation constraint it
    declares (`required`, `type=email`, `minlength`, a pattern, a max). A button
-   nobody tests is a button nobody knows works.
+   nobody tests is a button nobody knows works. Where the model names a field's
+   **kind**, look it up in `references/field-library.md` (the **authoring**
+   skill) and add the cases that kind has but the DOM never advertised — an
+   email that must not be a duplicate, an OTP that must die after one use, a
+   price that must refuse three decimals. Still four cases per field, not
+   thirty. What the rejection should look like, and why **Expected Result**
+   describes the rule instead of quoting the app's wording:
+   `references/validation-rules.md`.
 2. **Every flow in `flows.txt` for this feature gets one end-to-end case**,
    following its `steps`, plus one case per entry in its `branches` — those are
    the failure paths, cited from real code, and they are where the bugs are.
