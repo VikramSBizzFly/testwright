@@ -23,6 +23,14 @@ tf.sh hash    <src> > tests/.cache/hash         # cache key
 Spring, ASP.NET and Express, and doesn't classify what it finds — skim and
 delete non-routes rather than re-deriving the list yourself.
 
+`tf.sh schemas` finds the constraints the code declares — Zod, Pydantic,
+Jakarta, DataAnnotations. That is what the app *says*, which is not the same as
+what a field of that sort needs tested. When a form is found, name each field's
+**kind** (person name, money, OTP, file upload) alongside its declared
+constraints, so authoring can look up the rest in the **authoring** skill's
+`references/field-library.md`. A field the code constrains not at all still has
+a kind, and that is usually the interesting case.
+
 ## Step 2 — cache check
 
 `tf.sh cache-check <src>` — **exit 0 means stop.** Source unchanged, so

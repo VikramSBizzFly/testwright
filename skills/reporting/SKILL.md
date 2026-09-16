@@ -44,6 +44,15 @@ For prose beyond the panel, coverage reporting and Artifact publishing, see
 `references/prose-coverage-publishing.md`; for `--bug <id>`, the report shape and
 the `gh issue create` hand-off are in `references/bug-reports.md`.
 
+## Audit mode
+
+When the ask is a QA audit, a pre-release assessment or a baseline on an app
+nobody has tested, coverage and its limits become the deliverable rather than a
+footnote: the sequence, the baseline identity to capture first, and the
+three-part coverage statement are in `references/audit-workflow.md`. It is the
+same engine — testwright still only inspects, runs and reports; the fix belongs
+to whoever owns the code.
+
 ## Never report an unverified pass as a pass
 
 If the panel warns that cases ran without a session, those verdicts are

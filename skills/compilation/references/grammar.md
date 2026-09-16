@@ -100,7 +100,11 @@ Translate mechanically:
 - a field's boundary constraint (`minlen=8`, `required`, `type=email`) is
   what justifies a boundary case's `fill` value — pull the value from the
   case row, not from the page model; the model only tells you _which_
-  constraint is being tested
+  constraint is being tested. This holds even when the model declares no
+  constraint at all: a case may test a rule the DOM never advertised (the
+  author derived it from the field's kind), and its **Test Data** is still
+  the authoritative value. Never re-derive a value at compile time — a
+  compiled value that disagrees with the case row makes the run untraceable
 - **Expected Result** becomes the trailing `expect` line(s); pick
   `expect url` for navigation, `expect text`/`expect not-text` for a
   message or its absence, `expect visible`/`expect absent` for an element
