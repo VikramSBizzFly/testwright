@@ -9,6 +9,63 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.1.0] - 2026-09-16
+
+A **minor** release: new knowledge, no new surface you have to type. Existing
+suites keep working untouched, and nothing needs migrating.
+
+Until now, everything the framework knew about a form field came from two
+places — a grep for validation decorators in the source, and whatever
+`required` or `minlength` the DOM happened to admit to. It could see that a
+field was constrained; it had no idea what the field *was*. So an email field
+and a coupon code got the same four boundary cases, and nothing ever asked
+whether the server enforced the rule the browser did.
+
+### Added
+
+- **A field library** (`skills/authoring/references/field-library.md`). Match a
+  discovered field to a kind — person name, money, OTP, file upload, date
+  range — and get the cases that kind actually needs, including the ones the
+  DOM never advertises: an email that must reject a duplicate, an OTP that must
+  die after one use, a price that must refuse three decimals.
+- **Rule families and what a rejection should look like**
+  (`references/validation-rules.md`), plus the mandatory checks per input type.
+  Its first rule is that **Expected Result** describes the rule rather than
+  quoting the app's wording — asserting someone else's error text is how a
+  working app gets a red run.
+- **A 336-checkpoint QA checklist in 42 categories**
+  (`references/qa-checklist.md`), used as a prompt when authoring and as the
+  denominator when reporting coverage. It marks which categories this tool
+  genuinely cannot cover — browser and device compatibility, native mobile,
+  install and upgrade, backup and failover, UAT, post-deployment — so coverage
+  stops counting them as gaps.
+- **A fifth security probe: client-server parity**
+  (`skills/security/references/client-server-parity.md`). The other four ask
+  what someone can reach; this asks whether a rule the browser enforces exists
+  on the server at all. `maxlength` is one devtools edit away. Stays inside the
+  same boundary as the rest of the security pass — a value the browser would
+  have refused, never an attack payload.
+- **Dispositions, and severity split from priority**
+  (`skills/triage/references/classification.md`). The four verdicts explain why
+  a case failed; these cover the finding with no verdict yet. A proposed bound
+  the app never agreed to is a **Decision needed**, not a `Fail` — the library
+  is a default to propose, never a truth to enforce.
+- **Audit mode** (`skills/reporting/references/audit-workflow.md`) for a
+  baseline pass over an app nobody has tested, where coverage and its limits
+  are the deliverable. testwright still only inspects, runs and reports: your
+  source stays read-only, and the fix belongs to whoever owns the code.
+
+### Fixed
+
+- Mangled markdown in the authoring skill's page-vs-api paragraph.
+
+### Not in this release
+
+The library is prose the model reads, not data the engine queries. A
+`tf.sh fields <kind>` lookup would make per-field expansion deterministic and
+free, the way `tf.sh rbac` already does for permissions. That is the natural
+next step and a larger piece of work.
+
 ## [2.0.0] - 2026-09-16
 
 A **major** release: the plugin, its commands and its skills are renamed.
