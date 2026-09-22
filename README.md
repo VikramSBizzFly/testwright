@@ -21,7 +21,16 @@ Part of the **BizzFly** marketplace.
 `testwright` is a plugin inside it. This repo holds only the plugin. The
 marketplace catalog lives in its own repo.
 
-Restart Claude Code. To update later: `/plugin marketplace update BizzFly`
+Restart Claude Code. To update later:
+
+```
+/plugin marketplace update BizzFly
+/plugin update testwright@BizzFly
+```
+
+The first line fetches the latest catalog; the second installs the new version.
+Restart Claude Code afterwards, since a running session keeps the version it
+started with.
 
 Browser tests need the **Playwright MCP**. A bundled `.mcp.json` declares it —
 delete that file if you already have the Playwright MCP plugin, so you don't run
