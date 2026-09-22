@@ -7,8 +7,7 @@ for `/api/*` endpoints.
 
 Works with any stack. Nothing is installed into your project.
 
-Part of the **BizzFly** marketplace, alongside
-[bizzfly-rules](https://github.com/VikramSBizzFly/bizzfly-rules).
+Part of the **BizzFly** marketplace.
 
 ## Install
 
@@ -33,7 +32,7 @@ New here? **[TRY-IT.md](TRY-IT.md)** walks through it in plain language.
 ### Turn it on for a whole team
 
 Commit this to the project's `.claude/settings.json`. Anyone who opens the project
-and trusts the folder is prompted to add the marketplace and enable the plugins:
+and trusts the folder is prompted to add the marketplace and enable the plugin:
 
 ```json
 {
@@ -43,21 +42,10 @@ and trusts the folder is prompted to add the marketplace and enable the plugins:
     }
   },
   "enabledPlugins": {
-    "testwright@BizzFly": true,
-    "bizzfly-rules@BizzFly": true
+    "testwright@BizzFly": true
   }
 }
 ```
-
-### With bizzfly-rules
-
-[bizzfly-rules](https://github.com/VikramSBizzFly/bizzfly-rules) keeps Claude
-inside the folder the session was launched from. The two plugins work together
-with no setup. testwright writes only under your project's `tests/`, and its
-engine, `$CLAUDE_PLUGIN_ROOT/scripts/tf.sh`, runs from the plugin install folder,
-which bizzfly-rules always allows (version 1.1.0 and later). So run Claude from
-your project's root. If it's launched from a subfolder, `tests/` may land outside
-the boundary.
 
 ## Upgrading from an older marketplace
 
