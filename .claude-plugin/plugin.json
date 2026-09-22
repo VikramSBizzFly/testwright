@@ -1,6 +1,6 @@
 {
   "name": "testwright",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "Point Claude at any web app: it maps the routes, writes a QA test suite into an Excel workbook, and runs it in a real browser and with curl. Most cases execute with zero model tokens.",
   "author": {
     "name": "rahul"

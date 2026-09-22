@@ -9,6 +9,22 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.1.1] - 2026-09-22
+
+A **patch** release: no change to the plugin itself.
+
+### Changed
+
+- **The marketplace moved.** The catalog left this repo for
+  [VikramSBizzFly/bizzfly-marketplace](https://github.com/VikramSBizzFly/bizzfly-marketplace)
+  and is now called `BizzFly`. It lists testwright and
+  [bizzfly-rules](https://github.com/VikramSBizzFly/bizzfly-rules). Install with
+  `/plugin install testwright@BizzFly`. If you added the old `bizzfly`
+  marketplace, run `/plugin marketplace remove bizzfly` and add the new one. See
+  **Upgrading from an older marketplace** in the README.
+- README and TRY-IT: new install steps, settings for enabling it across a team,
+  and how testwright works alongside bizzfly-rules.
+
 ## [2.1.0] - 2026-09-16
 
 A **minor** release: new knowledge, no new surface you have to type. Existing

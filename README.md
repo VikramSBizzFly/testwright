@@ -7,6 +7,9 @@ for `/api/*` endpoints.
 
 Works with any stack. Nothing is installed into your project.
 
+Part of the **BizzFly** marketplace, alongside
+[bizzfly-rules](https://github.com/VikramSBizzFly/bizzfly-rules).
+
 ## Install
 
 ```
@@ -14,7 +17,10 @@ Works with any stack. Nothing is installed into your project.
 /plugin install testwright@BizzFly
 ```
 
-`BizzFly` is the marketplace ([VikramSBizzFly/bizzfly-marketplace](https://github.com/VikramSBizzFly/bizzfly-marketplace)); `testwright` is the plugin inside it.
+`BizzFly` is the marketplace
+([VikramSBizzFly/bizzfly-marketplace](https://github.com/VikramSBizzFly/bizzfly-marketplace));
+`testwright` is a plugin inside it. This repo holds only the plugin. The
+marketplace catalog lives in its own repo.
 
 Restart Claude Code. To update later: `/plugin marketplace update BizzFly`
 
@@ -24,26 +30,64 @@ two copies.
 
 New here? **[TRY-IT.md](TRY-IT.md)** walks through it in plain language.
 
+### Turn it on for a whole team
+
+Commit this to the project's `.claude/settings.json`. Anyone who opens the project
+and trusts the folder is prompted to add the marketplace and enable the plugins:
+
+```json
+{
+  "extraKnownMarketplaces": {
+    "BizzFly": {
+      "source": { "source": "github", "repo": "VikramSBizzFly/bizzfly-marketplace" }
+    }
+  },
+  "enabledPlugins": {
+    "testwright@BizzFly": true,
+    "bizzfly-rules@BizzFly": true
+  }
+}
+```
+
+### With bizzfly-rules
+
+[bizzfly-rules](https://github.com/VikramSBizzFly/bizzfly-rules) keeps Claude
+inside the folder the session was launched from. The two plugins work together
+with no setup. testwright writes only under your project's `tests/`, and its
+engine, `$CLAUDE_PLUGIN_ROOT/scripts/tf.sh`, runs from the plugin install folder,
+which bizzfly-rules always allows (version 1.1.0 and later). So run Claude from
+your project's root. If it's launched from a subfolder, `tests/` may land outside
+the boundary.
+
 ## Upgrading from an older marketplace
 
-The marketplace used to be `bizzfly` (inside this repo), and before that
-`test-framework`. Drop whichever one you have, then install from the new one:
+**From `bizzfly` (2.1.0 and earlier).** The marketplace used to live inside this
+repo under the name `bizzfly`. It now has its own repo and is called `BizzFly`.
+`/plugin marketplace update bizzfly` fails from now on, because the catalog file
+is gone. Switch once:
 
 ```
 /plugin marketplace remove bizzfly
+/plugin marketplace add VikramSBizzFly/bizzfly-marketplace
+/plugin install testwright@BizzFly
+```
+
+**From `test-framework` 1.x.** The plugin was called `test-framework` and lived in
+a marketplace of the same name:
+
+```
 /plugin marketplace remove test-framework
 /plugin marketplace add VikramSBizzFly/bizzfly-marketplace
 /plugin install testwright@BizzFly
 ```
 
-Your project is untouched by the rename — the `tests/` workbooks, suites,
-credentials and cached CSVs all carry over as they are, and nothing needs
-migrating.
+Either way your project is untouched. The `tests/` workbooks, suites, credentials
+and cached CSVs all carry over as they are, and nothing needs migrating.
 
-What changed is what you type. The `/test-setup`, `/test-run` and `/test-report`
-commands are gone; use `/testwright:setup`, `/testwright:run` and
-`/testwright:report`. Skills dropped their `test-` prefix too — `test-discovery`
-is now `testwright:discovery`, and so on.
+Coming from `test-framework`, what changed is what you type. The `/test-setup`,
+`/test-run` and `/test-report` commands are gone; use `/testwright:setup`,
+`/testwright:run` and `/testwright:report`. Skills dropped their `test-` prefix
+too — `test-discovery` is now `testwright:discovery`, and so on.
 
 ## Commands
 
@@ -367,6 +411,11 @@ means _your existing suite stops running_:
 
 `2.0.0` is a MAJOR for the rename reason only: moving to testwright changed
 every command and skill name. No workbook, suite or stored file changed.
+
+`2.1.1` is a PATCH even though the install command changed. The marketplace
+moved to [bizzfly-marketplace](https://github.com/VikramSBizzFly/bizzfly-marketplace)
+and became `BizzFly`, but the plugin itself (commands, skills, suites) is
+unchanged. You re-add the marketplace once; your suite keeps running.
 
 ## Status
 
