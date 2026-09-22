@@ -10,13 +10,13 @@ Works with any stack. Nothing is installed into your project.
 ## Install
 
 ```
-/plugin marketplace add VikramSBizzFly/testwright
-/plugin install testwright@bizzfly
+/plugin marketplace add VikramSBizzFly/bizzfly-marketplace
+/plugin install testwright@BizzFly
 ```
 
-`bizzfly` is the marketplace; `testwright` is the plugin inside it.
+`BizzFly` is the marketplace ([VikramSBizzFly/bizzfly-marketplace](https://github.com/VikramSBizzFly/bizzfly-marketplace)); `testwright` is the plugin inside it.
 
-Restart Claude Code. To update later: `/plugin marketplace update bizzfly`
+Restart Claude Code. To update later: `/plugin marketplace update BizzFly`
 
 Browser tests need the **Playwright MCP**. A bundled `.mcp.json` declares it —
 delete that file if you already have the Playwright MCP plugin, so you don't run
@@ -24,15 +24,16 @@ two copies.
 
 New here? **[TRY-IT.md](TRY-IT.md)** walks through it in plain language.
 
-## Upgrading from test-framework 1.x
+## Upgrading from an older marketplace
 
-The plugin was called `test-framework` and lived in a marketplace of the same
-name. Drop the old one first, then install the new:
+The marketplace used to be `bizzfly` (inside this repo), and before that
+`test-framework`. Drop whichever one you have, then install from the new one:
 
 ```
+/plugin marketplace remove bizzfly
 /plugin marketplace remove test-framework
-/plugin marketplace add VikramSBizzFly/testwright
-/plugin install testwright@bizzfly
+/plugin marketplace add VikramSBizzFly/bizzfly-marketplace
+/plugin install testwright@BizzFly
 ```
 
 Your project is untouched by the rename — the `tests/` workbooks, suites,
