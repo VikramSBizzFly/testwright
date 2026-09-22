@@ -9,14 +9,14 @@ You do **not** need to install Node, Python, npm, or anything else.
 In Claude Code:
 
 ```
-/plugin marketplace add VikramSBizzFly/testwright
-/plugin install testwright@bizzfly
+/plugin marketplace add VikramSBizzFly/bizzfly-marketplace
+/plugin install testwright@BizzFly
 ```
 
 Restart Claude Code. You now have the `/testwright:` commands.
 
-If you used this before it was renamed, remove the old one first with
-`/plugin marketplace remove test-framework`. Your `tests/` folder is untouched by
+If you installed it before, remove the old marketplace first with
+`/plugin marketplace remove bizzfly` (or `test-framework` if it's older still). Your `tests/` folder is untouched by
 any of this.
 
 ---
