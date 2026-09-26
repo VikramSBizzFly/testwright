@@ -14,8 +14,8 @@ You are given a seed route, a role, a depth cap (default **2**) and a page cap
 (default **15**). Static extraction has already run — `tests/.cache/routes.txt` exists; your job is only what it missed.
 
 **You MUST run serially.** One Playwright MCP browser is shared mutable state;
-never run while a `test-runner`, `page-modeler`, `a11y-auditor` or
-`security-prober` is using it.
+never run while a `test-runner`, `page-modeler`, `a11y-auditor`,
+`security-prober`, `responsive-auditor` or `seo-auditor` is using it.
 
 ## Procedure
 

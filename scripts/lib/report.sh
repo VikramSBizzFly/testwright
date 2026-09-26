@@ -17,8 +17,10 @@ cmd_cost() {
   b="$(json_get "$FRAMEWORK" max_tokens_per_run 2>/dev/null || true)"
   case "$b" in ''|*[!0-9]*) budget=0 ;; *) budget="$b" ;; esac
   joined | awk -v budget="$budget" -v check="$check" "$AWKLIB"'
-    function bucket(type, status, spec) {
+    function bucket(type, status, spec, tags) {
       if (type == "api")        return "api"
+      # SEO cases are page cases a curl request answers: `tf.sh seo run`.
+      if (index("," tags ",", ",seo,")) return "seo"
       if (spec != "")           return "spec"
       if (status == "Skipped")  return "skip"
       if (status == "Pass" || status == "Fail" || status == "Flaky") return "replay"
@@ -27,7 +29,7 @@ cmd_cost() {
     NR == 1 { hdrmap($0, H); next }
     {
       csvsplit($0, F)
-      b = bucket(F[H["type"]], F[H["Status"]], F[H["spec_file"]])
+      b = bucket(F[H["type"]], F[H["Status"]], F[H["spec_file"]], F[H["tags"]])
       N[b]++; total++
       if (b == "compile") { r = F[H["route"]]
         if (r != "" && !(r in ROUTE)) { ROUTE[r] = 1; nroutes++ } }
@@ -40,6 +42,8 @@ cmd_cost() {
 
       printf "%-9s %6s  %-34s %10s\n", "BUCKET", "CASES", "ENGINE", "EST TOKENS"
       printf "%-9s %6d  %-34s %10s\n", "api",    N["api"]+0,    "curl, no browser",              "0"
+      if (N["seo"] > 0)
+        printf "%-9s %6d  %-34s %10s\n", "seo", N["seo"], "curl, what a crawler sees", "0"
       printf "%-9s %6d  %-34s %10s\n", "spec",   N["spec"]+0,   "your own test runner, headless","0"
       printf "%-9s %6d  %-34s %10d\n", "replay", N["replay"]+0, "browser, replaying a recipe",   tReplay
       printf "%-9s %6d  %-34s %10d\n", "compile",N["compile"]+0,"browser, first time for this case", tCompile
@@ -48,7 +52,7 @@ cmd_cost() {
         printf "%-9s %6d  %-34s %10s\n", "skipped", N["skip"], "not run", "0"
       printf "%-9s %6d  %-34s %10d\n", "TOTAL", total+0, "", grand
 
-      free = N["api"] + N["spec"]
+      free = N["api"] + N["spec"] + N["seo"]
       freepct = total > 0 ? int(free * 100 / total) : 0
       printf "\n%d of %d cases (%d%%) cost nothing to re-run.\n", free, total, freepct
       if (N["spec"] == 0 && total > 10)
@@ -228,7 +232,7 @@ cmd_summary() {
     id = $1; type = $2; role = $3; route = $4; actual = $6; verdict = $7
     # Not a verdict on the app: listed apart, and left out of the pass rate.
     if (verdict == "UNJUDGED") {
-      NUNJ++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
+      NUNJ++; if (type == "seo") NUNJSEO++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
       next
     }
     total++; V[verdict]++; TT[type]++
@@ -250,7 +254,7 @@ cmd_summary() {
         OTHC[NOTH] = actual
       }
     }
-    if (type == "api") FREE++
+    if (type == "api" || type == "seo") FREE++
     dur += $8 + 0
     next
   }
@@ -388,16 +392,23 @@ cmd_summary() {
     }
     if (NUNJ > 0) {
       if (!warned) sect(""); warned = 1
-      sect(sprintf("  \034\014  %d api case%s could not be judged\030 \035(not counted as failures)\030", \
+      sect(sprintf("  \034\014  %d case%s could not be judged\030 \035(not counted as failures)\030", \
            NUNJ, (NUNJ == 1 ? "" : "s")))
       for (i = 1; i <= NUNJ && i <= 5; i++) sect(sprintf("     \035%s\030", UNJ[i]))
       if (NUNJ > 5) sect(sprintf("     \035... and %d more\030", NUNJ - 5))
-      sect("     \035give each a method and an expect_code: tf.sh set <id> method=POST expect_code=2xx\030")
+      if (NUNJ > NUNJSEO)
+        sect("     \035give each a method and an expect_code: tf.sh set <id> method=POST expect_code=2xx\030")
+      if (NUNJSEO > 0)
+        sect("     \035client-rendered pages: hand tests/.cache/seo/render.txt to seo-auditor\030")
     }
     if (skipped > 0) {
       if (!warned) sect("")
-      sect(sprintf("  \034\014  %d destructive case%s skipped\030 \035(--allow-destructive to run)\030", \
-           skipped, (skipped == 1 ? "" : "s")))
+      if (META["skip_reason"] != "")
+        sect(sprintf("  \034\014  %d case%s skipped\030 \035(%s)\030", \
+             skipped, (skipped == 1 ? "" : "s"), META["skip_reason"]))
+      else
+        sect(sprintf("  \034\014  %d destructive case%s skipped\030 \035(--allow-destructive to run)\030", \
+             skipped, (skipped == 1 ? "" : "s")))
     }
 
     # ---- exactly one next action, chosen by outcome

@@ -45,6 +45,9 @@ credential rules are owned by the **auth** skill.
 | `Fail` / `Blocked` | any         | replay again; still counts toward the circuit breaker         |
 | `skipped`          | any         | destructive, or opted out — skip unless `--allow-destructive` |
 
+`tags=seo` cases are not in this queue. `tf.sh seo run` judges them over
+curl, and the `seo-auditor` agent takes only the ones it hands on.
+
 `--headed` shows the browser instead of headless.
 
 ## Delegating, folding, triage

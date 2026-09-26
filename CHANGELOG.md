@@ -9,6 +9,56 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.2.0] - 2026-09-26
+
+A **minor** release: a new flag, a new engine subcommand and a new agent.
+Existing suites keep working untouched, and nothing needs migrating.
+
+Nothing checked whether the app could be found. A page could ship with no
+title, a `noindex` left over from staging or a robots.txt that blocks every
+crawler, and every run stayed green. Almost all of SEO is in the HTML the
+server sends, so it is a curl request, not a browser session — the engine does
+it for no tokens, and an agent handles only what needs rendering or judgement.
+
+### Added
+
+- **`/testwright:run --seo`.** It generates the SEO cases, runs them over curl
+  straight after `run-api`, and only then opens a browser, for the pages that
+  need one.
+- **`tf.sh seo cases` and `tf.sh seo run`** (`scripts/lib/seo.sh`). One
+  `SEO-NNN` case per public page checks the status and redirects, title and
+  description length, one h1, an absolute canonical that resolves, `lang`,
+  viewport, Open Graph tags, `noindex` (by meta tag or `X-Robots-Tag`),
+  hreflang and image alt text. Four site cases check robots.txt, the sitemap
+  (every URL live and indexable, no public page missing), soft 404s, and
+  duplicate titles and descriptions. Findings go to
+  `tests/evidence/<id>/seo.txt`. A canonical or sitemap URL on the production
+  host is checked by its path on `base_url`, so the production guard holds.
+- **The `seo-auditor` agent.** `render` judges a page that is an empty shell
+  until JavaScript runs, which the engine leaves UNJUDGED `needs-render`.
+  `review` flags placeholder titles, titles about the wrong thing, and JSON-LD
+  that is invalid or missing what Google needs to show it.
+- **`"seo"` in `tests/framework.json`**: `noindex_allow` for pages hidden on
+  purpose, and `max_sitemap_urls` (default 200).
+- **The demo app** has a correct home page, a flawed `/about`, a
+  client-rendered `/app`, a robots.txt and a sitemap to try it on.
+
+### Changed
+
+- `tf.sh cost` counts `tags=seo` cases in their own free bucket, and the
+  summary counts them as free. Page modelling, compiling and the `test-runner`
+  queue leave them out.
+- The summary's "could not be judged" and "skipped" notes name the real
+  reason instead of always assuming an API or destructive case.
+- The `qa` skill, the prompt hook and the **signals** skill know about SEO;
+  the QA checklist notes it sits outside its 42 categories.
+
+### Not in this release
+
+- Rankings, keywords, backlinks, page speed, or anything that needs a
+  third-party SEO service.
+- The `seo-auditor` agent has not yet been run end to end.
+
 ## [2.1.1] - 2026-09-22
 
 A **patch** release: no change to the plugin itself.
