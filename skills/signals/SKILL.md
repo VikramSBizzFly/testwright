@@ -1,15 +1,15 @@
 ---
 name: signals
-description: Add accessibility, performance and visual-regression assertions to a browser case. Use when authoring an a11y/perf/visual case, when a page case already opens a route and the extra assertion is nearly free, or when deciding whether visual regression is worth turning on.
+description: Add accessibility, performance, responsive, SEO and visual-regression checks to page cases. Use when authoring an a11y/perf/responsive/seo/visual case, when a page case already opens a route and the extra assertion is nearly free, when deciding what an SEO pass checks and what it hands to the seo-auditor agent, or when deciding whether visual regression is worth turning on.
 ---
 
 # Signals
 
-Three assertions riding on browser cases you already run. Only add them where
+Assertions riding on page cases you already have. Only add them where
 they cost close to nothing — that is the whole pitch.
 
 All of them stay `type=page`; the signal lives in `tags` (`a11y`, `perf`,
-`visual`, `responsive`). `type` is only ever `page` or `api` — see **testwright:authoring**.
+`visual`, `responsive`, `seo`). `type` is only ever `page` or `api` — see **testwright:authoring**.
 Delegate the browser work: accessibility to the `a11y-auditor` agent, a
 baseline diff to the `visual-reviewer` agent. Neither the tree nor the image
 belongs in the main thread.
@@ -52,6 +52,37 @@ a nav that never collapses, and tap targets under 24px on the phone width.
 **Reflow is not a failure** — a stacking sidebar or a one-column grid is the
 design working. The failing width goes in the case's `viewport` column, which
 the state schema has always had and nothing used until now.
+
+## SEO (`tags=seo`) — curl first, a browser only when it must
+
+A crawler reads the HTML the server sends, so nearly all of SEO is a curl
+request: `tf.sh seo cases` writes the cases and `tf.sh seo run` judges them,
+for zero tokens. The ids say what each one checks:
+
+- `SEO-NNN`, one per public page (no API routes, no parameterised or
+  privileged routes, and anything that redirects to a login is skipped at run
+  time): 200 with at most one redirect; title 10–60 characters; description
+  50–160; exactly one h1; one absolute canonical that resolves; `html lang`;
+  a viewport; `og:title`, `og:description` and an `og:image` that resolves;
+  not `noindex`; hreflang alternates that resolve, with `x-default`; `alt` on
+  every image.
+- `SEO-SITE-001` robots.txt does not block the site and names a sitemap;
+  `-002` the sitemap parses, lists only live, indexable URLs and misses no
+  public page; `-003` a path that does not exist returns 404; `-004` no two
+  pages share a title or a description.
+
+A canonical, og:image or sitemap URL naming the production host is checked by
+its path on `base_url` — the production guard still holds. Findings go to
+`tests/evidence/<id>/seo.txt`. A page meant to be hidden goes in
+`framework.json` as `"seo": { "noindex_allow": ["/drafts"] }`; the sitemap
+check stops after `seo.max_sitemap_urls` URLs (default 200).
+
+Two things are handed to the `seo-auditor` agent instead of being guessed at:
+a page that is an empty shell until JavaScript runs (UNJUDGED `needs-render`,
+listed in `tests/.cache/seo/render.txt`), and judgement — placeholder titles,
+a title about the wrong thing, JSON-LD (copied raw to
+`tests/.cache/seo/jsonld/`) that is broken or missing what Google needs.
+Rankings, keywords, backlinks and page speed are out of scope.
 
 ## Visual regression (`tags=visual`) — opt-in, and the one signal that costs tokens
 

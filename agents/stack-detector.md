@@ -31,7 +31,7 @@ for the manifest/runtime/runner table and the exact JSON shape.
 
 `tests/framework.json`, in the shape from `references/detection-table.md`,
 seeded from `templates/shared/framework.example.json`. Do not overwrite an
-existing file's `max_tokens_per_run`, `perf_budget_ms` or `allow_remote` — those
+existing file's `max_tokens_per_run`, `perf_budget_ms`, `seo` or `allow_remote` — those
 are the user's settings. `allow_remote` stays `false`; only a human turns it on.
 
 Tiers: **0** no binding · **1** binding present, specs run in the project's own

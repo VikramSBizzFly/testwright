@@ -12,7 +12,7 @@ this sits among the other browser signals.
 
 **You MUST run serially.** One Playwright MCP browser is shared mutable state;
 never run alongside `test-runner`, `page-modeler`, `a11y-auditor`,
-`security-prober` or `route-crawler`.
+`security-prober`, `seo-auditor` or `route-crawler`.
 
 ## The widths
 

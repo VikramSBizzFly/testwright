@@ -1,6 +1,6 @@
 ---
 name: qa
-description: Test a running web app and find real bugs in it - map its flows, generate test cases into an Excel workbook, check pages in a real browser, hit API endpoints with curl, verify permissions, responsive layout and accessibility, and report what failed. Use whenever someone asks to test an app or site, write or generate test cases, do QA, find bugs, check whether something is broken, look for regressions, map the flows or user journeys of the software, verify a user cannot see what they shouldn't, test an API or endpoints, check whether a page breaks on mobile or at a small screen, run Playwright or browser tests, check accessibility, open or update the test cases workbook, ask what has no test coverage, or ask why a test keeps failing. This is the entry point - start here and route to /testwright:setup, /testwright:run or /testwright:report. Not for unit-testing a single function, questions about a test library the project already uses, or projects with no web app.
+description: Test a running web app and find real bugs in it - map its flows, generate test cases into an Excel workbook, check pages in a real browser, hit API endpoints with curl, verify permissions, responsive layout, accessibility and SEO, and report what failed. Use whenever someone asks to test an app or site, write or generate test cases, do QA, find bugs, check whether something is broken, look for regressions, map the flows or user journeys of the software, verify a user cannot see what they shouldn't, test an API or endpoints, check whether a page breaks on mobile or at a small screen, run Playwright or browser tests, check accessibility, check SEO (meta tags, sitemap, robots.txt, structured data, whether pages can be indexed), open or update the test cases workbook, ask what has no test coverage, or ask why a test keeps failing. This is the entry point - start here and route to /testwright:setup, /testwright:run or /testwright:report. Not for unit-testing a single function, questions about a test library the project already uses, or projects with no web app.
 ---
 
 # QA — start here
@@ -42,6 +42,7 @@ the word "test" gets uninstalled.
 | "is it secure", "can a user see someone else's data" | `/testwright:run --security`                          |
 | "test my API", "check the endpoints"                 | `/testwright:run` — `api` cases run on curl, free     |
 | "does it work for screen readers"                    | `/testwright:run --a11y`                              |
+| "check SEO", "can Google index it", "meta tags"      | `/testwright:run --seo` — mostly curl, nearly free    |
 | "what isn't tested"                                  | `/testwright:report --coverage`                       |
 | "why does this keep failing"                         | `/testwright:report --flakes`                         |
 | "file a bug for that"                                | `/testwright:report --bug <id>`                       |

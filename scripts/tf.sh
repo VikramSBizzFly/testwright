@@ -62,7 +62,7 @@ BUG_HEADER='Bug No,Module,Bug Description,Steps to Reproduce,Expected Result,Act
 # always the matching version -- and fall back to the plugin root.
 TF_LIB="$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)/lib"
 [ -f "$TF_LIB/core.sh" ] || TF_LIB="${CLAUDE_PLUGIN_ROOT:-}/scripts/lib"
-for _m in core progress store integrity discovery generate auth api report migrate bugs xlsx; do
+for _m in core progress store integrity discovery generate auth api seo report migrate bugs xlsx; do
   [ -f "$TF_LIB/$_m.sh" ] || { echo "tf: missing module $TF_LIB/$_m.sh -- reinstall the plugin" >&2; exit 3; }
   # shellcheck disable=SC1090
   . "$TF_LIB/$_m.sh"
@@ -79,7 +79,7 @@ store      check | restore
 excel      xlsx [--import|--status]
 discovery  routes | forms | schemas | hash | cache-check | impacted | cover
 generate   rbac
-execute    login | storage-state | preflight | run-api
+execute    login | storage-state | preflight | run-api | seo
 report     summary | watch | cost | diff | junit | render | latest
 meta       version | help
 
@@ -94,6 +94,8 @@ meta       version | help
   routes src/ > tests/.cache/routes.txt
   rbac tests/.cache/routes.txt > /tmp/rbac.csv
   run-api [--allow-destructive]
+  seo cases tests/.cache/routes.txt > /tmp/seo.csv   crawler checks, zero tokens
+  seo run                        robots, sitemap, soft 404, every public page's head
   storage-state admin            cookie jar -> Playwright storage state
   bug from AUTH-002 "Bug Description=..." Severity=Critical
   bug set BUG-003 "Bug Link=https://github.com/o/r/issues/12"
@@ -159,6 +161,7 @@ case "$sub" in
   bug)       cmd_bug "$@" ;;
   preflight) cmd_preflight "$@" ;;
   run-api)   cmd_run_api "$@" ;;
+  seo)       cmd_seo "$@" ;;
   junit)     cmd_junit "$@" ;;
   diff)      cmd_diff "$@" ;;
   render)    cmd_render "$@" ;;

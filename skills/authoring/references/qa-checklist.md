@@ -84,6 +84,14 @@ Claiming these whole is the easiest way to make a report dishonest.
 | 39 | UAT Support | 311-315 | 5 | Human acceptance |
 | 42 | Post-Deployment Verification | 330-336 | 7 | Production. The production guard refuses a non-local target unless explicitly allowed |
 
+## Beyond the checklist
+
+**SEO** is not one of the 42 categories, so it adds nothing to the coverage
+denominator. `--seo` covers it anyway (**signals** skill): whether each public
+page can be indexed and what it shows in a search result, robots.txt, the
+sitemap, soft 404s, duplicate titles and structured data. Rankings, keywords
+and backlinks are out of scope.
+
 ## Two rules about counting
 
 - **A shared root cause is one defect.** One bug that trips eight checkpoints

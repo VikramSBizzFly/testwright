@@ -25,6 +25,7 @@ binding → Tier 0, with a note.
   "report": null,
   "allow_remote": false,
   "max_tokens_per_run": 200000,
-  "perf_budget_ms": 3000
+  "perf_budget_ms": 3000,
+  "seo": { "noindex_allow": [], "max_sitemap_urls": 200 }
 }
 ```

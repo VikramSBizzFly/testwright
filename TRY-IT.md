@@ -201,6 +201,7 @@ it everything still works — your tests just stay in
 | `--a11y`              | Checks each page can be used with a screen reader           |
 | `--responsive`        | Checks each page on a phone, a tablet and a desktop screen  |
 | `--security`          | Tries harder to get at pages you shouldn't be able to see   |
+| `--seo`               | Checks each public page the way a search engine reads it    |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -239,12 +240,22 @@ but still reachable, a session that still works after you log out. It only ever
 _looks_. It never deletes, changes or takes anything, and it never attacks your
 login.
 
-Both are optional. Ask for them when you want them:
+**`--seo`** reads each public page the way a search engine does — before any
+JavaScript runs — and checks what decides whether it gets found and how it
+looks in the results: a title and description of a sensible length, one main
+heading, a canonical link, share-preview tags, nothing accidentally marked
+"don't index". It also checks robots.txt, the sitemap, that a missing page
+really says "not found", and that no two pages share a title. Almost all of it
+is plain HTTP requests, so it costs nothing; only a page that builds itself
+with JavaScript gets opened in a browser.
+
+All of them are optional. Ask for them when you want them:
 
 ```
 /testwright:run --a11y
 /testwright:run --responsive
 /testwright:run --security
+/testwright:run --seo
 ```
 
 ---

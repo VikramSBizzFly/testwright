@@ -55,6 +55,7 @@ kw=$kw'flow|flows|user flow|user journey|journey|journeys|happy path|map the app
 kw=$kw'permission|permissions|unauthorised|unauthorized|access control|rbac|privilege|idor|leak|leaking|'
 kw=$kw'responsive|breakpoint|breakpoints|mobile view|small screen|tablet|layout break|overflowing|'
 kw=$kw'accessibility|a11y|screen reader|wcag|aria|'
+kw=$kw'seo|sitemap|sitemaps|robots.txt|meta description|meta tags|open graph|structured data|json-ld|schema markup|hreflang|noindex|canonical tag|canonical url|search console|'
 kw=$kw'visual regression|baseline|baselines|screenshot diff|pixel|'
 kw=$kw'endpoint|endpoints|curl|api test|'
 kw=$kw'playwright|selenium|cypress|browser test|headless|'
@@ -93,6 +94,6 @@ fi
 [ "$match" -eq 1 ] || exit 0
 
 cat <<'JSON'
-{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"The testwright plugin is installed in this session. If this request is about a running web app -- testing it, finding bugs, mapping its flows or user journeys, checking permissions or access control, checking API endpoints, responsive or mobile layout, accessibility, or the test cases workbook -- load its `qa` skill first: it routes to /testwright:setup, /testwright:run or /testwright:report, runs the free checks immediately, and asks before anything slow or destructive. If the request is a unit test for a single function, a question about the project's own test library, or not about a web app, ignore this note entirely."}}
+{"hookSpecificOutput":{"hookEventName":"UserPromptSubmit","additionalContext":"The testwright plugin is installed in this session. If this request is about a running web app -- testing it, finding bugs, mapping its flows or user journeys, checking permissions or access control, checking API endpoints, responsive or mobile layout, accessibility, SEO, or the test cases workbook -- load its `qa` skill first: it routes to /testwright:setup, /testwright:run or /testwright:report, runs the free checks immediately, and asks before anything slow or destructive. If the request is a unit test for a single function, a question about the project's own test library, or not about a web app, ignore this note entirely."}}
 JSON
 exit 0

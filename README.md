@@ -119,6 +119,7 @@ same name, and `/testwright:` never does.
 --responsive        check each page at phone, tablet and desktop widths
 --a11y              check each page works for a screen-reader user
 --security          probe permission boundaries a role sweep can't reach
+--seo               check what a search engine sees on every public page
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -256,7 +257,7 @@ Cost scales with the number of _pages_, not the number of tests.
 
 ## What else it can check
 
-Three optional passes ride on browser cases you are already running:
+Optional passes that ride on cases you already have:
 
 - **`--a11y`** — from the accessibility tree each page snapshot already returns:
   every input has an accessible name, every control is reachable, heading levels
@@ -270,6 +271,12 @@ Three optional passes ride on browser cases you are already running:
   after logout, open redirects, and whether a rule the browser enforces exists
   on the server at all (`maxlength` is one devtools edit away). **Authorization
   probing only** — never injection, brute force or anything destructive.
+- **`--seo`** — what a search engine sees, read over curl for zero tokens:
+  each public page's status, title, description, h1, canonical, `lang`,
+  viewport, Open Graph tags, noindex, hreflang and image alt text; robots.txt,
+  the sitemap, soft 404s and duplicate titles across pages. Only a page that
+  renders with JavaScript opens a browser, and the `seo-auditor` agent flags
+  placeholder titles and broken structured data. Not rankings or keywords.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -370,7 +377,7 @@ found. `tf.sh watch` renders a live bar in a second terminal.
 
 Above the engine sit **14 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **20 agents**, one per stage:
+on — and **21 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -384,6 +391,7 @@ on — and **20 agents**, one per stage:
 | compile cases to recipes, no browser             | `test-compiler`                                                            |
 | replay in a browser                              | `test-runner`                                                              |
 | accessibility, responsive, visual, authorization | `a11y-auditor`, `responsive-auditor`, `visual-reviewer`, `security-prober` |
+| SEO the engine cannot judge                      | `seo-auditor`                                                              |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -425,7 +433,9 @@ The browser loop is real, not a plan — permission checks navigate, click, and 
 the live page. The JS and Python JUnit→CSV adapters were run against sample
 output; the Java and .NET adapters were not (no JDK or dotnet SDK available). The
 `--a11y` and `--security` passes are new: the rules and agents are in place, but
-they have not yet been run end to end against the fixture.
+they have not yet been run end to end against the fixture. The `--seo` engine
+checks (`tf.sh seo`) were run against the fixture and a deliberately broken
+site; the `seo-auditor` agent has not yet been run end to end.
 
 ## Playwright MCP naming
 
@@ -437,4 +447,5 @@ how Playwright got installed:
 
 If you add the MCP under a different server name, add that prefix to every agent
 that drives a browser: `page-modeler`, `test-runner`, `login-broker`,
-`route-crawler`, `a11y-auditor` and `security-prober`.
+`route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober` and
+`seo-auditor`.

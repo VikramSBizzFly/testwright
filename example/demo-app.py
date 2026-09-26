@@ -18,6 +18,11 @@ Then open:     http://127.0.0.1:8731
 Logins:  a@x.com / pw1   (admin)
          u@x.com / pw2   (normal user)
 
+For `/testwright:run --seo` it also has one page a search engine would
+mark down on purpose -- /about has no meta description and two h1s -- and
+one page, /app, that only fills itself in with JavaScript, so its raw HTML
+cannot be judged without a browser.
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -44,6 +49,45 @@ LOGIN_PAGE = """<!doctype html><title>Login</title>
 </form>
 <p>Try a@x.com / pw1 (admin) or u@x.com / pw2 (user)</p>"""
 
+# The canonical and og:image name the production host, as a real site's do. The
+# SEO checks fetch them by path on the host under test instead.
+SITE = "https://demo.example.com"
+HEAD = f"""<meta charset=utf-8>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<meta property="og:title" content="{{title}}">
+<meta property="og:description" content="{{desc}}">
+<meta property="og:image" content="{SITE}/og.png">
+<link rel=canonical href="{SITE}{{path}}">"""
+
+HOME_PAGE = """<!doctype html><html lang=en><head>
+<title>Demo app - a small app for trying testwright</title>
+<meta name=description content="A tiny web app with a login, two roles and a couple of deliberate bugs, for trying the testwright test framework.">
+""" + HEAD.format(title="Demo app", desc="A tiny web app for trying testwright.", path="/") + """
+<script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Demo app", "url": "https://demo.example.com/"}</script>
+</head><body><h1>Demo app</h1><a href=/login>Log in</a> <a href=/about>About</a></body></html>"""
+
+# Deliberately flawed for the SEO pass: no meta description, two h1s.
+ABOUT_PAGE = """<!doctype html><html lang=en><head>
+<title>About the demo app and its bugs</title>
+""" + HEAD.format(title="About", desc="About the demo app.", path="/about") + """
+</head><body><h1>About</h1><h1>Why it is broken</h1>
+<p>This app exists to be tested.</p></body></html>"""
+
+# A client-rendered shell: nothing to judge until JavaScript runs.
+APP_SHELL = """<!doctype html><html lang=en><head><title>Demo app</title></head>
+<body><div id=root></div><script src=/app.js></script></body></html>"""
+
+ROBOTS = f"""User-agent: *
+Disallow: /admin
+
+Sitemap: {SITE}/sitemap.xml
+"""
+SITEMAP = f"""<?xml version="1.0" encoding="UTF-8"?>
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url><loc>{SITE}/</loc></url>
+  <url><loc>{SITE}/about</loc></url>
+</urlset>"""
+
 
 class Handler(http.server.BaseHTTPRequestHandler):
     def log_message(self, *args):
@@ -58,11 +102,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
                 return SESSIONS.get(part[4:])
         return None
 
-    def reply(self, code, body="", headers=()):
+    def reply(self, code, body="", headers=(), ctype="text/html"):
         self.send_response(code)
         for key, value in headers:
             self.send_header(key, value)
-        self.send_header("Content-Type", "text/html")
+        self.send_header("Content-Type", ctype)
         self.send_header("Content-Length", str(len(body)))
         self.end_headers()
         self.wfile.write(body.encode())
@@ -72,7 +116,26 @@ class Handler(http.server.BaseHTTPRequestHandler):
         role = self.who()
 
         if path == "/":
-            return self.reply(200, "<h1>Demo app</h1><a href=/login>Log in</a>")
+            return self.reply(200, HOME_PAGE)
+
+        if path == "/about":
+            return self.reply(200, ABOUT_PAGE)
+
+        if path == "/app":
+            return self.reply(200, APP_SHELL)
+
+        if path == "/app.js":
+            return self.reply(200, "document.getElementById('root').innerHTML = '<h1>App</h1>'",
+                              ctype="text/javascript")
+
+        if path == "/robots.txt":
+            return self.reply(200, ROBOTS, ctype="text/plain")
+
+        if path == "/sitemap.xml":
+            return self.reply(200, SITEMAP, ctype="application/xml")
+
+        if path == "/og.png":
+            return self.reply(200, "png", ctype="image/png")
 
         if path == "/login":
             return self.reply(200, LOGIN_PAGE)
