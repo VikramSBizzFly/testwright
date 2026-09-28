@@ -1,6 +1,6 @@
 ---
 name: signals
-description: Add accessibility, performance, responsive, SEO and visual-regression checks to page cases. Use when authoring an a11y/perf/responsive/seo/visual case, when a page case already opens a route and the extra assertion is nearly free, when deciding what an SEO pass checks and what it hands to the seo-auditor agent, or when deciding whether visual regression is worth turning on.
+description: Add accessibility, responsive, SEO and visual-regression checks to page cases, and point performance work to the performance skill. Use when authoring an a11y/responsive/seo/visual case, when a page case already opens a route and the extra assertion is nearly free, when deciding what an SEO pass checks and what it hands to the seo-auditor agent, or when deciding whether visual regression is worth turning on.
 ---
 
 # Signals
@@ -31,16 +31,18 @@ Ignore: colour contrast, ARIA role nitpicks below `WCAG A`, and anything only
 a visual diff would catch — that noise buries the three checks above that
 actually block a user. One `a11y` case per route, not per element.
 
-## Performance (`tags=perf`) — capture what the browser already timed
+## Performance (`tags=perf`) — its own skill now
 
-Capture navigation timing (`domContentLoaded` / `load`, or the MCP's own
-timing if it exposes one) on a case you're already running — do not add a
-dedicated page load just to time it.
+Performance has outgrown a signal: server timing, endpoint p95, compression
+and caching run over curl for free (`tf.sh perf run`), Web Vitals get one
+`perf-auditor` call per page, and `--load` adds concurrent users. Load the
+**testwright:performance** skill for all of it.
 
-Compare against `perf_budget_ms` in `tests/framework.json` (default `3000`).
-Over budget is a `FAIL`, not a warning — a budget nobody enforces is decor.
-Record the actual ms in the result row so a regression shows a number, not
-just red.
+What stays here is the rule every signal shares: over budget is a `FAIL`, not
+a warning, and the result row records the measured number, so a regression
+shows as a number rather than just red. The one budget older suites already
+have, `perf_budget_ms` (default `3000`), still applies to a page's full
+response.
 
 ## Responsive (`tags=responsive`) — three widths, five failures
 
@@ -82,7 +84,8 @@ a page that is an empty shell until JavaScript runs (UNJUDGED `needs-render`,
 listed in `tests/.cache/seo/render.txt`), and judgement — placeholder titles,
 a title about the wrong thing, JSON-LD (copied raw to
 `tests/.cache/seo/jsonld/`) that is broken or missing what Google needs.
-Rankings, keywords, backlinks and page speed are out of scope.
+Rankings, keywords and backlinks are out of scope; page speed is `--perf`
+(**testwright:performance**).
 
 ## Visual regression (`tags=visual`) — opt-in, and the one signal that costs tokens
 

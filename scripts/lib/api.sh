@@ -47,6 +47,8 @@ cmd_run_api() {
   cmd_select --type api --cols id,type,who,route,tags,status,method,body,headers,expect_code,repeat \
     --format csv 2>/dev/null |
     awk -v us="$US" "$AWKLIB"'NR > 1 { n = csvsplit($0, F); o = F[1]
+      # A perf case times an endpoint; `tf.sh perf` owns its verdict.
+      if (index("," F[5] ",", ",perf,")) next
       for (i = 2; i <= 11; i++) o = o us F[i]; print o }' > "$work"
 
   roles="$(json_keys "$CREDS" roles 2>/dev/null | tr '\n' ' ')"

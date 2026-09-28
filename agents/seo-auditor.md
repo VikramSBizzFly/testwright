@@ -14,7 +14,8 @@ You do only the two things it cannot, and nothing it already did.
 Load the **signals** skill. Cases are `type=page` with `tags=seo`; `type` is
 only ever `page` or `api`.
 
-**You MUST run serially.** One browser, one agent at a time.
+**You MUST run serially.** One browser, one agent at a time — never alongside
+another browser agent, `perf-auditor` included.
 
 Your prompt names one mode.
 

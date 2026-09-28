@@ -202,6 +202,8 @@ it everything still works — your tests just stay in
 | `--responsive`        | Checks each page on a phone, a tablet and a desktop screen  |
 | `--security`          | Tries harder to get at pages you shouldn't be able to see   |
 | `--seo`               | Checks each public page the way a search engine reads it    |
+| `--perf`              | Times every page and endpoint, and finds what makes it slow |
+| `--load`              | Sends many users at once for a few seconds (asks first)     |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -249,6 +251,23 @@ really says "not found", and that no two pages share a title. Almost all of it
 is plain HTTP requests, so it costs nothing; only a page that builds itself
 with JavaScript gets opened in a browser.
 
+**`--perf`** asks: how long does each page and each endpoint make people wait,
+and why? It times every page and asks every endpoint ten times, so one slow
+moment doesn't count against it, and checks for pages sent uncompressed,
+files the browser has to download again on every visit, and lists that
+return thousands of rows at once. Then it opens each page in a browser to
+measure what a visitor feels — how long until the main content shows, whether
+the page jumps around as it loads, how heavy it is. It also reads your code
+for things that are fine today and slow next year, like a database query
+repeated once per row. Every failure says the number and the limit it broke
+(_"2.7 s, limit 0.5 s"_), and the limits are yours to set.
+
+**`--load`** sends a crowd at once — ten users for fifteen seconds, by
+default — and reports how many requests failed and how slow the slowest were.
+Because that is real traffic, it shows you the plan and waits for a yes, and
+it only runs against your own machine or a server you've listed as fine to
+stress.
+
 All of them are optional. Ask for them when you want them:
 
 ```
@@ -256,6 +275,8 @@ All of them are optional. Ask for them when you want them:
 /testwright:run --responsive
 /testwright:run --security
 /testwright:run --seo
+/testwright:run --perf
+/testwright:run --perf --load
 ```
 
 ---

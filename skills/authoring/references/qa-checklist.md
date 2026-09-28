@@ -64,7 +64,7 @@ Claiming these whole is the easiest way to make a report dishonest.
 | 12 | UX / Usability | 102-109 | 8 | 0/3/5/0 | mechanical checks only — focus order, feedback on submit. Whether a flow *feels* right is a human judgement |
 | 19 | Database & Data Verification | 162-168 | 7 | 4/2/1/0 | only what the app exposes. Direct schema, index and constraint checks need database access testwright does not take |
 | 22 | Notification Testing | 188-197 | 10 | 2/5/3/0 | in-app notifications yes; email and SMS only against an outbox or provider sandbox, never live delivery |
-| 28 | Performance (Observational) | 237-242 | 6 | 0/4/2/0 | page-level timings from a run (**signals** skill). Not load, soak or capacity testing |
+| 28 | Performance (Observational) | 237-242 | 6 | 0/4/2/0 | `--perf` (**performance** skill): server timing, endpoint p95, page weight, Web Vitals, and code patterns that will be slow at scale. `--load` adds a short, capped concurrency test. Not soak or capacity testing |
 | 30 | Localization | 252-258 | 7 | 0/4/3/0 | layout under a longer locale and RTL yes; translation accuracy no |
 | 34 | Compliance, Privacy & Legal | 283-289 | 7 | 0/5/2/0 | observable behaviour — consent recorded, PII not leaked into a response. Not a legal opinion |
 | 35 | Content & Documentation | 290-295 | 6 | 0/0/4/2 | presence of help text and error copy; not editorial quality |

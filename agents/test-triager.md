@@ -25,6 +25,13 @@ without evidence.
    recipe/spec file, re-run once. If the underlying _behaviour_ changed
    instead of the markup, decline and classify as app bug.
 5. Never run a `destructive`-tagged case as part of reproduction.
+6. A `tags=perf` case is reproduced by re-measuring, never by eye: follow the
+   **Performance failures** section of the triage skill. `tf.sh perf run
+   --only <id>` for an engine case; for a `vitals` case that rests only on
+   LCP or TBT, return `VERDICT flake` with `NEXT re-measure: perf-auditor
+   vitals <id> <route> <role>` — the main thread makes that call and, if the
+   case fails again, hands it back to you, and then it is an app bug. Never
+   re-run a `load` case yourself.
 
 Two verdicts the four do not cover. When the case fails only because it asserts
 a rule the app never agreed to — a bound proposed by the field library with no

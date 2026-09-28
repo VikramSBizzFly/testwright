@@ -26,6 +26,11 @@ binding → Tier 0, with a note.
   "allow_remote": false,
   "max_tokens_per_run": 200000,
   "perf_budget_ms": 3000,
+  "perf": {
+    "ttfb_ms": 800, "api_p95_ms": 500, "api_max_kb": 256, "repeat": 10,
+    "vitals": { "lcp_ms": 2500, "cls": 0.1, "tbt_ms": 200, "max_kb": 2048, "max_requests": 100 },
+    "load": { "targets": ["/"], "allow_hosts": [], "users": 10, "seconds": 15, "max_error_rate": 0.01, "p95_ms": 1500 }
+  },
   "seo": { "noindex_allow": [], "max_sitemap_urls": 200 }
 }
 ```

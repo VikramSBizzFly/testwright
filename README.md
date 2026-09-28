@@ -120,6 +120,8 @@ same name, and `/testwright:` never does.
 --a11y              check each page works for a screen-reader user
 --security          probe permission boundaries a role sweep can't reach
 --seo               check what a search engine sees on every public page
+--perf              time every page and endpoint, and measure Web Vitals
+--load              add a short, capped concurrent-user test (asks first)
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -277,6 +279,21 @@ Optional passes that ride on cases you already have:
   the sitemap, soft 404s and duplicate titles across pages. Only a page that
   renders with JavaScript opens a browser, and the `seo-auditor` agent flags
   placeholder titles and broken structured data. Not rankings or keywords.
+- **`--perf`** — how fast the app answers, mostly over curl for zero tokens:
+  each page's time to first byte and full response (median of three, after a
+  warm-up request), each GET endpoint's p50/p95 over ten requests, response
+  size and paging, compression, caching and missing assets. Only Web Vitals
+  open a browser: the `perf-auditor` agent reads LCP, CLS, TBT, page weight and
+  render-blocking files from the Performance API. The `perf-case-author` agent
+  reads the code for what will be slow at scale (N+1 queries, unpaginated
+  lists, missing indexes, oversized bundles) and writes a case for each
+  suspect. Every failure carries the number and the budget it broke; budgets
+  live under `"perf"` in `tests/framework.json`.
+- **`--load`** — a few seconds of concurrent users against chosen routes:
+  error rate, p95, requests per second. Real traffic, so it prints the plan
+  and asks first, runs only against a local host or one listed in
+  `perf.load.allow_hosts`, and caps users and duration. A smoke test for
+  concurrency bugs, not a capacity plan.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -375,9 +392,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **14 skills** — the rules for each stage, loaded only when
+Above the engine sit **15 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **21 agents**, one per stage:
+on — and **23 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -392,6 +409,7 @@ on — and **21 agents**, one per stage:
 | replay in a browser                              | `test-runner`                                                              |
 | accessibility, responsive, visual, authorization | `a11y-auditor`, `responsive-auditor`, `visual-reviewer`, `security-prober` |
 | SEO the engine cannot judge                      | `seo-auditor`                                                              |
+| Web Vitals, and perf bugs found in the code      | `perf-auditor`, `perf-case-author`                                         |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -435,7 +453,10 @@ output; the Java and .NET adapters were not (no JDK or dotnet SDK available). Th
 `--a11y` and `--security` passes are new: the rules and agents are in place, but
 they have not yet been run end to end against the fixture. The `--seo` engine
 checks (`tf.sh seo`) were run against the fixture and a deliberately broken
-site; the `seo-auditor` agent has not yet been run end to end.
+site; the `seo-auditor` agent has not yet been run end to end. The `--perf`
+and `--load` engine checks (`tf.sh perf`) were run against the fixture, and the
+`perf-auditor`'s measuring script was run in a real browser against its heavy
+page; the two perf agents have not yet been run end to end as agents.
 
 ## Playwright MCP naming
 
@@ -447,5 +468,5 @@ how Playwright got installed:
 
 If you add the MCP under a different server name, add that prefix to every agent
 that drives a browser: `page-modeler`, `test-runner`, `login-broker`,
-`route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober` and
-`seo-auditor`.
+`route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober`,
+`seo-auditor` and `perf-auditor`.
