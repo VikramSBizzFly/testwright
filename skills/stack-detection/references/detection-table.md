@@ -34,6 +34,7 @@ binding → Tier 0, with a note.
   "seo": { "noindex_allow": [], "max_sitemap_urls": 200 },
   "headers": { "skip": [] },
   "links": { "max_pages": 50, "max_per_page": 200 },
-  "contract": { "spec": "", "strict": false }
+  "contract": { "spec": "", "strict": false },
+  "privacy": { "consent_required": false, "allow_hosts": [], "trackers": [] }
 }
 ```

@@ -17,7 +17,8 @@ the page-vs-api decision table and the equivalence-class rules.
 
 1. See what already exists:
    `tf.sh select --area <feature> --cols id,route,todo --format plain` and
-   `tf.sh next-id <PREFIX>`. Never renumber an existing id, never restate a case
+   `tf.sh next-id <PREFIX> <n>` for the whole batch (nothing is reserved until
+   the merge). Never renumber an existing id, never restate a case
    that is already there.
 2. Read what the mechanical passes already produced — the page models at
    `tests/.cache/pages/<route>.txt`, the flows at `tests/.cache/flows.txt`, and

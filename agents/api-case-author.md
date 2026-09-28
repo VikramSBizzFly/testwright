@@ -42,7 +42,8 @@ and how `run-api` judges them.
    the 8 column names plus `type`, `route`, `tags`, `method`, `body`, `headers`,
    `expect_code`, `repeat`, tab-separated, then `tf.sh merge <file>`. Tabs mean
    a comma in text, a JSON body or `tags` needs no quoting. A malformed row
-   rejects the whole file. `tf.sh next-id API` for ids; never renumber.
+   rejects the whole file. `tf.sh next-id API <n>` for the whole batch of
+   ids at once (nothing is reserved until the merge); never renumber.
 6. Tag anything that writes, deletes or acts in bulk `tags=destructive` and set
    `status=Skipped`.
 
