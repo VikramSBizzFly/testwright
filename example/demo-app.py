@@ -23,6 +23,15 @@ mark down on purpose -- /about has no meta description and two h1s -- and
 one page, /app, that only fills itself in with JavaScript, so its raw HTML
 cannot be judged without a browser.
 
+For `/testwright:run --perf` it has four slow spots, one per kind of check:
+
+  /slow             takes 1.5 s before the first byte
+  /heavy            1.5 MB uncompressed image with no size (layout shift), a
+                    render-blocking script, a long task, no cache headers
+  /api/catalog      5,000 rows, no paging, one lookup per row (an N+1)
+  /api/flaky-load   fine alone, fails once more than three requests overlap
+                    (`--perf --load` finds it)
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -30,6 +39,9 @@ need Python, or Node, or anything else.
 import hashlib
 import hmac
 import http.server
+import json
+import threading
+import time
 import urllib.parse
 import uuid
 
@@ -82,6 +94,29 @@ Disallow: /admin
 
 Sitemap: {SITE}/sitemap.xml
 """
+# Deliberately slow for the perf pass. The script in the head blocks rendering,
+# the inline loop is a long task, and the image has no width or height, so the
+# text below it jumps down when it arrives.
+HEAVY_PAGE = """<!doctype html><html lang=en><head><title>A heavy page</title>
+<meta name=viewport content="width=device-width, initial-scale=1">
+<link rel=stylesheet href=/heavy.css>
+<script src=/blocking.js></script>
+</head><body><h1>A heavy page</h1>
+<img src=/heavy.svg alt="A very large picture">
+<p>This paragraph moves when the picture above it finally loads.</p>
+<div style="height:900px;background:#eee">And so does everything below it.</div>
+<script>addEventListener("load", function () { var t = Date.now(); while (Date.now() - t < 300) {} });</script>
+</body></html>"""
+HEAVY_SVG = ('<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="800">'
+             + "".join(f'<rect x="{i % 1200}" y="{i % 800}" width="3" height="3" fill="#{i % 4096:03x}"/>'
+                       for i in range(30000))
+             + "</svg>")
+CATALOG = [{"id": i, "name": f"Item {i}", "price": i % 97,
+            "description": f"A plain demo item, number {i}, with a little text to it"}
+           for i in range(5000)]
+IN_FLIGHT = [0]
+IN_FLIGHT_LOCK = threading.Lock()
+
 SITEMAP = f"""<?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
   <url><loc>{SITE}/</loc></url>
@@ -139,6 +174,46 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         if path == "/login":
             return self.reply(200, LOGIN_PAGE)
+
+        if path == "/slow":
+            time.sleep(1.5)  # a slow query on every request
+            return self.reply(200, "<!doctype html><html lang=en><title>Slow</title><h1>Slow page</h1></html>")
+
+        if path == "/heavy":
+            return self.reply(200, HEAVY_PAGE)
+
+        if path == "/heavy.svg":
+            time.sleep(2.8)  # arrives long after the text has painted
+            return self.reply(200, HEAVY_SVG, ctype="image/svg+xml")
+
+        if path == "/heavy.css":
+            return self.reply(200, "body { font-family: sans-serif; }\n" * 200, ctype="text/css")
+
+        if path == "/blocking.js":
+            time.sleep(0.6)
+            return self.reply(200, "window.ready = true;\n", ctype="text/javascript")
+
+        if path == "/api/catalog":
+            # THE PERF BUG. No paging, and one lookup per row -- an N+1.
+            rows = []
+            for item in CATALOG:
+                time.sleep(0.0001)  # stands in for a query per row
+                rows.append(item)
+            return self.reply(200, json.dumps(rows), ctype="application/json")
+
+        if path == "/api/flaky-load":
+            # Fine alone. Runs out of workers once four requests overlap.
+            with IN_FLIGHT_LOCK:
+                IN_FLIGHT[0] += 1
+                busy = IN_FLIGHT[0] > 3
+            try:
+                time.sleep(0.05)
+                if busy:
+                    return self.reply(503, '{"error": "no worker free"}', ctype="application/json")
+                return self.reply(200, '{"ok": true}', ctype="application/json")
+            finally:
+                with IN_FLIGHT_LOCK:
+                    IN_FLIGHT[0] -= 1
 
         if path == "/dashboard":
             if role:
@@ -245,4 +320,4 @@ class Handler(http.server.BaseHTTPRequestHandler):
 if __name__ == "__main__":
     print("Demo app running at http://127.0.0.1:8731")
     print("Press Ctrl+C to stop it.")
-    http.server.HTTPServer(("127.0.0.1", 8731), Handler).serve_forever()
+    http.server.ThreadingHTTPServer(("127.0.0.1", 8731), Handler).serve_forever()
