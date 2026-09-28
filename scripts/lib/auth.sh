@@ -261,9 +261,16 @@ cmd_login() {
   rm -f "$page"
 
   # shellcheck disable=SC2086
-  curl -s -b "$jar" -c "$jar" -o /dev/null --max-time 20 -L \
+  curl -s -b "$jar" -c "$jar" -o /dev/null --max-time 20 -L -D "$page.hdr" \
     --data-urlencode "$ufield=$user" --data-urlencode "$pfield=$pass" $csrf_arg \
     "$base$path" 2>/dev/null
+
+  # Keep what the security-header checks need to know about the cookies this
+  # login set -- their names and attributes -- and never their values.
+  tr -d '\r' < "$page.hdr" 2>/dev/null |
+    awk 'tolower(substr($0, 1, 11)) == "set-cookie:" { v = substr($0, 12); sub(/^[ \t]+/, "", v); sub(/=[^;]*/, "", v); print v }' \
+    > "$TESTS_DIR/.auth/$role.setcookie"
+  rm -f "$page.hdr"
 
   code="$(curl -s -b "$jar" -o /dev/null -w '%{http_code}' --max-time 20 \
            --max-redirs 0 "$base$ok" 2>/dev/null)"; [ -n "$code" ] || code=000
