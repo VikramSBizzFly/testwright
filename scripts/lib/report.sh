@@ -18,6 +18,10 @@ cmd_cost() {
   case "$b" in ''|*[!0-9]*) budget=0 ;; *) budget="$b" ;; esac
   joined | awk -v budget="$budget" -v check="$check" "$AWKLIB"'
     function bucket(type, status, spec, tags) {
+      # Perf cases are timed by `tf.sh perf` over curl, except Web Vitals,
+      # which need one perf-auditor browser call each.
+      if (index("," tags ",", ",vitals,")) return (status == "Skipped") ? "skip" : "vitals"
+      if (index("," tags ",", ",perf,")) return "perf"
       if (type == "api")        return "api"
       # SEO cases are page cases a curl request answers: `tf.sh seo run`.
       if (index("," tags ",", ",seo,")) return "seo"
@@ -35,15 +39,19 @@ cmd_cost() {
         if (r != "" && !(r in ROUTE)) { ROUTE[r] = 1; nroutes++ } }
     }
     END {
-      cReplay = 350; cCompile = 300; cRoute = 6000
+      cReplay = 350; cCompile = 300; cRoute = 6000; cVitals = 2500
       tReplay = N["replay"] * cReplay; tCompile = N["compile"] * cCompile
-      tRoutes = nroutes * cRoute
-      grand = tReplay + tCompile + tRoutes
+      tRoutes = nroutes * cRoute; tVitals = N["vitals"] * cVitals
+      grand = tReplay + tCompile + tRoutes + tVitals
 
       printf "%-9s %6s  %-34s %10s\n", "BUCKET", "CASES", "ENGINE", "EST TOKENS"
       printf "%-9s %6d  %-34s %10s\n", "api",    N["api"]+0,    "curl, no browser",              "0"
       if (N["seo"] > 0)
         printf "%-9s %6d  %-34s %10s\n", "seo", N["seo"], "curl, what a crawler sees", "0"
+      if (N["perf"] > 0)
+        printf "%-9s %6d  %-34s %10s\n", "perf", N["perf"], "curl, server timing and latency", "0"
+      if (N["vitals"] > 0)
+        printf "%-9s %6d  %-34s %10d\n", "vitals", N["vitals"], "browser, Web Vitals per page", tVitals
       printf "%-9s %6d  %-34s %10s\n", "spec",   N["spec"]+0,   "your own test runner, headless","0"
       printf "%-9s %6d  %-34s %10d\n", "replay", N["replay"]+0, "browser, replaying a recipe",   tReplay
       printf "%-9s %6d  %-34s %10d\n", "compile",N["compile"]+0,"browser, first time for this case", tCompile
@@ -52,7 +60,7 @@ cmd_cost() {
         printf "%-9s %6d  %-34s %10s\n", "skipped", N["skip"], "not run", "0"
       printf "%-9s %6d  %-34s %10d\n", "TOTAL", total+0, "", grand
 
-      free = N["api"] + N["spec"] + N["seo"]
+      free = N["api"] + N["spec"] + N["seo"] + N["perf"]
       freepct = total > 0 ? int(free * 100 / total) : 0
       printf "\n%d of %d cases (%d%%) cost nothing to re-run.\n", free, total, freepct
       if (N["spec"] == 0 && total > 10)
@@ -232,7 +240,7 @@ cmd_summary() {
     id = $1; type = $2; role = $3; route = $4; actual = $6; verdict = $7
     # Not a verdict on the app: listed apart, and left out of the pass rate.
     if (verdict == "UNJUDGED") {
-      NUNJ++; if (type == "seo") NUNJSEO++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
+      NUNJ++; if (type == "seo") NUNJSEO++; if (type == "perf") NUNJPERF++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
       next
     }
     total++; V[verdict]++; TT[type]++
@@ -254,7 +262,7 @@ cmd_summary() {
         OTHC[NOTH] = actual
       }
     }
-    if (type == "api" || type == "seo") FREE++
+    if (type == "api" || type == "seo" || type == "perf") FREE++
     dur += $8 + 0
     next
   }
@@ -396,10 +404,12 @@ cmd_summary() {
            NUNJ, (NUNJ == 1 ? "" : "s")))
       for (i = 1; i <= NUNJ && i <= 5; i++) sect(sprintf("     \035%s\030", UNJ[i]))
       if (NUNJ > 5) sect(sprintf("     \035... and %d more\030", NUNJ - 5))
-      if (NUNJ > NUNJSEO)
+      if (NUNJ > NUNJSEO + NUNJPERF)
         sect("     \035give each a method and an expect_code: tf.sh set <id> method=POST expect_code=2xx\030")
       if (NUNJSEO > 0)
         sect("     \035client-rendered pages: hand tests/.cache/seo/render.txt to seo-auditor\030")
+      if (NUNJPERF > 0)
+        sect("     \035Web Vitals need a browser: hand tests/.cache/perf/vitals.txt to perf-auditor\030")
     }
     if (skipped > 0) {
       if (!warned) sect("")
