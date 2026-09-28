@@ -32,6 +32,17 @@ For `/testwright:run --perf` it has four slow spots, one per kind of check:
   /api/flaky-load   fine alone, fails once more than three requests overlap
                     (`--perf --load` finds it)
 
+For `--headers`, `--links` and `--contract`:
+
+  /                 the one page with every security header, done right
+  every other page  no CSP, no framing protection; and the Server header
+                    names the Python version on every response
+  the login cookie  sid is neither HttpOnly nor SameSite
+  /api/profile      trusts any Origin with credentials (CORS), and drops the
+                    `created` field its contract in /openapi.json requires
+  /about            links to /team, which does not exist, and to #contact,
+                    which is not on the page
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -83,7 +94,42 @@ ABOUT_PAGE = """<!doctype html><html lang=en><head>
 <title>About the demo app and its bugs</title>
 """ + HEAD.format(title="About", desc="About the demo app.", path="/about") + """
 </head><body><h1>About</h1><h1>Why it is broken</h1>
-<p>This app exists to be tested.</p></body></html>"""
+<p>This app exists to be tested.</p>
+<p><a href=/>Home</a> <a href=/team>Meet the team</a> <a href=#contact>Contact us</a></p></body></html>"""
+
+# The one page that sends every security header, so the checks have a pass.
+GOOD_HEADERS = [
+    ("Content-Security-Policy", "default-src 'self'; script-src 'self'; frame-ancestors 'none'"),
+    ("X-Frame-Options", "DENY"),
+    ("X-Content-Type-Options", "nosniff"),
+    ("Referrer-Policy", "strict-origin-when-cross-origin"),
+]
+
+# The contract for two endpoints. /api/profile breaks it: no `created`.
+OPENAPI = {
+    "openapi": "3.0.3",
+    "info": {"title": "Demo app", "version": "1.0.0"},
+    "paths": {
+        "/api/catalog": {"get": {"responses": {"200": {"description": "Every item",
+            "content": {"application/json": {"schema": {
+                "type": "array", "items": {"$ref": "#/components/schemas/Item"}}}}}}}},
+        "/api/profile": {"get": {"security": [{"session": []}], "responses": {
+            "200": {"description": "The signed-in user", "content": {"application/json": {
+                "schema": {"$ref": "#/components/schemas/Profile"}}}},
+            "401": {"description": "Not signed in"}}}},
+    },
+    "components": {
+        "securitySchemes": {"session": {"type": "apiKey", "in": "cookie", "name": "sid"}},
+        "schemas": {
+            "Item": {"type": "object", "required": ["id", "name", "price"], "properties": {
+                "id": {"type": "integer"}, "name": {"type": "string"},
+                "price": {"type": "number"}, "description": {"type": "string"}}},
+            "Profile": {"type": "object", "required": ["email", "role", "created"], "properties": {
+                "email": {"type": "string"}, "role": {"type": "string", "enum": ["admin", "user"]},
+                "created": {"type": "string"}}},
+        },
+    },
+}
 
 # A client-rendered shell: nothing to judge until JavaScript runs.
 APP_SHELL = """<!doctype html><html lang=en><head><title>Demo app</title></head>
@@ -151,7 +197,23 @@ class Handler(http.server.BaseHTTPRequestHandler):
         role = self.who()
 
         if path == "/":
-            return self.reply(200, HOME_PAGE)
+            return self.reply(200, HOME_PAGE, GOOD_HEADERS)
+
+        if path == "/openapi.json":
+            return self.reply(200, json.dumps(OPENAPI), ctype="application/json")
+
+        if path == "/api/profile":
+            # THE CORS BUG. Echoes whatever Origin asked, with credentials, so
+            # any website can read a signed-in user's profile.
+            origin = self.headers.get("Origin")
+            cors = [("Access-Control-Allow-Origin", origin),
+                    ("Access-Control-Allow-Credentials", "true")] if origin else []
+            if not role:
+                return self.reply(401, '{"error": "not signed in"}', cors, ctype="application/json")
+            email = "a@x.com" if role == "admin" else "u@x.com"
+            # THE CONTRACT BUG. The spec promises `created`; it was dropped.
+            return self.reply(200, json.dumps({"email": email, "role": role}), cors,
+                              ctype="application/json")
 
         if path == "/about":
             return self.reply(200, ABOUT_PAGE)
@@ -217,7 +279,7 @@ class Handler(http.server.BaseHTTPRequestHandler):
 
         if path == "/dashboard":
             if role:
-                return self.reply(200, f"<h1>Dashboard</h1><p>You are: {role}</p>")
+                return self.reply(200, f"<h1>Dashboard</h1><p>You are: {role}</p><a href=/logout>Sign out</a>")
             return self.reply(302, "", [("Location", "/login")])
 
         if path == "/admin":
