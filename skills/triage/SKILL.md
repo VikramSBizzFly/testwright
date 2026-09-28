@@ -34,6 +34,30 @@ Never assign a verdict from the failure row alone. Re-run once against fresh
 evidence (`tests/evidence/<id>/`) before deciding — a single sample cannot
 distinguish app bug from environment.
 
+## Performance failures (`tags=perf`) — re-measure before blaming the app
+
+A timing is a sample, not a fact. The re-run above is, for a perf case, a
+re-measure:
+
+- **An engine case** (`PERF-NNN`, `PERF-API-NNN`, `PERF-SITE-*`, an api
+  `PERF-RISK-NNN`): `tf.sh perf run --only <id>`. Still over budget, by a
+  similar margin → **app bug**. Inside budget now → **flake**, citing both
+  numbers. Slow only against a remote or freshly started environment, while
+  the same route is fast locally → **environment**.
+- **A browser case** (`tags=vitals`): the findings that are not timings —
+  bytes over budget, a render-blocking file, an uncompressed or unsized
+  resource, too many requests — are deterministic and need no re-measure:
+  **app bug**. A failure that rests only on LCP or TBT needs a second
+  `perf-auditor vitals` call first; return `NEXT re-measure` and let the main
+  thread make it.
+- **A load case** (`PERF-LOAD-NNN`): a 5xx rate over budget is an **app bug**
+  on the first run — errors under concurrency do not come from noise. A p95
+  failure alone gets one re-run of `tf.sh perf load --yes`, with the user's
+  say-so, since it sends traffic again.
+
+Never re-measure by raising the budget. Patterns and severities for the bug:
+the **performance** skill's `references/bug-patterns.md`.
+
 ## Locator failure vs assertion failure — self-heal only the former
 
 A **locator** failure (element not found, selector timeout) can be self-healed

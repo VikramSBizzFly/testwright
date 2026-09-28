@@ -61,6 +61,15 @@ Status(QA) yourself — those belong to people.
 | **Medium**   | wrong, but a user can work around it                                                                                |
 | **Low**      | cosmetic, copy, or responsive layout                                                                                |
 
+**A performance bug** (a `PERF-` case) takes its severity from the
+**performance** skill's `references/bug-patterns.md`, not from this table, and
+is filed **once per cause**: read `tests/.cache/perf/causes.txt`, and when this
+case shares a cause with cases already filed, update that bug instead of
+opening another. Its Bug Description says what is slow, the measured number
+against its budget (`p95 2746 ms, budget 500 ms`), how it was measured, and
+the suspect `file:line` — a `PERF-RISK` case names it in its description.
+Actual Result is the number, never just "slow".
+
 **Priority is a separate judgement, not a copy of severity.** Severity is the
 impact you observed; priority is when it gets fixed, and it also weighs
 exposure, how many users hit it, and what it blocks. A Critical defect behind a

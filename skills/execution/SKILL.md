@@ -46,7 +46,9 @@ credential rules are owned by the **auth** skill.
 | `skipped`          | any         | destructive, or opted out — skip unless `--allow-destructive` |
 
 `tags=seo` cases are not in this queue. `tf.sh seo run` judges them over
-curl, and the `seo-auditor` agent takes only the ones it hands on.
+curl, and the `seo-auditor` agent takes only the ones it hands on. Nor are
+`tags=perf` cases: `tf.sh perf run` times them over curl, and the
+`perf-auditor` agent takes the `vitals` ones it lists.
 
 `--headed` shows the browser instead of headless.
 
