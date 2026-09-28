@@ -9,6 +9,90 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.3.0] - 2026-09-28
+
+A **minor** release: two new flags, a new engine subcommand, two new agents
+and a new skill. Existing suites keep working untouched, and nothing needs
+migrating.
+
+`tags=perf` and `perf_budget_ms` were documented, but nothing read them: no
+case was ever generated, and no run ever timed anything. Most of what makes an
+app slow is visible from outside without a browser — time to first byte, how
+big a response is, whether it is compressed or cached, how an endpoint's
+latency spreads — so the engine does that over curl for no tokens. Only the
+metrics that exist inside a browser cost an agent call.
+
+### Added
+
+- **`/testwright:run --perf`.** It generates the perf cases, times them over
+  curl straight after `run-api` (and the SEO pass), then opens a browser for
+  Web Vitals, and groups the failures into causes before any bug is filed.
+- **`/testwright:run --load`.** A short, capped concurrent-user test. It prints
+  the plan and asks before sending anything.
+- **`tf.sh perf cases`, `tf.sh perf run [--only <ids>]` and
+  `tf.sh perf load [--yes]`** (`scripts/lib/perf.sh`):
+  - `PERF-NNN`, one per page: first byte and full response (median of three
+    after a warm-up), HTML size, compression, redirect chains.
+  - `PERF-API-NNN`, one per GET endpoint the suite already tests: p50/p95 over
+    ten requests, response size, and a large response with no paging
+    parameter.
+  - `PERF-SITE-001..003`: linked assets arrive, text assets are compressed,
+    static assets are cacheable.
+  - `PERF-WV-NNN`, one per page, goes to the browser.
+  - `PERF-LOAD-NNN`, one per load target: error rate, p95 and requests per
+    second under concurrent curl workers.
+
+  Findings go to `tests/evidence/<id>/perf.txt`, and every result row carries
+  the measured milliseconds.
+- **The `perf-auditor` agent.** Two modes:
+  - `vitals` runs one fixed Performance API script per page and judges it
+    against the budgets. The script reads LCP and its element, CLS, TBT, page
+    weight, request count, and render-blocking, uncompressed, unsized and
+    oversized resources.
+  - `review` groups the run's failures into `tests/.cache/perf/causes.txt`,
+    so one bundle failing every page is one bug.
+- **The `perf-case-author` agent.** It reads one feature's code for the
+  patterns behind real perf bugs — N+1 queries, unpaginated lists, unbounded
+  search, missing indexes, oversized bundles, polling — and writes a
+  `PERF-RISK-NNN` case for each suspect, naming the file and line.
+- **The `performance` skill**, with two references:
+  - `references/budgets.md`: every budget, its default and why.
+  - `references/bug-patterns.md`: the code signal, runtime symptom and
+    severity for each pattern.
+- **`"perf"` in `tests/framework.json`**:
+  - page, endpoint and Web Vitals budgets;
+  - sample counts;
+  - `expect_compression`;
+  - a `load` block with targets, `allow_hosts`, and hard caps on users and
+    seconds.
+- **The demo app** now serves requests on threads and has four slow spots:
+  - `/slow`;
+  - a `/heavy` page that fails LCP, CLS and TBT;
+  - an unpaginated N+1 `/api/catalog`;
+  - `/api/flaky-load`, which fails under concurrency.
+
+### Changed
+
+- `tf.sh cost` has two new buckets: a free `perf` one, and a `vitals` one
+  priced per browser call. The summary counts engine perf rows as free and
+  points UNJUDGED vitals cases at `perf-auditor`.
+- `run-api`, page modelling, compiling and the `test-runner` queue leave
+  `tags=perf` cases out: `tf.sh perf` owns their verdicts.
+- Triage re-measures a perf failure once before calling it an app bug, and
+  never by raising a budget. The bug reporter files perf bugs once per cause,
+  with the number against its budget.
+- The **signals** skill hands performance to the new skill. The `qa` skill,
+  the prompt hook and the QA checklist know about `--perf` and `--load`.
+
+### Not in this release
+
+- CPU or memory profiling, query plans, anything that needs an APM agent, and
+  Lighthouse itself. Soak and capacity testing.
+- Browser numbers come from an unthrottled browser, so a pass is a floor, not
+  a promise about a phone on a slow network.
+- The `perf-auditor` and `perf-case-author` agents have not yet been run end
+  to end as agents. The measuring script was run in a real browser.
+
 ## [2.2.0] - 2026-09-26
 
 A **minor** release: a new flag, a new engine subcommand and a new agent.
