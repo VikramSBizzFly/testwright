@@ -204,6 +204,9 @@ it everything still works — your tests just stay in
 | `--seo`               | Checks each public page the way a search engine reads it    |
 | `--perf`              | Times every page and endpoint, and finds what makes it slow |
 | `--load`              | Sends many users at once for a few seconds (asks first)     |
+| `--headers`           | Checks the security settings each page sends back           |
+| `--links`             | Finds links that go nowhere                                 |
+| `--contract`          | Checks the API still answers what its documentation says    |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -268,6 +271,21 @@ Because that is real traffic, it shows you the plan and waits for a yes, and
 it only runs against your own machine or a server you've listed as fine to
 stress.
 
+**`--headers`** reads the small settings every page sends along with itself —
+the ones that tell a browser to refuse injected scripts, to refuse to show the
+page inside another site, and to keep the login cookie away from scripts. It
+also checks whether another website could read a signed-in user's data, and
+whether the server announces exactly which software version it runs.
+
+**`--links`** clicks every link, in effect, without a browser: a link to a
+page that no longer exists, a "jump to" link whose target isn't on the page, a
+link that bounces around forever. It never follows a link that could sign you
+out or delete something.
+
+**`--contract`** compares what your API actually sends back with what its
+documentation (the OpenAPI or Swagger file) promises — a field that went
+missing, a number that became text, an answer nobody documented.
+
 All of them are optional. Ask for them when you want them:
 
 ```
@@ -277,6 +295,7 @@ All of them are optional. Ask for them when you want them:
 /testwright:run --seo
 /testwright:run --perf
 /testwright:run --perf --load
+/testwright:run --headers --links --contract
 ```
 
 ---
