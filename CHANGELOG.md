@@ -9,6 +9,94 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.5.0] - 2026-09-28
+
+A **minor** release: three new flags, two engine subcommands, four agents
+and three skills. Existing suites keep working untouched.
+
+This is phase 2 of the roadmap: what the app gives away, and whether what it
+saves is what it was sent.
+
+### Added
+
+- **`/testwright:run --privacy`** (`tf.sh privacy cases|run`,
+  `scripts/lib/privacy.sh`, the **privacy** skill).
+  - `PRIV-NNN`, per page, over curl:
+    - keys, private keys, Luhn-valid card numbers and SSN patterns in the
+      source;
+    - passwords and tokens in link URLs;
+    - password forms submitted by GET;
+    - a personal page without `Cache-Control: private` or `no-store`.
+  - `PRIV-API-NNN`: the field names of each GET response, so an API that
+    serialises `password_hash`, `secret` or `ssn` is caught.
+  - `PRIV-SITE-001`: a privacy-policy link that loads.
+  - Evidence names the kind of thing found and a masked prefix, never the
+    value.
+- **The `privacy-auditor` agent** (`PRIV-BR-NNN`). In a fresh browser it
+  checks third-party requests before consent against
+  `references/trackers.md`, and whether rejecting consent stops them. It
+  also flags tokens, emails and card numbers in localStorage or
+  sessionStorage, and session-like cookies readable from script.
+  `privacy.consent_required`, `privacy.allow_hosts` and `privacy.trackers`
+  in `framework.json` tune it.
+- **`/testwright:run --data`** (the **data-integrity** skill):
+  - **`state-machine-mapper`** reads each record's states, allowed moves and
+    guarding lines out of the code into `tests/.cache/states.txt`. It writes
+    a `STATE-NNN` case for every forbidden move, actions with no state check
+    first.
+  - **`data-verifier`** writes `DATA-NNN` round-trip cases for every writing
+    flow:
+    - every field reads back exactly, at its longest and with Unicode;
+    - computed fields are right, and client-sent protected fields are
+      ignored;
+    - a delete leaves no orphans.
+
+    It can add one read-only `SELECT` when `db.readonly_url` is given.
+  - Both write data, so both arrive `Skipped` for `--allow-destructive`.
+- **`/testwright:run --seed`** (the **test-data** skill):
+  - **`tf.sh preconditions`** lists every data need the cases state, with
+    the cases that depend on it, from Preconditions and from volume-stating
+    Test Data.
+  - **`test-data-seeder`** plans how to create that data through the
+    project's own seeds or its API, never raw SQL. It writes
+    `tests/data/seed.sh`, which is marked `tw-seed`, idempotent and
+    local-only, and runs it only on the user's yes.
+- **The demo app**:
+  - a users endpoint that serialises `password_hash`;
+  - a change-password form sent by GET;
+  - an email in an HTML comment and a tracker script;
+  - orders whose `cancel` skips the state check that `ship` makes;
+  - notes cut to 20 characters on save;
+  - a privacy page.
+
+### Changed
+
+- The cost projection's `vitals` row is now `audits`. It counts every case
+  that needs one browser audit call: Web Vitals and privacy browser cases.
+- `run-api`, compiling and the browser queue leave `tags=privacy` to
+  `tf.sh privacy` and `privacy-auditor`. `privacy-auditor` joins every
+  browser agent's serial list.
+- The QA checklist now credits categories 5, 8, 19 and 34.
+- **`tf.sh next-id <PREFIX> <n>`** returns a batch of ids. Nothing is reserved
+  until a merge, so an agent that asked once per case got the same id every
+  time. Every authoring agent now asks for its batch at once.
+
+### Fixed
+
+- **`--allow-destructive` never ran a Skipped api case.** Authoring parks a
+  destructive case as `Skipped`, and the execution skill says
+  `--allow-destructive` un-parks it. `run-api` skipped every Skipped case
+  before it looked at the flag, so an api case marked that way could never
+  run. It now runs destructive-tagged Skipped cases under the flag; any
+  other Skipped case stays skipped.
+- **A templated route is UNJUDGED, not a 404.** An api case whose route still
+  holds a `{param}` used to request the literal template and fail. It now
+  says to seed a record and set the route.
+
+Found by running `state-machine-mapper` against the demo app. Its STATE
+cases for cancelling a shipped or delivered order fail on the demo's real
+bug, and its cases for illegal `ship` and `deliver` moves pass.
+
 ## [2.4.0] - 2026-09-28
 
 A **minor** release: three new flags and three engine subcommands, all free
