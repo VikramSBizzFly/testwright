@@ -48,7 +48,9 @@ credential rules are owned by the **auth** skill.
 `tags=seo` cases are not in this queue. `tf.sh seo run` judges them over
 curl, and the `seo-auditor` agent takes only the ones it hands on. Nor are
 `tags=perf` cases: `tf.sh perf run` times them over curl, and the
-`perf-auditor` agent takes the `vitals` ones it lists.
+`perf-auditor` agent takes the `vitals` ones it lists. Nor are `tags=headers`,
+`links` or `contract` cases: `tf.sh headers|links|contract run` judge them
+over curl, with no agent at all.
 
 `--headed` shows the browser instead of headless.
 

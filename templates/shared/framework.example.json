@@ -12,5 +12,8 @@
     "vitals": { "lcp_ms": 2500, "cls": 0.1, "tbt_ms": 200, "max_kb": 2048, "max_requests": 100 },
     "load": { "targets": ["/"], "allow_hosts": [], "users": 10, "seconds": 15, "max_error_rate": 0.01, "p95_ms": 1500 }
   },
-  "seo": { "noindex_allow": [], "max_sitemap_urls": 200 }
+  "seo": { "noindex_allow": [], "max_sitemap_urls": 200 },
+  "headers": { "skip": [] },
+  "links": { "max_pages": 50, "max_per_page": 200 },
+  "contract": { "spec": "", "strict": false }
 }

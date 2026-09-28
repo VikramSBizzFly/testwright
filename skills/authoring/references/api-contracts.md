@@ -83,6 +83,33 @@ An older case with no `expect_code` still works: `tags=refused` inverts pass/fai
 so a `200` on an endpoint that should have rejected you is a **failure**. New
 cases state `expect_code` instead — it says exactly what "rejected" means.
 
+## Contract drift (`--contract`, `tags=contract`)
+
+An `api` case asks whether the endpoint answered with the right status.
+`tf.sh contract` asks whether what it answered is still what the spec
+promises. It needs no authoring:
+
+- `tf.sh contract cases` reads the spec and writes one `CONTRACT-NNN` per GET
+  operation. A `{param}` path is filled from a route an existing `api` case
+  already requests, and skipped otherwise.
+- `tf.sh contract run` requests each route and validates the live status and
+  JSON body with `scripts/tf-contract.py` (standard library only). It checks
+  `$ref`, type, nullable, required, enum, items, `allOf`/`anyOf`/`oneOf` and
+  `additionalProperties: false`.
+
+Findings name the JSON path: `$.items[3].price: is string, contract says
+number`. An undocumented status code is a finding too.
+
+The spec comes from:
+
+1. `"contract": { "spec": "docs/openapi.json" }` in `framework.json`;
+2. else the first `openapi.json` or `swagger.json` in the project;
+3. else one the app serves (`/openapi.json`, `/v3/api-docs`, ...).
+
+It must be JSON — the standard library cannot read YAML, so point
+`contract.spec` at a JSON copy. `"strict": true` also reports undocumented
+fields. Without Python the cases are UNJUDGED, never failed.
+
 ## The line you may not cross
 
 A case is `api` only if it is a **headless endpoint — nothing a person ever

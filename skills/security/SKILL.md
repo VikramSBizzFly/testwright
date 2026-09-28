@@ -51,6 +51,37 @@ Evidence records **that** protected content rendered — never the content.
 Redact on write: a leaked salary pasted into `tests/evidence/` has simply moved
 the leak somewhere else.
 
+## Security headers (`--headers`, `tags=headers`) — free, over curl
+
+The defences a browser applies only when the server asks for them. `tf.sh
+headers cases` writes the cases and `tf.sh headers run` judges them for zero
+tokens:
+
+- `HDR-NNN`, one per page:
+  - a Content-Security-Policy, and one that does not allow `'unsafe-inline'`
+    script without a nonce or hash;
+  - `X-Frame-Options` or CSP `frame-ancestors`, against clickjacking;
+  - `X-Content-Type-Options: nosniff`;
+  - no Referrer-Policy that leaks full URLs;
+  - HSTS of at least 180 days, when the page is served over https.
+- `HDR-SITE-001` CORS: an arbitrary Origin, or `null`, is never echoed back
+  with credentials. It checks the home page and up to ten GET endpoints.
+- `HDR-SITE-002` no `Server` or `X-Powered-By` banner names a version, and a
+  missing page shows no stack trace.
+- `HDR-SITE-003` session cookies are HttpOnly and SameSite, and Secure on
+  https. `tf.sh login` keeps each cookie's name and attributes in
+  `tests/.auth/<role>.setcookie`, never its value.
+- `HDR-SITE-004` plain http redirects to https. It is skipped when the target
+  itself is http.
+
+A check a project has ruled out goes in `framework.json` as
+`"headers": { "skip": ["csp-inline"] }`, using the bracketed name from the
+finding. These are `tags=headers`, not `tags=security`: a missing header is a
+missing defence, not someone reaching what they must not, so it does not pin
+the panel or exit `2`. Severity is Medium for CSP, framing and CORS, and Low
+for banners and nosniff. Raise CORS to Critical when the endpoint that trusts
+any origin returns personal data.
+
 ## Scope — authorization only
 
 Probe what a user is allowed to reach. **Never** send an injection payload,

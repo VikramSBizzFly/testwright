@@ -8,7 +8,7 @@ Run the tests. Arguments: `$ARGUMENTS`
 
 Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`
-`--seo` `--perf` `--load`.
+`--seo` `--perf` `--load` `--headers` `--links` `--contract`.
 
 **Bare `/testwright:run` means `--changed`**, falling back to `smoke`-tagged cases when
 nothing has changed. A full browser run takes minutes, so the whole suite is
@@ -70,6 +70,12 @@ tf.sh merge /tmp/new.csv
    then `tf.sh merge /tmp/perf.csv`. On `--perf`, then one `perf-case-author`
    call per feature in the featuremap, for the code patterns that will be slow
    at scale — load the **performance** skill.
+10. The curl check families, each **on its flag**, the same way and at no cost:
+    `tf.sh headers cases …` on `--headers` (**security** skill),
+    `tf.sh links cases …` on `--links` (**signals** skill) — both take
+    `tests/.cache/routes.txt tests/.cache/privileged.txt` — and
+    `tf.sh contract cases` on `--contract` (needs an OpenAPI/Swagger JSON;
+    **authoring** skill, `references/api-contracts.md`). Merge each.
 
 ```sh
 tf.sh prune --apply
@@ -92,7 +98,8 @@ runs.**
 1. For every `page` case whose route has no `tests/.cache/pages/<route>.txt` —
    or whose model predates the last source hash — call the `page-modeler` agent
    for that route. One route per call, one snapshot each, never two at once.
-   Leave out `tags=seo` and `tags=perf` cases: they never need a page model.
+   Leave out `tags=seo`, `perf`, `headers`, `links` and `contract` cases: the
+   engine judges them, and they never need a page model.
 2. Then call the `test-compiler` agent per route. It reads the page model and
    compiles **every** case on that route into `tests/.cache/recipes/<id>.rcp`
    without opening a browser, and writes `spec_file` back.
@@ -113,6 +120,9 @@ step leaves `test-runner` with nothing to replay.
    On `--load`, **`tf.sh perf load`** prints the plan and sends nothing. Show
    the user the plan — it is real concurrent traffic — and only on their yes
    run `tf.sh perf load --yes`.
+   On `--headers`, `--links` and `--contract`, **`tf.sh headers run`**,
+   **`tf.sh links run`** and **`tf.sh contract run`** — curl, free, no
+   agent.
 2. **Promoted specs** — any case with a `spec_file`, run by the project's own
    test command. Also free.
 3. **Browser** — everything else. Load the **execution** skill and hand
