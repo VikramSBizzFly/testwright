@@ -62,7 +62,7 @@ BUG_HEADER='Bug No,Module,Bug Description,Steps to Reproduce,Expected Result,Act
 # always the matching version -- and fall back to the plugin root.
 TF_LIB="$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)/lib"
 [ -f "$TF_LIB/core.sh" ] || TF_LIB="${CLAUDE_PLUGIN_ROOT:-}/scripts/lib"
-for _m in core progress store integrity discovery generate auth api seo perf checks headers links contract report migrate bugs xlsx; do
+for _m in core progress store integrity discovery generate auth api seo perf checks headers links contract privacy seed report migrate bugs xlsx; do
   [ -f "$TF_LIB/$_m.sh" ] || { echo "tf: missing module $TF_LIB/$_m.sh -- reinstall the plugin" >&2; exit 3; }
   # shellcheck disable=SC1090
   . "$TF_LIB/$_m.sh"
@@ -78,8 +78,8 @@ bugs       bug from | bug set | bug list
 store      check | restore
 excel      xlsx [--import|--status]
 discovery  routes | forms | schemas | hash | cache-check | impacted | cover
-generate   rbac
-execute    login | storage-state | preflight | run-api | seo | perf | headers | links | contract
+generate   rbac | preconditions
+execute    login | storage-state | preflight | run-api | seo | perf | headers | links | contract | privacy
 report     summary | watch | cost | diff | junit | render | latest
 meta       version | help
 
@@ -88,6 +88,7 @@ meta       version | help
   set AUTH-002 status=Fail "actual=HTTP 200, payroll rendered"
   merge /tmp/new-cases.tsv        additive; never overwrites status or notes
   merge --check /tmp/new.tsv      validate only; a malformed row rejects the file
+  next-id STATE 20               the next 20 free ids (nothing is reserved until merge)
   check                           is the store readable? (line numbers if not)
   restore [--from backup|xlsx]    put back the last store that parses
   migrate                         convert an old 20-column suite
@@ -102,6 +103,8 @@ meta       version | help
   headers cases|run              CSP, framing, nosniff, HSTS, CORS, banners, cookie flags
   links cases|run                broken links, dead anchors, mixed content; a crawl from /
   contract cases|run             live API responses against the OpenAPI spec (python3)
+  privacy cases|run              secrets, card/ID numbers, sensitive URLs, exposed fields
+  preconditions [--status Fail]  the data every case assumes exists, grouped
   storage-state admin            cookie jar -> Playwright storage state
   bug from AUTH-002 "Bug Description=..." Severity=Critical
   bug set BUG-003 "Bug Link=https://github.com/o/r/issues/12"
@@ -172,6 +175,8 @@ case "$sub" in
   headers)   cmd_headers "$@" ;;
   links)     cmd_links "$@" ;;
   contract)  cmd_contract "$@" ;;
+  privacy)   cmd_privacy "$@" ;;
+  preconditions) cmd_preconditions "$@" ;;
   junit)     cmd_junit "$@" ;;
   diff)      cmd_diff "$@" ;;
   render)    cmd_render "$@" ;;

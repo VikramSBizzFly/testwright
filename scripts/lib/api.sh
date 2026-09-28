@@ -49,7 +49,7 @@ cmd_run_api() {
     awk -v us="$US" "$AWKLIB"'NR > 1 { n = csvsplit($0, F); o = F[1]
       # A perf case times an endpoint and a contract case checks its body;
       # `tf.sh perf` and `tf.sh contract` own those verdicts.
-      if (index("," F[5] ",", ",perf,") || index("," F[5] ",", ",contract,")) next
+      if (index("," F[5] ",", ",perf,") || index("," F[5] ",", ",contract,") || index("," F[5] ",", ",privacy,")) next
       for (i = 2; i <= 11; i++) o = o us F[i]; print o }' > "$work"
 
   roles="$(json_keys "$CREDS" roles 2>/dev/null | tr '\n' ' ')"
@@ -72,7 +72,15 @@ cmd_run_api() {
   skip=0; unjudged=0
   while IFS="$US" read -r id typ who route tags status method body headers expect_code repeat; do
     [ -n "${id:-}" ] || continue
-    [ "$(qa_status "$status")" = "Skipped" ] && { skip=$((skip + 1)); _tf_progress_tick SKIP "$typ" "$id"; continue; }
+    # Skipped is how authoring parks a destructive case, and --allow-destructive
+    # is how a person un-parks it (the execution skill's queue table). Any
+    # other Skipped case stays skipped: someone opted it out.
+    if [ "$(qa_status "$status")" = "Skipped" ]; then
+      case ",$tags," in
+        *,destructive,*) [ "$allow_destructive" = 1 ] || { skip=$((skip + 1)); _tf_progress_tick SKIP "$typ" "$id"; continue; } ;;
+        *) skip=$((skip + 1)); _tf_progress_tick SKIP "$typ" "$id"; continue ;;
+      esac
+    fi
     case "$tags" in
       *destructive*) [ "$allow_destructive" = "1" ] || \
         { skip=$((skip + 1)); _tf_progress_tick SKIP "$typ" "$id"; continue; } ;;
@@ -84,7 +92,12 @@ cmd_run_api() {
 
     t0=$(date +%s%N 2>/dev/null || echo 0)
     reason=""; actual=""
-    _api_prepare "$id" "$(_api_role "$who")" "$m" "$body" "$headers" "$route" "$tags" || reason="$API_WHY"
+    # A route still holding a {param} needs a real record first: a request to
+    # the literal template is a 404 that says nothing about the app.
+    case "$route" in
+      *'{'*'}'*) reason="route is a template: seed a record and set the route (test-data-seeder)" ;;
+      *) _api_prepare "$id" "$(_api_role "$who")" "$m" "$body" "$headers" "$route" "$tags" || reason="$API_WHY" ;;
+    esac
     if [ -z "$reason" ]; then
       set -- -s -o /dev/null -w '%{http_code}' --max-time 20 --max-redirs 0
       [ "$m" = GET ] || set -- "$@" -X "$m"

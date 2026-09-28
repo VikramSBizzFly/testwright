@@ -24,8 +24,10 @@ cmd_cost() {
       if (index("," tags ",", ",perf,")) return "perf"
       # headers, links and contract: curl families run by their own tf.sh
       # subcommand (lib/checks.sh).
+      # Privacy browser cases need one privacy-auditor call each.
+      if (index("," tags ",", ",privacy,") && index("," tags ",", ",browser,")) return (status == "Skipped") ? "skip" : "vitals"
       if (index("," tags ",", ",headers,") || index("," tags ",", ",links,") || \
-          index("," tags ",", ",contract,")) return "checks"
+          index("," tags ",", ",contract,") || index("," tags ",", ",privacy,")) return "checks"
       if (type == "api")        return "api"
       # SEO cases are page cases a curl request answers: `tf.sh seo run`.
       if (index("," tags ",", ",seo,")) return "seo"
@@ -55,9 +57,9 @@ cmd_cost() {
       if (N["perf"] > 0)
         printf "%-9s %6d  %-34s %10s\n", "perf", N["perf"], "curl, server timing and latency", "0"
       if (N["checks"] > 0)
-        printf "%-9s %6d  %-34s %10s\n", "checks", N["checks"], "curl: headers, links, contract", "0"
+        printf "%-9s %6d  %-34s %10s\n", "checks", N["checks"], "curl, engine check families", "0"
       if (N["vitals"] > 0)
-        printf "%-9s %6d  %-34s %10d\n", "vitals", N["vitals"], "browser, Web Vitals per page", tVitals
+        printf "%-9s %6d  %-34s %10d\n", "audits", N["vitals"], "browser, one audit call per page", tVitals
       printf "%-9s %6d  %-34s %10s\n", "spec",   N["spec"]+0,   "your own test runner, headless","0"
       printf "%-9s %6d  %-34s %10d\n", "replay", N["replay"]+0, "browser, replaying a recipe",   tReplay
       printf "%-9s %6d  %-34s %10d\n", "compile",N["compile"]+0,"browser, first time for this case", tCompile
@@ -246,7 +248,7 @@ cmd_summary() {
     id = $1; type = $2; role = $3; route = $4; actual = $6; verdict = $7
     # Not a verdict on the app: listed apart, and left out of the pass rate.
     if (verdict == "UNJUDGED") {
-      NUNJ++; if (type == "seo") NUNJSEO++; if (type == "perf") NUNJPERF++; if (index(",headers,links,contract,", "," type ",")) NUNJCHK++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
+      NUNJ++; if (type == "seo") NUNJSEO++; if (type == "perf") NUNJPERF++; if (index(",headers,links,contract,privacy,", "," type ",")) NUNJCHK++; if (type == "privacy") NUNJPRIV++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
       next
     }
     total++; V[verdict]++; TT[type]++
@@ -268,7 +270,7 @@ cmd_summary() {
         OTHC[NOTH] = actual
       }
     }
-    if (index(",api,seo,perf,headers,links,contract,", "," type ",")) FREE++
+    if (index(",api,seo,perf,headers,links,contract,privacy,", "," type ",")) FREE++
     dur += $8 + 0
     next
   }
@@ -416,6 +418,8 @@ cmd_summary() {
         sect("     \035client-rendered pages: hand tests/.cache/seo/render.txt to seo-auditor\030")
       if (NUNJPERF > 0)
         sect("     \035Web Vitals need a browser: hand tests/.cache/perf/vitals.txt to perf-auditor\030")
+      if (NUNJPRIV > 0)
+        sect("     \035trackers and storage need a browser: hand tests/.cache/privacy/browser.txt to privacy-auditor\030")
     }
     if (skipped > 0) {
       if (!warned) sect("")
