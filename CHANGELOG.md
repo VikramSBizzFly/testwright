@@ -9,6 +9,75 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.8.0] - 2026-09-29
+
+A **minor** release: five new flags, one engine subcommand, nine agents, two
+skills and nine CI templates. Existing suites keep working untouched.
+
+This is phase 5, the last of the roadmap: the edges of the happy path, the
+protocols beyond REST, and CI beyond GitHub.
+
+### Added
+
+- **`tf.sh export-check <file> [--rows N] [--columns a,b]`**
+  (`scripts/lib/files.sh`) opens a downloaded export, for free:
+  - **CSV and TSV**: header, field counts, UTF-8, the expected columns and
+    row count, and **formula injection**;
+  - **XLSX and JSON**: rows, and injected cells (with `python3`);
+  - **PDF**: `%PDF`, `%%EOF` and the page count;
+  - any file that is really an HTML page.
+- **`/testwright:run --edge`** (the **edge-cases** skill):
+  - **`export-verifier`** downloads each export and checks it against the
+    list it mirrors.
+  - **`upload-prober`** sends benign probe files: over the limit, the wrong
+    type, renamed, empty, huge, or named `../`. It expects a clean refusal
+    or a safe stored name.
+  - **`concurrency-prober`** fires the same write N times at once, for lost
+    updates, double submits, silent overwrites and oversells.
+
+  Writes need `--allow-destructive` and a local target.
+- **`--ux`** (**`ux-heuristics-reviewer`**) checks six mechanical rules:
+  - submit feedback;
+  - double-submit protection;
+  - confirming destructive actions;
+  - errors at the field;
+  - dialog focus;
+  - the page title.
+- **`--explore`** (**`exploratory-scout`**): the three riskiest routes, by
+  change, coverage and failure history, with 25 browser actions each. Every
+  oddity becomes a `tags=explored` case, never a verdict.
+- **GraphQL** (**`graphql-case-author`**, the **api-protocols** skill):
+  - curl cases per operation, with per-field authorization and missing
+    arguments;
+  - the endpoint's introspection, depth and batching limits;
+  - a refusal carried in `errors` with HTTP 200 is handled.
+- **`--realtime`** (**`websocket-prober`**): a channel needs a session, keeps
+  one user's room from another, sends the fields the client reads, and
+  reconnects after going offline.
+- **`--mobile`** (**`mobile-web-auditor`**): zoom not blocked, the manifest
+  and icons, an offline page from the service worker, input types and
+  keyboards, no hover-only controls.
+- **`email-template-auditor`**, under `--notifications`: each saved email at
+  phone width, in dark mode and with images off.
+- **`tf.sh audit-cases ux|mobile`**, alongside `i18n`, `resilience` and
+  `memory`.
+- **CI templates** for `gitlab-ci.yml`, `azure-pipelines.yml` and
+  `bitbucket-pipelines.yml`, for every stack, step for step with the GitHub
+  Actions ones. `ci-wirer` picks the one matching the repo, and merges into
+  an existing GitLab or Bitbucket file instead of replacing it.
+- **The demo app**:
+  - a notes export that carries a formula;
+  - a counter that loses updates under concurrency;
+  - an avatar upload that keeps a `../` filename.
+
+### Changed
+
+- `run-api`, the compiler and the cost projection route the new
+  agent-judged tags to their agents: `export`, `upload`, `concurrency`,
+  `ux`, `mobile` and `realtime`.
+- The QA checklist credits categories 12, 15, 20, 21 and 37. Its note for
+  26 says what `--mobile` does and does not cover.
+
 ## [2.7.0] - 2026-09-29
 
 A **minor** release: eight new flags, four engine subcommands, seven agents

@@ -226,6 +226,11 @@ it everything still works — your tests just stay in
 | `--cross-browser`     | Runs your saved tests in Firefox and Safari's engine too    |
 | `--analytics`         | Checks your tracking still records what you think it does   |
 | `--post-deploy`       | Takes a quick, read-only look at your live site (asks first) |
+| `--edge`              | Tries exports, uploads and two people clicking at once      |
+| `--ux`                | Checks forms give feedback and deletes ask first            |
+| `--explore`           | Pokes around the riskiest pages and writes up what it finds |
+| `--realtime`          | Checks live updates are private and reconnect               |
+| `--mobile`            | Checks your site behaves like a good phone app              |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -342,6 +347,14 @@ checks it doesn't keep eating memory. **`--post-deploy`** takes a quick,
 look-only walk around your live site after a release, and asks before it
 starts.
 
+**`--edge`** tries the corners: it downloads your exports and opens them
+(is it really a spreadsheet, does it have every row, would a cell run as a
+formula in Excel?), uploads the files people aren't supposed to (too big,
+wrong type, a funny name), and has ten people click the same button at the
+same moment. **`--explore`** pokes around the pages most likely to be
+broken, the way a curious tester would, and writes each odd thing it finds
+as a new test. It never decides for itself that something is a bug.
+
 All of them are optional. Ask for them when you want them:
 
 ```
@@ -359,6 +372,8 @@ All of them are optional. Ask for them when you want them:
 /testwright:run --notifications
 /testwright:run --resilience --memory
 /testwright:run --post-deploy
+/testwright:run --edge --allow-destructive
+/testwright:run --ux --explore
 ```
 
 ---

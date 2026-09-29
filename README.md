@@ -144,6 +144,11 @@ same name, and `/testwright:` never does.
 --cross-browser     promoted specs in Firefox and WebKit too (Tier 1/2)
 --analytics         tracked events still fire, with the right properties
 --post-deploy       a read-only smoke check of a live deploy (asks first)
+--edge              exports, uploads and race conditions (writes: with --allow-destructive)
+--ux                double submits, unconfirmed deletes, feedback and focus
+--explore           an aimed, time-boxed look around the riskiest pages
+--realtime          websocket and live-update channels: session, rooms, reconnect
+--mobile            manifest, offline page, zoom and keyboards on a phone
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -383,6 +388,27 @@ Optional passes that ride on cases you already have:
   at `postdeploy.base_url`: status, speed, title, no stack trace, and TLS
   expiry. It is paced, capped and asks first. It is the one command that
   talks to a remote host on purpose.
+- **`--edge`** — the places the happy path stops:
+  - **exports**: `tf.sh export-check` opens the downloaded CSV, Excel, JSON
+    or PDF and fails an HTML error page saved as `.csv`, rows that differ
+    from the screen, and cells that Excel would run as formulas;
+  - **uploads**: over the limit, the wrong type, empty, or named `../`; all
+    benign, all generated on the spot;
+  - **concurrency**: the same write sent ten times at once, catching lost
+    updates, double orders and oversells.
+
+  Anything that writes needs `--allow-destructive`.
+- **`--ux`**, **`--explore`**, **`--realtime`** and **`--mobile`** —
+  mechanical usability rules, an aimed exploratory scout whose finds become
+  cases (never verdicts), WebSocket channels (session, room isolation,
+  reconnect), and the mobile-web layer (manifest, offline page, zoom, input
+  types).
+- **GraphQL** — when the app has an endpoint, `graphql-case-author` writes
+  curl cases per operation: per-field authorization, missing arguments, and
+  depth, batching and introspection limits.
+- **CI** — templates for GitHub Actions, GitLab CI, Azure Pipelines and
+  Bitbucket Pipelines, for every stack. `ci-wirer` merges into the CI file
+  the repo already has.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -481,9 +507,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **23 skills** — the rules for each stage, loaded only when
+Above the engine sit **25 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **41 agents**, one per stage:
+on — and **50 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -509,6 +535,9 @@ on — and **41 agents**, one per stage:
 | copy and languages                               | `content-reviewer`, `i18n-auditor`                                         |
 | emails and analytics                             | `outbox-checker`, `analytics-verifier`                                     |
 | failure, memory and other browsers               | `resilience-prober`, `leak-hunter`, `cross-browser-runner`                 |
+| exports, uploads, races                          | `export-verifier`, `upload-prober`, `concurrency-prober`                   |
+| usability and exploration                        | `ux-heuristics-reviewer`, `exploratory-scout`                              |
+| GraphQL, realtime, mobile web, email layout      | `graphql-case-author`, `websocket-prober`, `mobile-web-auditor`, `email-template-auditor` |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -570,6 +599,12 @@ against the fixture's deliberate faults. The measuring scripts of
 `resilience-prober`, `leak-hunter` and `i18n-auditor` were run in a real
 browser against the fixture's failing feed, leaking SPA and clipped German
 button. The Phase 4 agents themselves have not yet been run end to end.
+Phase 5: `tf.sh export-check` was run against crafted CSV, JSON, PDF and
+XLSX files and the fixture's export. The export, concurrency and upload
+probes were run against the fixture's faults. The new CI templates follow
+the GitHub Actions ones step for step, but have not been run on those
+services, and no YAML parser was available to machine-check them. The
+Phase 5 agents have not yet been run end to end.
 
 ## Playwright MCP naming
 
@@ -583,4 +618,6 @@ If you add the MCP under a different server name, add that prefix to every agent
 that drives a browser: `page-modeler`, `test-runner`, `login-broker`,
 `route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober`,
 `seo-auditor`, `perf-auditor`, `privacy-auditor`, `content-reviewer`,
-`i18n-auditor`, `resilience-prober`, `leak-hunter` and `analytics-verifier`.
+`i18n-auditor`, `resilience-prober`, `leak-hunter`, `analytics-verifier`,
+`ux-heuristics-reviewer`, `exploratory-scout`, `websocket-prober`,
+`mobile-web-auditor` and `email-template-auditor`.
