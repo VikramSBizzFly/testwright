@@ -28,7 +28,10 @@ cmd_cost() {
       # one audit call each -- never a page model or a recipe.
       if (index("," tags ",", ",privacy,") && index("," tags ",", ",browser,")) return (status == "Skipped") ? "skip" : "vitals"
       if (index("," tags ",", ",i18n,") || index("," tags ",", ",resilience,") || \
-          index("," tags ",", ",memory,") || index("," tags ",", ",analytics,")) return (status == "Skipped") ? "skip" : "vitals"
+          index("," tags ",", ",memory,") || index("," tags ",", ",analytics,") || \
+          index("," tags ",", ",ux,") || index("," tags ",", ",mobile,") || \
+          index("," tags ",", ",realtime,") || index("," tags ",", ",export,") || \
+          index("," tags ",", ",upload,") || index("," tags ",", ",concurrency,")) return (status == "Skipped") ? "skip" : "vitals"
       if (index("," tags ",", ",headers,") || index("," tags ",", ",links,") || \
           index("," tags ",", ",contract,") || index("," tags ",", ",privacy,") || \
           index("," tags ",", ",content,") || index("," tags ",", ",notifications,")) return "checks"
