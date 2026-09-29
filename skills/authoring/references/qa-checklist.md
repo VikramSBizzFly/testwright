@@ -39,7 +39,7 @@ not run is not a Critical bug. Nothing here starts as a finding.
 | 10 | Boundary & Data Limits | 081-086 | 6 | 1/3/2/0 | equivalence-class sampling per constrained field |
 | 13 | Navigation & Routing | 110-118 | 9 | 1/4/4/0 | `tf.sh routes`, plus deep links, back button, 404; `--links` for broken links, dead anchors and redirect loops |
 | 14 | Negative Testing | 119-126 | 8 | 4/3/1/0 | `page` + `api` with the values in `validation-rules.md` |
-| 15 | Edge Cases & Error Scenarios | 127-136 | 10 | 5/3/2/0 | `page` + `api`; empty, maximum, concurrent, interrupted |
+| 15 | Edge Cases & Error Scenarios | 127-136 | 10 | 5/3/2/0 | `page` + `api`; empty, maximum, concurrent, interrupted; `--resilience` for a page whose API fails, drops or is slow |
 | 16 | Security Testing | 137-148 | 12 | 7/4/1/0 | `--security` (**security** skill); `--headers` for CSP, framing, CORS, HSTS, banners and cookie flags |
 | 17 | Session & Authentication | 149-156 | 8 | 3/3/2/0 | `--security` + the **auth** skill: expiry, reuse after logout, fixation |
 | 18 | Role & Permission | 157-161 | 5 | 3/2/0/0 | the free `tf.sh rbac` sweep, judged from the rendered page |
@@ -63,12 +63,12 @@ Claiming these whole is the easiest way to make a report dishonest.
 | 11 | UI / Visual Verification | 087-101 | 15 | 0/4/10/1 | layout and rendering yes, via `page` and opt-in visual regression; brand and design-comp fidelity no |
 | 12 | UX / Usability | 102-109 | 8 | 0/3/5/0 | mechanical checks only — focus order, feedback on submit. Whether a flow *feels* right is a human judgement |
 | 19 | Database & Data Verification | 162-168 | 7 | 4/2/1/0 | what the app exposes, through `--data` round-trip reads; a single read-only `SELECT` when `db.readonly_url` is given. Schema, index and constraint checks stay out |
-| 22 | Notification Testing | 188-197 | 10 | 2/5/3/0 | in-app notifications yes; email and SMS only against an outbox or provider sandbox, never live delivery |
+| 22 | Notification Testing | 188-197 | 10 | 2/5/3/0 | in-app notifications yes; email through `--notifications` against a sandbox outbox (Mailpit/MailHog), never live delivery; SMS only through a provider sandbox |
 | 28 | Performance (Observational) | 237-242 | 6 | 0/4/2/0 | `--perf` (**performance** skill): server timing, endpoint p95, page weight, Web Vitals, and code patterns that will be slow at scale. `--load` adds a short, capped concurrency test. Not soak or capacity testing |
-| 30 | Localization | 252-258 | 7 | 0/4/3/0 | layout under a longer locale and RTL yes; translation accuracy no |
+| 30 | Localization | 252-258 | 7 | 0/4/3/0 | `--i18n`: clipped labels under a longer locale, RTL, `lang`, locale formats, untranslated strings; `--content` for missing translations and raw keys. Translation accuracy no |
 | 34 | Compliance, Privacy & Legal | 283-289 | 7 | 0/5/2/0 | `--privacy` (**privacy** skill): secrets and PII in responses and URLs, exposed API fields, trackers before consent, tokens in browser storage. Not a legal opinion |
-| 35 | Content & Documentation | 290-295 | 6 | 0/0/4/2 | presence of help text and error copy; not editorial quality |
-| 36 | Analytics Verification | 296-299 | 4 | 1/1/2/0 | whether the event fires, from network requests. Not whether the warehouse received it |
+| 35 | Content & Documentation | 290-295 | 6 | 0/0/4/2 | `--content`: placeholder copy, leaked templates and values, garbled text, and clear copy defects (`content-reviewer`); not editorial quality |
+| 36 | Analytics Verification | 296-299 | 4 | 1/1/2/0 | `--analytics`: whether each event fires, once, with its properties and no personal data. Not whether the warehouse received it |
 | 37 | Exploratory / Ad-hoc | 300-304 | 5 | 0/2/3/0 | by definition unscripted; a run can suggest where to look, not do it |
 
 ## Out of scope — report as out of scope, not as a gap
@@ -76,13 +76,13 @@ Claiming these whole is the easiest way to make a report dishonest.
 | # | Category | IDs | n | Why |
 | --- | --- | --- | --- | --- |
 | 1 | Test Readiness & Entry Criteria | 001-007 | 7 | Process gates — signed-off requirements, environment readiness. Nothing to execute |
-| 25 | Browser Compatibility | 217-224 | 8 | One browser per run; cross-browser needs a grid this does not drive |
+| 25 | Browser Compatibility | 217-224 | 8 | One browser per MCP session. At Tier 1/2, `--cross-browser` runs the promoted specs in Firefox and WebKit too; a grid of browser versions stays out |
 | 26 | Device & OS Compatibility | 225-231 | 7 | Real devices, not viewport emulation. `--responsive` is not a device check |
 | 31 | Mobile App Specific | 259-270 | 12 | Native apps. This tool tests web apps |
 | 32 | Installation & Upgrade | 271-277 | 7 | Deployment and migration, outside a test run |
 | 33 | Backup, Recovery & Failover | 278-282 | 5 | Infrastructure behaviour, and destructive by nature |
 | 39 | UAT Support | 311-315 | 5 | Human acceptance |
-| 42 | Post-Deployment Verification | 330-336 | 7 | Production. The production guard refuses a non-local target unless explicitly allowed |
+| 42 | Post-Deployment Verification | 330-336 | 7 | Production. The production guard refuses a non-local target unless explicitly allowed. `--post-deploy` is the one exception: a read-only, anonymous smoke check of `postdeploy.base_url`. Anything that writes stays out |
 
 ## Beyond the checklist
 

@@ -9,7 +9,8 @@ Run the tests. Arguments: `$ARGUMENTS`
 Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`
 `--seo` `--perf` `--load` `--headers` `--links` `--contract` `--privacy`
-`--data` `--seed` `--impact <base|PR>`.
+`--data` `--seed` `--impact <base|PR>` `--content` `--i18n` `--notifications`
+`--resilience` `--memory` `--analytics` `--cross-browser` `--post-deploy`.
 
 **`--impact <base|PR>`** replaces the selection. First call the
 `pr-impact-analyst` agent with the base branch, commit or PR number
@@ -92,6 +93,20 @@ tf.sh merge /tmp/new.csv
     `tf.sh preconditions`, then the `test-data-seeder` agent (**test-data**
     skill). Show the user its plan, and let it run `tests/data/seed.sh` only
     on their yes.
+14. The browser-audit families, each on its flag, all free to write:
+    - `tf.sh content cases` on `--content`;
+    - `tf.sh audit-cases i18n` on `--i18n`;
+    - `tf.sh audit-cases resilience` on `--resilience`, for pages that load
+      data;
+    - `tf.sh audit-cases memory` on `--memory`, for single-page-app routes.
+
+    `tf.sh audit-cases` takes the same route files as `content cases`. Merge
+    each (**localization** and **robustness** skills).
+15. On `--notifications`: `tf.sh notifications cases`, then one
+    `outbox-checker` call per feature (**notifications** skill). Before step
+    4, run `tf.sh notifications mark`.
+16. On `--analytics`: one `analytics-verifier` call per feature. It writes
+    and runs its own cases.
 
 ```sh
 tf.sh prune --apply
@@ -114,9 +129,10 @@ runs.**
 1. For every `page` case whose route has no `tests/.cache/pages/<route>.txt` —
    or whose model predates the last source hash — call the `page-modeler` agent
    for that route. One route per call, one snapshot each, never two at once.
-   Leave out `tags=seo`, `perf`, `headers`, `links`, `contract` and
-   `privacy` cases: the engine or an auditor judges them, and they never
-   need a page model.
+   Leave out `tags=seo`, `perf`, `headers`, `links`, `contract`, `privacy`,
+   `content`, `notifications`, `i18n`, `resilience`, `memory` and `analytics`
+   cases: the engine or an auditor judges them, and they never need a page
+   model.
 2. Then call the `test-compiler` agent per route. It reads the page model and
    compiles **every** case on that route into `tests/.cache/recipes/<id>.rcp`
    without opening a browser, and writes `spec_file` back.
@@ -142,8 +158,15 @@ step leaves `test-runner` with nothing to replay.
    agent. On `--privacy`, **`tf.sh privacy run`** — curl, free. It leaves
    each `tags=browser` case UNJUDGED, listing it in
    `tests/.cache/privacy/browser.txt`.
+   On `--content`, **`tf.sh content run`**; on `--notifications`,
+   **`tf.sh notifications run`** (after `run-api` has fired the triggers).
+   Both are free. On `--post-deploy`, **`tf.sh postdeploy`** prints its plan
+   against `postdeploy.base_url`. Show it to the user, and only on their yes
+   run `tf.sh postdeploy --yes` (**robustness** skill).
 2. **Promoted specs** — any case with a `spec_file`, run by the project's own
-   test command. Also free.
+   test command. Also free. On `--cross-browser`, the `cross-browser-runner`
+   agent runs them in Chromium, Firefox and WebKit and reports only
+   differences (Tier 1 and 2).
 3. **Browser** — everything else. Load the **execution** skill and hand
    route groups to the `test-runner` agent, one group at a time — never two
    browser agents at once. `--headed` shows the browser.
@@ -155,7 +178,12 @@ step leaves `test-runner` with nothing to replay.
    browser; on `--perf`, one `perf-auditor vitals <id> <route> <role>` call per
    line of `tests/.cache/perf/vitals.txt`; on `--privacy`, one
    `privacy-auditor <id> <route> <role>` call per line of
-   `tests/.cache/privacy/browser.txt`. Fold their rows back with
+   `tests/.cache/privacy/browser.txt`; on `--content`, one `content-reviewer
+   render` call per line of `tests/.cache/content/render.txt`, then one
+   `content-reviewer review`. For each `tags=i18n`, `resilience` or `memory`
+   case (`tf.sh select --tag <tag>`), make one call to `i18n-auditor`,
+   `resilience-prober` or `leak-hunter` respectively. The `leak-hunter` call
+   also needs the view steps to move between. Fold their rows back with
    `tf.sh setmany` as for `test-runner`: a review returns only the cases it
    fails.
 4. **Failures only** get further attention: the `test-triager` agent, one

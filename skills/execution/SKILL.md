@@ -51,7 +51,18 @@ curl, and the `seo-auditor` agent takes only the ones it hands on. Nor are
 `perf-auditor` agent takes the `vitals` ones it lists. Nor are `tags=headers`,
 `links` or `contract` cases: `tf.sh headers|links|contract run` judge them
 over curl, with no agent at all. `tags=privacy` cases go to `tf.sh privacy
-run`, and its `browser` ones to the `privacy-auditor` agent.
+run`, and its `browser` ones to the `privacy-auditor` agent. `content` and
+`notifications` are judged by `tf.sh`; `i18n`, `resilience`, `memory` and
+`analytics` by their own agents, one call per case.
+
+**Every agent that drives the browser runs alone.** The Playwright MCP is
+one shared browser. These agents are the browser agents: `test-runner`,
+`page-modeler`, `login-broker`, `route-crawler`, `a11y-auditor`,
+`responsive-auditor`, `security-prober`, `seo-auditor`, `perf-auditor`,
+`privacy-auditor`, `content-reviewer` (render mode), `i18n-auditor`,
+`resilience-prober`, `leak-hunter` and `analytics-verifier`. Queue them; never
+start one while another is running. An agent's own "never alongside" list
+is a reminder, and this list is the rule.
 
 `--headed` shows the browser instead of headless.
 

@@ -52,6 +52,14 @@ the word "test" gets uninstalled.
 | "is data saved correctly", "can I cancel a shipped…" | `/testwright:run --data` — writes cases, runs on `--allow-destructive` |
 | "we need test data", "seed it"                       | `/testwright:run --seed` — plans, then asks           |
 | "what does this PR affect", "what should I test"     | `/testwright:run --impact <base or PR>`               |
+| "check the copy", "typos", "lorem ipsum left in"     | `/testwright:run --content` — curl, free              |
+| "does it work in German", "RTL", "translations"      | `/testwright:run --i18n`                              |
+| "test the emails", "password reset email"            | `/testwright:run --notifications` — sandbox outbox    |
+| "what if the API is down", "error handling"          | `/testwright:run --resilience`                        |
+| "memory leak", "tab gets slow"                       | `/testwright:run --memory`                            |
+| "does it work in Safari/Firefox"                     | `/testwright:run --cross-browser` (Tier 1/2)          |
+| "is tracking still firing", "analytics events"       | `/testwright:run --analytics`                         |
+| "is the deploy healthy", "smoke test production"     | `/testwright:run --post-deploy` — read-only, asks first |
 | "is it ready to ship", "go/no-go"                    | `/testwright:report --release`                        |
 | "which requirements are untested", "traceability"    | `/testwright:report --trace`                          |
 | "is quality getting better", "trend"                 | `/testwright:report --trend`                          |
