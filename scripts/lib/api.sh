@@ -49,7 +49,8 @@ cmd_run_api() {
     awk -v us="$US" "$AWKLIB"'NR > 1 { n = csvsplit($0, F); o = F[1]
       # A perf case times an endpoint and a contract case checks its body;
       # `tf.sh perf` and `tf.sh contract` own those verdicts.
-      if (index("," F[5] ",", ",perf,") || index("," F[5] ",", ",contract,") || index("," F[5] ",", ",privacy,")) next
+      if (index("," F[5] ",", ",perf,") || index("," F[5] ",", ",contract,") || index("," F[5] ",", ",privacy,") || \
+          index("," F[5] ",", ",notifications,")) next
       for (i = 2; i <= 11; i++) o = o us F[i]; print o }' > "$work"
 
   roles="$(json_keys "$CREDS" roles 2>/dev/null | tr '\n' ' ')"
