@@ -1,0 +1,28 @@
+# Opt-in CI for Tier 1/2 Python projects, the GitLab CI twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from masked CI/CD variables (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+stages: [test]
+
+native-suite:
+  stage: test
+  image: python:3.11
+  rules:
+    - if: $CI_PIPELINE_SOURCE == "merge_request_event"
+    - if: $CI_PIPELINE_SOURCE == "web"
+  variables:
+    BASE_URL: $TEST_BASE_URL
+  script:
+    - pip install -r requirements.txt
+    - playwright install --with-deps
+    - pytest tests/specs --junitxml=tests/results/junit.xml
+  after_script:
+    - python tests/junit_to_csv.py tests/results/junit.xml tests/results/run-$CI_PIPELINE_ID.csv
+  artifacts:
+    when: always
+    paths:
+      - tests/results/*.csv
+      - test-results/**

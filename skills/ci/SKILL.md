@@ -9,8 +9,14 @@ description: Run the suite unattended and turn its exit code into a job verdict.
 
 CI has no person watching, so everything this framework normally says in a panel
 has to survive as an exit code and an artifact. Delegate the wiring to the
-`ci-wirer` agent; start from `templates/<stack>/ci/github-actions.yml`, which is
-copied in, never auto-enabled.
+`ci-wirer` agent. It starts from the template in `templates/<stack>/ci/` that
+matches the repo's CI system: `github-actions.yml`, `gitlab-ci.yml`,
+`azure-pipelines.yml` or `bitbucket-pipelines.yml`. The steps are the same in
+each. Templates are copied in, never auto-enabled.
+
+`tf.sh postdeploy --yes` makes a deploy gate on its own: run it after the
+deploy step against `postdeploy.base_url`, and its exit code fails the
+pipeline when the live site does not answer.
 
 ## The exit code is the verdict
 

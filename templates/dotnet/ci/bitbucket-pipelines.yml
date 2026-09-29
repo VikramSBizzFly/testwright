@@ -1,0 +1,26 @@
+# Opt-in CI for Tier 1/2 .NET projects, the Bitbucket Pipelines twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from a secured repository variable (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+image: mcr.microsoft.com/dotnet/sdk:8.0
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: &native
+          name: testwright (native)
+          script:
+            - dotnet build
+            - pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+            - BASE_URL=$TEST_BASE_URL dotnet test --logger "junit;LogFilePath=../../../tests/results/junit.xml"
+          after-script:
+            - dotnet tests/JunitToCsv.cs tests/results/junit.xml tests/results/run-$BITBUCKET_BUILD_NUMBER.csv
+          artifacts:
+            - tests/results/*.csv
+            - tests/results/junit.xml
+  custom:
+    testwright:
+      - step: *native
