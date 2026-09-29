@@ -444,14 +444,19 @@ _tf_validate_input() {
 }
 
 # next-id <PREFIX>  -> PREFIX-007
+# next-id <PREFIX> [count] -- the next free id, or the next <count> of them.
+# Nothing is reserved until the cases are merged, so an agent writing a batch
+# asks for the whole batch at once: calling this once per case before a merge
+# returns the same id every time.
 cmd_next_id() {
   need_csv
-  p="$1"
-  awk -v p="$p" "$AWKLIB"'
+  p="$1"; c="${2:-1}"
+  case "$c" in ''|*[!0-9]*|0) c=1 ;; esac
+  awk -v p="$p" -v c="$c" "$AWKLIB"'
     NR == 1 { hdrmap($0, H); next }
     { csvsplit($0, F); id = F[idcol(H)]
       if (index(id, p "-") == 1) { n = substr(id, length(p) + 2) + 0; if (n > max) max = n } }
-    END { printf "%s-%03d\n", p, max + 1 }
+    END { for (i = 1; i <= c; i++) printf "%s-%03d\n", p, max + i }
   ' "$CSV"
 }
 

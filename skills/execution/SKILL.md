@@ -50,7 +50,8 @@ curl, and the `seo-auditor` agent takes only the ones it hands on. Nor are
 `tags=perf` cases: `tf.sh perf run` times them over curl, and the
 `perf-auditor` agent takes the `vitals` ones it lists. Nor are `tags=headers`,
 `links` or `contract` cases: `tf.sh headers|links|contract run` judge them
-over curl, with no agent at all.
+over curl, with no agent at all. `tags=privacy` cases go to `tf.sh privacy
+run`, and its `browser` ones to the `privacy-auditor` agent.
 
 `--headed` shows the browser instead of headless.
 

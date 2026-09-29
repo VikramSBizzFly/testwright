@@ -31,10 +31,10 @@ not run is not a Critical bug. Nothing here starts as a finding.
 | --- | --- | --- | --- | --- | --- |
 | 3 | Smoke / Sanity | 016-022 | 7 | 5/2/0/0 | `page` cases tagged `smoke` |
 | 4 | Functional — Core Flows | 023-028 | 6 | 3/3/0/0 | the **flows** skill, then one `page` case per journey |
-| 5 | Functional — CRUD & Persistence | 029-036 | 8 | 6/1/1/0 | `page` cases that re-read the record in a fresh request, not just the toast |
+| 5 | Functional — CRUD & Persistence | 029-036 | 8 | 6/1/1/0 | `page` cases that re-read the record in a fresh request, not just the toast; `--data` (`data-verifier`) writes them per writing flow |
 | 6 | Functional — Search & Lists | 037-047 | 11 | 0/8/3/0 | `page` cases: filter, sort, paginate, no-match empty state |
 | 7 | Functional — Business Rules | 048-055 | 8 | 3/4/1/0 | `page` + `api`; the rule must hold when posted directly |
-| 8 | Functional — Workflow & States | 056-062 | 7 | 2/3/2/0 | flows, plus an illegal transition per state |
+| 8 | Functional — Workflow & States | 056-062 | 7 | 2/3/2/0 | flows, plus an illegal transition per state — `--data` (`state-machine-mapper`) reads the machine out of the code |
 | 9 | **Field & Form Validation** | 063-080 | 18 | 4/10/4/0 | `references/field-library.md` + `references/validation-rules.md` — the largest single category |
 | 10 | Boundary & Data Limits | 081-086 | 6 | 1/3/2/0 | equivalence-class sampling per constrained field |
 | 13 | Navigation & Routing | 110-118 | 9 | 1/4/4/0 | `tf.sh routes`, plus deep links, back button, 404; `--links` for broken links, dead anchors and redirect loops |
@@ -62,11 +62,11 @@ Claiming these whole is the easiest way to make a report dishonest.
 | 2 | Test Design & Coverage | 008-015 | 8 | 3/5/0/0 | authoring covers the design rules; sign-off and traceability to requirements are human |
 | 11 | UI / Visual Verification | 087-101 | 15 | 0/4/10/1 | layout and rendering yes, via `page` and opt-in visual regression; brand and design-comp fidelity no |
 | 12 | UX / Usability | 102-109 | 8 | 0/3/5/0 | mechanical checks only — focus order, feedback on submit. Whether a flow *feels* right is a human judgement |
-| 19 | Database & Data Verification | 162-168 | 7 | 4/2/1/0 | only what the app exposes. Direct schema, index and constraint checks need database access testwright does not take |
+| 19 | Database & Data Verification | 162-168 | 7 | 4/2/1/0 | what the app exposes, through `--data` round-trip reads; a single read-only `SELECT` when `db.readonly_url` is given. Schema, index and constraint checks stay out |
 | 22 | Notification Testing | 188-197 | 10 | 2/5/3/0 | in-app notifications yes; email and SMS only against an outbox or provider sandbox, never live delivery |
 | 28 | Performance (Observational) | 237-242 | 6 | 0/4/2/0 | `--perf` (**performance** skill): server timing, endpoint p95, page weight, Web Vitals, and code patterns that will be slow at scale. `--load` adds a short, capped concurrency test. Not soak or capacity testing |
 | 30 | Localization | 252-258 | 7 | 0/4/3/0 | layout under a longer locale and RTL yes; translation accuracy no |
-| 34 | Compliance, Privacy & Legal | 283-289 | 7 | 0/5/2/0 | observable behaviour — consent recorded, PII not leaked into a response. Not a legal opinion |
+| 34 | Compliance, Privacy & Legal | 283-289 | 7 | 0/5/2/0 | `--privacy` (**privacy** skill): secrets and PII in responses and URLs, exposed API fields, trackers before consent, tokens in browser storage. Not a legal opinion |
 | 35 | Content & Documentation | 290-295 | 6 | 0/0/4/2 | presence of help text and error copy; not editorial quality |
 | 36 | Analytics Verification | 296-299 | 4 | 1/1/2/0 | whether the event fires, from network requests. Not whether the warehouse received it |
 | 37 | Exploratory / Ad-hoc | 300-304 | 5 | 0/2/3/0 | by definition unscripted; a run can suggest where to look, not do it |

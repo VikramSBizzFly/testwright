@@ -125,6 +125,9 @@ same name, and `/testwright:` never does.
 --headers           check security headers, CORS and cookie flags
 --links             find broken links, dead anchors and mixed content
 --contract          check live API responses against the OpenAPI spec
+--privacy           find leaked secrets and personal data, and trackers before consent
+--data              write cases proving saved data and state changes are right
+--seed              plan (and, on your yes, create) the data the cases need
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -315,6 +318,29 @@ Optional passes that ride on cases you already have:
   is requested live and its status and JSON body checked against the schema:
   types, required fields, enums, and `oneOf`. Drift is reported by JSON path.
   It needs Python 3's standard library, and nothing else.
+- **`--privacy`** — what the app gives away. Over curl, for free:
+  - keys, card numbers and ID numbers in page source (masked in the
+    evidence, never copied);
+  - passwords and tokens in URLs;
+  - password forms sent by GET;
+  - API responses that expose `password_hash` or a secret;
+  - personal pages that a shared cache may keep.
+
+  In a browser, the `privacy-auditor` agent checks for trackers that load
+  before consent or after it is rejected, and for tokens or personal data
+  left in localStorage.
+- **`--data`** — the `state-machine-mapper` agent reads each record's states
+  out of the code (order: pending → paid → shipped) and writes a case for
+  every move it forbids. The actions that forget to check come first. The
+  `data-verifier` agent writes cases that read each saved record back in a
+  fresh request: values truncated or mangled, the wrong owner, orphans left
+  by a delete. Both write data, so they run only with
+  `--allow-destructive`.
+- **`--seed`** — `tf.sh preconditions` lists the data every case assumes
+  ("an order in status shipped", "at least 1,000 notes"). The
+  `test-data-seeder` agent then plans how to create it through the project's
+  own seeds or API, and writes a marked, idempotent, local-only
+  `tests/data/seed.sh` that runs only when you say yes.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -413,9 +439,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **15 skills** — the rules for each stage, loaded only when
+Above the engine sit **18 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **23 agents**, one per stage:
+on — and **27 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -431,6 +457,9 @@ on — and **23 agents**, one per stage:
 | accessibility, responsive, visual, authorization | `a11y-auditor`, `responsive-auditor`, `visual-reviewer`, `security-prober` |
 | SEO the engine cannot judge                      | `seo-auditor`                                                              |
 | Web Vitals, and perf bugs found in the code      | `perf-auditor`, `perf-case-author`                                         |
+| trackers, consent and browser storage            | `privacy-auditor`                                                          |
+| state machines and saved-data round trips        | `state-machine-mapper`, `data-verifier`                                    |
+| the data cases need                              | `test-data-seeder`                                                         |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -480,7 +509,11 @@ and `--load` engine checks (`tf.sh perf`) were run against the fixture, and the
 page; the two perf agents have not yet been run end to end as agents. The
 `--headers`, `--links` and `--contract` checks run entirely in the engine,
 and each was run against the fixture's deliberate faults. The contract
-validator was also run against a set of schema edge cases.
+validator was also run against a set of schema edge cases. The `--privacy`
+engine checks and `tf.sh preconditions` were run against the fixture. The
+`privacy-auditor`'s storage script and network capture were run in a real
+browser. `state-machine-mapper` was run once as an agent against the fixture,
+and the other Phase 2 agents have not yet been run end to end.
 
 ## Playwright MCP naming
 
@@ -493,4 +526,4 @@ how Playwright got installed:
 If you add the MCP under a different server name, add that prefix to every agent
 that drives a browser: `page-modeler`, `test-runner`, `login-broker`,
 `route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober`,
-`seo-auditor` and `perf-auditor`.
+`seo-auditor`, `perf-auditor` and `privacy-auditor`.

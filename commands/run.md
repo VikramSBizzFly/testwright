@@ -8,7 +8,8 @@ Run the tests. Arguments: `$ARGUMENTS`
 
 Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`
-`--seo` `--perf` `--load` `--headers` `--links` `--contract`.
+`--seo` `--perf` `--load` `--headers` `--links` `--contract` `--privacy`
+`--data` `--seed`.
 
 **Bare `/testwright:run` means `--changed`**, falling back to `smoke`-tagged cases when
 nothing has changed. A full browser run takes minutes, so the whole suite is
@@ -76,6 +77,15 @@ tf.sh merge /tmp/new.csv
     `tests/.cache/routes.txt tests/.cache/privileged.txt` — and
     `tf.sh contract cases` on `--contract` (needs an OpenAPI/Swagger JSON;
     **authoring** skill, `references/api-contracts.md`). Merge each.
+11. On `--privacy`, `tf.sh privacy cases tests/.cache/routes.txt tests/.cache/privileged.txt`,
+    merged the same way (**privacy** skill).
+12. On `--data`, after `flow-mapper`: one `state-machine-mapper` call and one
+    `data-verifier` call per feature (**data-integrity** skill). Their cases
+    write, so they arrive `Skipped` and run only with `--allow-destructive`.
+13. On `--seed`, or when cases are Blocked because their data is missing:
+    `tf.sh preconditions`, then the `test-data-seeder` agent (**test-data**
+    skill). Show the user its plan, and let it run `tests/data/seed.sh` only
+    on their yes.
 
 ```sh
 tf.sh prune --apply
@@ -98,8 +108,9 @@ runs.**
 1. For every `page` case whose route has no `tests/.cache/pages/<route>.txt` —
    or whose model predates the last source hash — call the `page-modeler` agent
    for that route. One route per call, one snapshot each, never two at once.
-   Leave out `tags=seo`, `perf`, `headers`, `links` and `contract` cases: the
-   engine judges them, and they never need a page model.
+   Leave out `tags=seo`, `perf`, `headers`, `links`, `contract` and
+   `privacy` cases: the engine or an auditor judges them, and they never
+   need a page model.
 2. Then call the `test-compiler` agent per route. It reads the page model and
    compiles **every** case on that route into `tests/.cache/recipes/<id>.rcp`
    without opening a browser, and writes `spec_file` back.
@@ -122,7 +133,9 @@ step leaves `test-runner` with nothing to replay.
    run `tf.sh perf load --yes`.
    On `--headers`, `--links` and `--contract`, **`tf.sh headers run`**,
    **`tf.sh links run`** and **`tf.sh contract run`** — curl, free, no
-   agent.
+   agent. On `--privacy`, **`tf.sh privacy run`** — curl, free. It leaves
+   each `tags=browser` case UNJUDGED, listing it in
+   `tests/.cache/privacy/browser.txt`.
 2. **Promoted specs** — any case with a `spec_file`, run by the project's own
    test command. Also free.
 3. **Browser** — everything else. Load the **execution** skill and hand
@@ -134,7 +147,9 @@ step leaves `test-runner` with nothing to replay.
    one `seo-auditor render <id> <route>` call per line of
    `tests/.cache/seo/render.txt`, then one `seo-auditor review` call with no
    browser; on `--perf`, one `perf-auditor vitals <id> <route> <role>` call per
-   line of `tests/.cache/perf/vitals.txt`. Fold their rows back with
+   line of `tests/.cache/perf/vitals.txt`; on `--privacy`, one
+   `privacy-auditor <id> <route> <role>` call per line of
+   `tests/.cache/privacy/browser.txt`. Fold their rows back with
    `tf.sh setmany` as for `test-runner`: a review returns only the cases it
    fails.
 4. **Failures only** get further attention: the `test-triager` agent, one

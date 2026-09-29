@@ -43,6 +43,18 @@ For `--headers`, `--links` and `--contract`:
   /about            links to /team, which does not exist, and to #contact,
                     which is not on the page
 
+For `--privacy`, `--data` and `--seed`:
+
+  /api/users        (admin) serialises the whole user row, password_hash included
+  /account          (signed in) a change-password form that submits by GET,
+                    and no Cache-Control on a personal page
+  /about            an email address in an HTML comment, and a tracker script
+                    that loads before anyone has consented
+  /api/orders/<id>  orders move pending -> paid -> shipped -> delivered, but
+                    POST /api/orders/<id>/cancel cancels a shipped order too
+  /api/notes        POST saves a note, and silently keeps only the first 20
+                    characters of its text
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -59,6 +71,19 @@ import uuid
 SESSIONS = {}
 WEBHOOK_SECRET = b"whsec_demo"        # credentials.json "secrets": {"webhook": ...}
 POST_ONLY = {"/api/items", "/api/logout", "/api/webhook", "/api/2fa"}
+
+# Orders and the moves between their states. `ship` checks this table;
+# `cancel` forgets to -- the illegal transition state-machine-mapper finds.
+ORDERS = {1: "pending", 2: "paid", 3: "shipped", 4: "delivered"}
+TRANSITIONS = {
+    "pending": {"paid", "cancelled"},
+    "paid": {"shipped", "cancelled"},
+    "shipped": {"delivered"},
+    "delivered": set(),
+    "cancelled": set(),
+}
+NOTES = []                            # {"id", "title", "text"}
+NOTE_TEXT_LIMIT = 20                  # THE DATA BUG: the column is too short
 TWOFA_FAILS = {}                      # session id -> wrong codes so far
 USERS = {"a@x.com": ("pw1", "admin"), "u@x.com": ("pw2", "user")}
 
@@ -87,7 +112,21 @@ HOME_PAGE = """<!doctype html><html lang=en><head>
 <meta name=description content="A tiny web app with a login, two roles and a couple of deliberate bugs, for trying the testwright test framework.">
 """ + HEAD.format(title="Demo app", desc="A tiny web app for trying testwright.", path="/") + """
 <script type="application/ld+json">{"@context": "https://schema.org", "@type": "Organization", "name": "Demo app", "url": "https://demo.example.com/"}</script>
-</head><body><h1>Demo app</h1><a href=/login>Log in</a> <a href=/about>About</a></body></html>"""
+</head><body><h1>Demo app</h1><a href=/login>Log in</a> <a href=/about>About</a>
+<a href=/privacy>Privacy policy</a></body></html>"""
+
+PRIVACY_PAGE = """<!doctype html><html lang=en><title>Privacy policy</title>
+<h1>Privacy policy</h1><p>We keep only what we need to run the demo.</p></html>"""
+
+# A signed-in page with two privacy faults: the password form submits by GET,
+# so the new password lands in the URL, and nothing stops a shared cache.
+ACCOUNT_PAGE = """<!doctype html><html lang=en><title>Your account</title>
+<h1>Your account</h1>
+<form action=/account method=get>
+  <p><input name=current type=password placeholder="current password"></p>
+  <p><input name=new type=password placeholder="new password"></p>
+  <button>Change password</button>
+</form></html>"""
 
 # Deliberately flawed for the SEO pass: no meta description, two h1s.
 ABOUT_PAGE = """<!doctype html><html lang=en><head>
@@ -95,7 +134,9 @@ ABOUT_PAGE = """<!doctype html><html lang=en><head>
 """ + HEAD.format(title="About", desc="About the demo app.", path="/about") + """
 </head><body><h1>About</h1><h1>Why it is broken</h1>
 <p>This app exists to be tested.</p>
-<p><a href=/>Home</a> <a href=/team>Meet the team</a> <a href=#contact>Contact us</a></p></body></html>"""
+<p><a href=/>Home</a> <a href=/team>Meet the team</a> <a href=#contact>Contact us</a></p>
+<!-- questions about this page: dev-team@demo.example -->
+<script async src="https://tracker.example/pixel.js"></script></body></html>"""
 
 # The one page that sends every security header, so the checks have a pass.
 GOOD_HEADERS = [
@@ -312,6 +353,39 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if path in POST_ONLY:
             return self.reply(405, "method not allowed", [("Allow", "POST")])
 
+        if path == "/privacy":
+            return self.reply(200, PRIVACY_PAGE)
+
+        if path == "/account":
+            if not role:
+                return self.reply(302, "", [("Location", "/login")])
+            return self.reply(200, ACCOUNT_PAGE)
+
+        if path == "/api/users":
+            # THE OVER-EXPOSURE BUG. The whole row is serialised, hash and all.
+            if role != "admin":
+                return self.reply(403 if role else 401, '{"error": "forbidden"}', ctype="application/json")
+            users = [{"id": i, "email": email, "role": r,
+                      "password_hash": hashlib.sha256(pw.encode()).hexdigest()}
+                     for i, (email, (pw, r)) in enumerate(USERS.items(), 1)]
+            return self.reply(200, json.dumps(users), ctype="application/json")
+
+        if path.startswith("/api/orders/"):
+            if not role:
+                return self.reply(401, '{"error": "not signed in"}', ctype="application/json")
+            try:
+                oid = int(path.rsplit("/", 1)[1])
+            except ValueError:
+                return self.reply(404, '{"error": "no such order"}', ctype="application/json")
+            if oid not in ORDERS:
+                return self.reply(404, '{"error": "no such order"}', ctype="application/json")
+            return self.reply(200, json.dumps({"id": oid, "status": ORDERS[oid]}), ctype="application/json")
+
+        if path == "/api/notes":
+            if not role:
+                return self.reply(401, '{"error": "not signed in"}', ctype="application/json")
+            return self.reply(200, json.dumps(NOTES), ctype="application/json")
+
         if path.startswith("/api/"):
             if role:
                 return self.reply(200, '{"ok": true}')
@@ -342,6 +416,38 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if path == "/api/logout":
             SESSIONS.pop(self.session_id(), None)
             return self.reply(204, "")
+
+        if path.startswith("/api/orders/") and path.endswith(("/cancel", "/ship", "/pay", "/deliver")):
+            if not self.who():
+                return self.reply(401, '{"error": "not signed in"}', ctype="application/json")
+            parts = path.split("/")                      # ['', 'api', 'orders', '<id>', '<action>']
+            try:
+                oid = int(parts[3])
+            except ValueError:
+                return self.reply(404, '{"error": "no such order"}', ctype="application/json")
+            if oid not in ORDERS:
+                return self.reply(404, '{"error": "no such order"}', ctype="application/json")
+            target = {"cancel": "cancelled", "ship": "shipped", "pay": "paid", "deliver": "delivered"}[parts[4]]
+            # THE STATE BUG. Every action checks TRANSITIONS except cancel.
+            if parts[4] != "cancel" and target not in TRANSITIONS[ORDERS[oid]]:
+                return self.reply(409, json.dumps({"error": f"cannot {parts[4]} an order that is {ORDERS[oid]}"}),
+                                  ctype="application/json")
+            ORDERS[oid] = target
+            return self.reply(200, json.dumps({"id": oid, "status": target}), ctype="application/json")
+
+        if path == "/api/notes":
+            if not self.who():
+                return self.reply(401, '{"error": "not signed in"}', ctype="application/json")
+            try:
+                note = json.loads(raw or b"{}")
+            except ValueError:
+                return self.reply(400, '{"error": "not JSON"}', ctype="application/json")
+            if not note.get("title"):
+                return self.reply(422, '{"error": "title is required"}', ctype="application/json")
+            saved = {"id": len(NOTES) + 1, "title": note["title"],
+                     "text": str(note.get("text", ""))[:NOTE_TEXT_LIMIT]}   # silently cut
+            NOTES.append(saved)
+            return self.reply(201, json.dumps({"id": saved["id"]}), ctype="application/json")
 
         if path == "/api/webhook":
             sent = self.headers.get("X-Signature", "")

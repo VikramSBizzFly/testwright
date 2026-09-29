@@ -45,8 +45,9 @@ Load the **authoring** skill for the schema.
 5. Write a scratch **tab-separated** file under `tests/.cache/`
    (`perf-risk-<feature>.tsv`), first line the column names
    `id module scenario description preconditions steps data expected actual status type route tags role method`,
-   then `tf.sh merge <file>` and delete the scratch file. `tf.sh next-id PERF-RISK`
-   for each id; never renumber. `Module` is the feature, `status` is
+   then `tf.sh merge <file>` and delete the scratch file. `tf.sh next-id
+   PERF-RISK <n>` for the whole batch at once (nothing is reserved until the
+   merge); never renumber. `Module` is the feature, `status` is
    `Not Run`, `role` is who can reach the route (`nobody` when public).
 6. **Never** write a case that writes, deletes, sends mail or charges money —
    a perf case repeats its request ten times. A slow write path gets a case

@@ -16,7 +16,7 @@ Load the **performance** skill for the budgets and the bug patterns. Cases are
 
 **You MUST run serially.** One Playwright MCP browser is shared mutable state;
 never run alongside `test-runner`, `page-modeler`, `a11y-auditor`,
-`security-prober`, `responsive-auditor`, `seo-auditor` or `route-crawler`.
+`security-prober`, `responsive-auditor`, `seo-auditor`, `privacy-auditor` or `route-crawler`.
 
 Your prompt names one mode.
 

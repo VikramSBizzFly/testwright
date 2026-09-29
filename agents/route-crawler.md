@@ -15,7 +15,7 @@ You are given a seed route, a role, a depth cap (default **2**) and a page cap
 
 **You MUST run serially.** One Playwright MCP browser is shared mutable state;
 never run while a `test-runner`, `page-modeler`, `a11y-auditor`,
-`security-prober`, `responsive-auditor`, `seo-auditor` or `perf-auditor` is using it.
+`security-prober`, `responsive-auditor`, `seo-auditor`, `perf-auditor` or `privacy-auditor` is using it.
 
 ## Procedure
 

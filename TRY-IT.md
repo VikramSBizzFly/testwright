@@ -207,6 +207,9 @@ it everything still works — your tests just stay in
 | `--headers`           | Checks the security settings each page sends back           |
 | `--links`             | Finds links that go nowhere                                 |
 | `--contract`          | Checks the API still answers what its documentation says    |
+| `--privacy`           | Looks for personal data and secrets the app gives away      |
+| `--data`              | Checks saved data is really saved, and states change safely |
+| `--seed`              | Plans the test data your tests need, and asks before making it |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -286,6 +289,24 @@ out or delete something.
 documentation (the OpenAPI or Swagger file) promises — a field that went
 missing, a number that became text, an answer nobody documented.
 
+**`--privacy`** looks for what your app gives away without meaning to: a
+secret key left in a page, a card number in the HTML, a password that ends
+up in the address bar, an API that sends back password hashes, analytics
+that start tracking before the visitor clicked "accept", a login token left
+where any script can read it. When it finds something it says what and
+where, and never copies the value itself into the report.
+
+**`--data`** reads how your records move — an order goes from paid to
+shipped to delivered — and writes a test for every move that should be
+impossible, like cancelling an order that already shipped. It also writes
+tests that save something and then read it back fresh, to catch a note that
+was quietly cut short or saved under the wrong person. Those tests change
+data, so they only run when you add `--allow-destructive`.
+
+**`--seed`** lists the data your tests assume is there ("an order that has
+shipped", "a thousand notes") and plans how to create it the way your app
+would. It shows you the plan and makes nothing until you say yes.
+
 All of them are optional. Ask for them when you want them:
 
 ```
@@ -296,6 +317,9 @@ All of them are optional. Ask for them when you want them:
 /testwright:run --perf
 /testwright:run --perf --load
 /testwright:run --headers --links --contract
+/testwright:run --privacy
+/testwright:run --data --allow-destructive
+/testwright:run --seed
 ```
 
 ---

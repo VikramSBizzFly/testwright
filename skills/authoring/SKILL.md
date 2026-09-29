@@ -26,7 +26,7 @@ human file, forget the other exists. **Never `cat` either file.** Query them:
 ```sh
 tf.sh select --status "Not Run" --tag smoke --cols id,route,type --format plain
 tf.sh stats
-tf.sh next-id AUTH
+tf.sh next-id AUTH        # or: tf.sh next-id AUTH 12 -- a batch; nothing is reserved until merge
 ```
 
 ## The routing rule (page vs api)
