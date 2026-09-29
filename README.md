@@ -136,6 +136,14 @@ same name, and `/testwright:` never does.
 --privacy           find leaked secrets and personal data, and trackers before consent
 --data              write cases proving saved data and state changes are right
 --seed              plan (and, on your yes, create) the data the cases need
+--content           placeholder copy, leaked templates, broken text, copy defects
+--i18n              clipped labels, RTL and formats in every language
+--notifications     the emails the app sends, from a sandbox outbox
+--resilience        what a page does when its API fails
+--memory            memory leaks in a single-page app
+--cross-browser     promoted specs in Firefox and WebKit too (Tier 1/2)
+--analytics         tracked events still fire, with the right properties
+--post-deploy       a read-only smoke check of a live deploy (asks first)
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -349,6 +357,32 @@ Optional passes that ride on cases you already have:
   `test-data-seeder` agent then plans how to create it through the project's
   own seeds or API, and writes a marked, idempotent, local-only
   `tests/data/seed.sh` that runs only when you say yes.
+- **`--content`** — the text a visitor reads, over curl for free: lorem
+  ipsum, TODOs, `{{templates}}` never filled in, `undefined` and `NaN`
+  leaking into the page, missing translations, raw i18n keys, garbled
+  characters, stack traces. The `content-reviewer` agent adds only what an
+  editor would stop a release for: developer-speak errors, empty states with
+  nothing to say, clear typos, one thing called two names.
+- **`--i18n`** — each page in every locale, in a browser: labels clipped
+  when the translation runs longer, right-to-left layouts, `lang`, and dates,
+  numbers and currency still in the English format.
+- **`--notifications`** — the emails a run makes the app send, read from a
+  sandbox outbox (Mailpit or MailHog), never real mail. Each expected email
+  must arrive, its links must work, and it must contain no password, token
+  or `{{template}}`.
+- **`--resilience`** — each page with its API failing, dropping or slow, in
+  the browser only: an error you can read and a way to retry, never an
+  endless spinner, a blank page or "undefined".
+- **`--memory`** — a single-page app's routes, visited ten times, with the
+  heap measured after garbage collection. Memory that only goes up is a leak.
+- **`--cross-browser`** — the promoted specs in Firefox and WebKit as well as
+  Chromium, reporting only what differs (Tier 1 and 2).
+- **`--analytics`** — each tracked event fires once, with its properties and
+  no personal data.
+- **`--post-deploy`** — a read-only, anonymous smoke check of a live deploy
+  at `postdeploy.base_url`: status, speed, title, no stack trace, and TLS
+  expiry. It is paced, capped and asks first. It is the one command that
+  talks to a remote host on purpose.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -447,9 +481,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **20 skills** — the rules for each stage, loaded only when
+Above the engine sit **23 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **34 agents**, one per stage:
+on — and **41 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -472,6 +506,9 @@ on — and **34 agents**, one per stage:
 | requirements to cases                            | `requirements-tracer`                                                      |
 | release sign-off, quality over time              | `release-gate`, `trend-reporter`                                           |
 | keep the suite and the bug sheet lean            | `suite-gardener`, `bug-deduper`, `issue-syncer`                            |
+| copy and languages                               | `content-reviewer`, `i18n-auditor`                                         |
+| emails and analytics                             | `outbox-checker`, `analytics-verifier`                                     |
+| failure, memory and other browsers               | `resilience-prober`, `leak-hunter`, `cross-browser-runner`                 |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -527,7 +564,12 @@ engine checks and `tf.sh preconditions` were run against the fixture. The
 browser. `state-machine-mapper` was run once as an agent against the fixture,
 and the other Phase 2 agents have not yet been run end to end. The Phase 3
 reports (`tf.sh trend`, `release`, `trace`, `dupes`) were run against a
-scratch suite. Its seven agents have not yet been run end to end.
+scratch suite. Its seven agents have not yet been run end to end. Phase 4's
+engine checks (`tf.sh content`, `notifications`, `postdeploy`) were run
+against the fixture's deliberate faults. The measuring scripts of
+`resilience-prober`, `leak-hunter` and `i18n-auditor` were run in a real
+browser against the fixture's failing feed, leaking SPA and clipped German
+button. The Phase 4 agents themselves have not yet been run end to end.
 
 ## Playwright MCP naming
 
@@ -540,4 +582,5 @@ how Playwright got installed:
 If you add the MCP under a different server name, add that prefix to every agent
 that drives a browser: `page-modeler`, `test-runner`, `login-broker`,
 `route-crawler`, `a11y-auditor`, `responsive-auditor`, `security-prober`,
-`seo-auditor`, `perf-auditor` and `privacy-auditor`.
+`seo-auditor`, `perf-auditor`, `privacy-auditor`, `content-reviewer`,
+`i18n-auditor`, `resilience-prober`, `leak-hunter` and `analytics-verifier`.
