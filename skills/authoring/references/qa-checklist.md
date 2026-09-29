@@ -37,15 +37,15 @@ not run is not a Critical bug. Nothing here starts as a finding.
 | 8 | Functional — Workflow & States | 056-062 | 7 | 2/3/2/0 | flows, plus an illegal transition per state |
 | 9 | **Field & Form Validation** | 063-080 | 18 | 4/10/4/0 | `references/field-library.md` + `references/validation-rules.md` — the largest single category |
 | 10 | Boundary & Data Limits | 081-086 | 6 | 1/3/2/0 | equivalence-class sampling per constrained field |
-| 13 | Navigation & Routing | 110-118 | 9 | 1/4/4/0 | `tf.sh routes`, plus deep links, back button, 404 |
+| 13 | Navigation & Routing | 110-118 | 9 | 1/4/4/0 | `tf.sh routes`, plus deep links, back button, 404; `--links` for broken links, dead anchors and redirect loops |
 | 14 | Negative Testing | 119-126 | 8 | 4/3/1/0 | `page` + `api` with the values in `validation-rules.md` |
 | 15 | Edge Cases & Error Scenarios | 127-136 | 10 | 5/3/2/0 | `page` + `api`; empty, maximum, concurrent, interrupted |
-| 16 | Security Testing | 137-148 | 12 | 7/4/1/0 | `--security` (**security** skill) |
+| 16 | Security Testing | 137-148 | 12 | 7/4/1/0 | `--security` (**security** skill); `--headers` for CSP, framing, CORS, HSTS, banners and cookie flags |
 | 17 | Session & Authentication | 149-156 | 8 | 3/3/2/0 | `--security` + the **auth** skill: expiry, reuse after logout, fixation |
 | 18 | Role & Permission | 157-161 | 5 | 3/2/0/0 | the free `tf.sh rbac` sweep, judged from the rendered page |
 | 20 | Reports & Exports | 169-177 | 9 | 3/3/3/0 | `page` cases that download and **parse** the file, not just assert a 200 |
 | 21 | File Upload / Download | 178-187 | 10 | 2/4/4/0 | `page` cases from the file-upload kind |
-| 23 | API Testing | 198-207 | 10 | 1/6/2/1 | `api` cases — free (`references/api-contracts.md`) |
+| 23 | API Testing | 198-207 | 10 | 1/6/2/1 | `api` cases — free (`references/api-contracts.md`); `--contract` for response drift from the OpenAPI spec |
 | 24 | Integration / End-to-End | 208-216 | 9 | 5/4/0/0 | flows run end to end |
 | 27 | Responsive & Resolution | 232-236 | 5 | 0/1/4/0 | `--responsive` |
 | 29 | Accessibility | 243-251 | 9 | 0/5/4/0 | `--a11y` |

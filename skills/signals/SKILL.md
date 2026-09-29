@@ -87,6 +87,24 @@ a title about the wrong thing, JSON-LD (copied raw to
 Rankings, keywords and backlinks are out of scope; page speed is `--perf`
 (**testwright:performance**).
 
+## Links (`tags=links`) — every link leads somewhere, for free
+
+`tf.sh links cases` writes the cases and `tf.sh links run` judges them over
+curl:
+
+- `LINK-NNN`, one per page. Every same-site link returns 2xx after
+  redirects, with no loop. Every `#anchor` pointing into the page names an
+  element that exists. An https page loads nothing over plain http.
+- `LINK-SITE-001` crawls from `/` as a logged-out visitor, up to
+  `links.max_pages` (50). It judges pages the route list never named, which
+  is how a link to a deleted page gets found.
+
+A target shared by twenty pages is requested once per run. Off-site links are
+counted and never fetched: the production guard covers them too. **A link
+whose GET could change state is never followed.** Sign-out, delete, remove,
+cancel, unsubscribe and the like would otherwise end the run's own session.
+Findings go to `tests/evidence/<id>/links.txt`.
+
 ## Visual regression (`tags=visual`) — opt-in, and the one signal that costs tokens
 
 Baselines live at `tests/baselines/<case-id>@<width>.png` — one per width, so a

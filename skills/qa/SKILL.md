@@ -45,6 +45,9 @@ the word "test" gets uninstalled.
 | "check SEO", "can Google index it", "meta tags"      | `/testwright:run --seo` — mostly curl, nearly free    |
 | "is it slow", "check performance", "Web Vitals"      | `/testwright:run --perf` — mostly curl, nearly free   |
 | "load test it", "can it handle many users"           | `/testwright:run --load` — shows the plan, then asks  |
+| "security headers", "CSP", "CORS", "cookie flags"    | `/testwright:run --headers` — curl, free              |
+| "broken links", "dead links", "404s"                 | `/testwright:run --links` — curl, free                |
+| "does the API match its spec", "OpenAPI drift"       | `/testwright:run --contract` — curl, free             |
 | "what isn't tested"                                  | `/testwright:report --coverage`                       |
 | "why does this keep failing"                         | `/testwright:report --flakes`                         |
 | "file a bug for that"                                | `/testwright:report --bug <id>`                       |

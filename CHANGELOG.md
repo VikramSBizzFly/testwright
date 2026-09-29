@@ -9,6 +9,76 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.4.0] - 2026-09-28
+
+A **minor** release: three new flags and three engine subcommands, all free
+over curl. No new agents. Existing suites keep working untouched.
+
+This is phase 1 of the roadmap: the checks that need no browser and no tokens
+and still find real bugs.
+
+### Added
+
+- **`/testwright:run --headers`** (`tf.sh headers cases|run`,
+  `scripts/lib/headers.sh`).
+  - `HDR-NNN`, one per page, checks:
+    - a CSP that does not allow `'unsafe-inline'` script;
+    - `X-Frame-Options` or `frame-ancestors`;
+    - `nosniff`;
+    - no Referrer-Policy that leaks full URLs;
+    - HSTS on https.
+  - `HDR-SITE-001..004`, across the site:
+    - CORS never trusts an arbitrary or `null` origin with credentials;
+    - no version banner, and no stack trace on an error page;
+    - session cookies are HttpOnly, SameSite, and Secure on https;
+    - http redirects to https.
+  - A project can rule a check out with `headers.skip`.
+- **`/testwright:run --links`** (`tf.sh links cases|run`,
+  `scripts/lib/links.sh`).
+  - `LINK-NNN`, one per page:
+    - every same-site link resolves, with no redirect loop;
+    - every `#anchor` exists;
+    - an https page loads nothing over http.
+  - `LINK-SITE-001` crawls from `/` for pages the route list missed.
+  - Off-site links are never fetched. A link that could change state (sign
+    out, delete, cancel) is never followed.
+- **`/testwright:run --contract`** (`tf.sh contract cases|run`,
+  `scripts/lib/contract.sh`, `scripts/tf-contract.py`).
+  - `CONTRACT-NNN`, one per GET operation in the OpenAPI 3 or Swagger 2 JSON
+    spec, compares the live status and body with the response schema.
+  - The spec is found in the project, or fetched from where the app serves
+    it.
+  - Drift is reported by JSON path. `contract.strict` also reports
+    undocumented fields.
+  - The checker uses only the standard library. Without Python the cases are
+    UNJUDGED.
+- **`scripts/lib/checks.sh`**, the shared run loop, which is where the next
+  families will plug in:
+  - page selection;
+  - case rows;
+  - cached fetching;
+  - evidence;
+  - folding verdicts back;
+  - `.meta` and the summary.
+- **`tf.sh login` keeps cookie attributes**: the names and flags of the
+  cookies a login sets, never their values, in
+  `tests/.auth/<role>.setcookie`, for the cookie-flag check.
+- **`framework.json`** has new `headers`, `links` and `contract` blocks.
+- **The demo app** has deliberate faults for each check:
+  - only `/` sends good security headers;
+  - `/api/profile` reflects any Origin with credentials and drops a field
+    its `/openapi.json` contract requires;
+  - `/about` links to a missing page and to a missing anchor.
+
+### Changed
+
+- `tf.sh cost` has a free `checks` bucket, and the summary counts the new
+  families as free.
+- `run-api` leaves `tags=contract` cases to `tf.sh contract`. Compiling, page
+  modelling and the browser queue skip every engine-judged tag.
+- The security, signals and authoring skills, the `qa` skill, the prompt hint
+  and the QA checklist (categories 13, 16 and 23) know about the new flags.
+
 ## [2.3.0] - 2026-09-28
 
 A **minor** release: two new flags, a new engine subcommand, two new agents

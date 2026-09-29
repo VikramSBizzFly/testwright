@@ -62,7 +62,7 @@ BUG_HEADER='Bug No,Module,Bug Description,Steps to Reproduce,Expected Result,Act
 # always the matching version -- and fall back to the plugin root.
 TF_LIB="$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)/lib"
 [ -f "$TF_LIB/core.sh" ] || TF_LIB="${CLAUDE_PLUGIN_ROOT:-}/scripts/lib"
-for _m in core progress store integrity discovery generate auth api seo perf report migrate bugs xlsx; do
+for _m in core progress store integrity discovery generate auth api seo perf checks headers links contract report migrate bugs xlsx; do
   [ -f "$TF_LIB/$_m.sh" ] || { echo "tf: missing module $TF_LIB/$_m.sh -- reinstall the plugin" >&2; exit 3; }
   # shellcheck disable=SC1090
   . "$TF_LIB/$_m.sh"
@@ -79,7 +79,7 @@ store      check | restore
 excel      xlsx [--import|--status]
 discovery  routes | forms | schemas | hash | cache-check | impacted | cover
 generate   rbac
-execute    login | storage-state | preflight | run-api | seo | perf
+execute    login | storage-state | preflight | run-api | seo | perf | headers | links | contract
 report     summary | watch | cost | diff | junit | render | latest
 meta       version | help
 
@@ -99,6 +99,9 @@ meta       version | help
   perf cases tests/.cache/routes.txt > /tmp/perf.csv  timing cases, zero tokens
   perf run [--only ID,...]       server timing, endpoint p95, compression, caching
   perf load [--yes]              concurrent users; local or allow-listed hosts only
+  headers cases|run              CSP, framing, nosniff, HSTS, CORS, banners, cookie flags
+  links cases|run                broken links, dead anchors, mixed content; a crawl from /
+  contract cases|run             live API responses against the OpenAPI spec (python3)
   storage-state admin            cookie jar -> Playwright storage state
   bug from AUTH-002 "Bug Description=..." Severity=Critical
   bug set BUG-003 "Bug Link=https://github.com/o/r/issues/12"
@@ -166,6 +169,9 @@ case "$sub" in
   run-api)   cmd_run_api "$@" ;;
   seo)       cmd_seo "$@" ;;
   perf)      cmd_perf "$@" ;;
+  headers)   cmd_headers "$@" ;;
+  links)     cmd_links "$@" ;;
+  contract)  cmd_contract "$@" ;;
   junit)     cmd_junit "$@" ;;
   diff)      cmd_diff "$@" ;;
   render)    cmd_render "$@" ;;

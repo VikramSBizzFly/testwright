@@ -57,6 +57,7 @@ kw=$kw'responsive|breakpoint|breakpoints|mobile view|small screen|tablet|layout 
 kw=$kw'accessibility|a11y|screen reader|wcag|aria|'
 kw=$kw'seo|sitemap|sitemaps|robots.txt|meta description|meta tags|open graph|structured data|json-ld|schema markup|hreflang|noindex|canonical tag|canonical url|search console|'
 kw=$kw'page speed|page load|load time|slow page|slow pages|slow endpoint|web vitals|core web vitals|lcp|cls|ttfb|lighthouse|load test|load testing|stress test|performance audit|performance test|performance testing|perf test|'
+kw=$kw'security headers|clickjacking|cookie flags|cors misconfiguration|broken link|broken links|dead link|dead links|mixed content|api contract|schema drift|contract test|contract testing|matches the spec|match the spec|'
 kw=$kw'visual regression|baseline|baselines|screenshot diff|pixel|'
 kw=$kw'endpoint|endpoints|curl|api test|'
 kw=$kw'playwright|selenium|cypress|browser test|headless|'

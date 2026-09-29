@@ -122,6 +122,9 @@ same name, and `/testwright:` never does.
 --seo               check what a search engine sees on every public page
 --perf              time every page and endpoint, and measure Web Vitals
 --load              add a short, capped concurrent-user test (asks first)
+--headers           check security headers, CORS and cookie flags
+--links             find broken links, dead anchors and mixed content
+--contract          check live API responses against the OpenAPI spec
 --allow-destructive also run the tests that delete or cancel things
 --fresh             rewrite the tests even if nothing changed
 --headed            show the browser instead of running it hidden
@@ -294,6 +297,24 @@ Optional passes that ride on cases you already have:
   and asks first, runs only against a local host or one listed in
   `perf.load.allow_hosts`, and caps users and duration. A smoke test for
   concurrency bugs, not a capacity plan.
+- **`--headers`** — the defences a browser applies only when asked, over curl
+  for zero tokens. It checks each page for:
+  - a Content-Security-Policy that actually blocks inline script;
+  - protection against being framed;
+  - `nosniff`;
+  - HSTS on https.
+
+  Across the site, it checks that CORS never trusts an arbitrary origin with
+  credentials, that no banner names a server version, that error pages show
+  no stack trace, and that session cookies are HttpOnly and SameSite.
+- **`--links`** — every same-site link on every page leads somewhere, every
+  `#anchor` exists, and an https page loads nothing over http. It also crawls
+  from `/` for pages the route list missed. Off-site links are counted and
+  never fetched, and a link that could sign out or delete is never followed.
+- **`--contract`** — each GET operation in the app's OpenAPI or Swagger spec
+  is requested live and its status and JSON body checked against the schema:
+  types, required fields, enums, and `oneOf`. Drift is reported by JSON path.
+  It needs Python 3's standard library, and nothing else.
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
@@ -456,7 +477,10 @@ checks (`tf.sh seo`) were run against the fixture and a deliberately broken
 site; the `seo-auditor` agent has not yet been run end to end. The `--perf`
 and `--load` engine checks (`tf.sh perf`) were run against the fixture, and the
 `perf-auditor`'s measuring script was run in a real browser against its heavy
-page; the two perf agents have not yet been run end to end as agents.
+page; the two perf agents have not yet been run end to end as agents. The
+`--headers`, `--links` and `--contract` checks run entirely in the engine,
+and each was run against the fixture's deliberate faults. The contract
+validator was also run against a set of schema edge cases.
 
 ## Playwright MCP naming
 
