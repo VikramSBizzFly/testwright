@@ -35,6 +35,10 @@ binding → Tier 0, with a note.
   "headers": { "skip": [] },
   "links": { "max_pages": 50, "max_per_page": 200 },
   "contract": { "spec": "", "strict": false },
-  "privacy": { "consent_required": false, "allow_hosts": [], "trackers": [] }
+  "privacy": { "consent_required": false, "allow_hosts": [], "trackers": [] },
+  "release": {
+    "min_pass_rate": 95, "max_open_critical": 0, "max_open_high": 0,
+    "require_security_clean": true, "require_smoke_pass": true, "max_age_hours": 24
+  }
 }
 ```

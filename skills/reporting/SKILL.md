@@ -17,7 +17,18 @@ tf.sh diff <previous> <latest>        # REGRESSED / FIXED / NEW only
 tf.sh render <latest> tests/results/report.html
 tf.sh stats                           # suite-wide counts
 tf.sh cover tests/.cache/routes.txt   # uncovered/thin routes
+tf.sh trend 10                        # pass rate per family over the last runs
+tf.sh release                         # GO / NO-GO; exit 1 = NO-GO
+tf.sh trace --gaps                    # requirements failing or untested
+tf.sh dupes                           # near-duplicate cases
 ```
+
+The agents that add judgement to these: `trend-reporter` (direction and an
+optional dashboard), `release-gate` (the sign-off page, with waivers only
+from named people), `requirements-tracer` (**traceability** skill),
+`suite-gardener` (merge, retire or repoint, on approval), `bug-deduper` (one
+defect, many cases) and `issue-syncer` (GitHub issues, on approval). To
+explain a case or a failure to a non-tester, load the **explain** skill.
 
 ## Print the panel; do not describe it
 
