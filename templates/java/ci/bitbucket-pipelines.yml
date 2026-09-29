@@ -1,0 +1,25 @@
+# Opt-in CI for Tier 1/2 Java projects, the Bitbucket Pipelines twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from a secured repository variable (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+image: maven:3.9-eclipse-temurin-17
+
+pipelines:
+  pull-requests:
+    '**':
+      - step: &native
+          name: testwright (native)
+          script:
+            - mvn -q -DskipTests install com.microsoft.playwright:playwright:install
+            - BASE_URL=$TEST_BASE_URL mvn -q test
+          after-script:
+            - java tests/JunitToCsv.java target/surefire-reports/TEST-*.xml tests/results/run-$BITBUCKET_BUILD_NUMBER.csv
+          artifacts:
+            - tests/results/*.csv
+            - target/surefire-reports/**
+  custom:
+    testwright:
+      - step: *native

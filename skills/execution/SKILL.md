@@ -60,7 +60,9 @@ one shared browser. These agents are the browser agents: `test-runner`,
 `page-modeler`, `login-broker`, `route-crawler`, `a11y-auditor`,
 `responsive-auditor`, `security-prober`, `seo-auditor`, `perf-auditor`,
 `privacy-auditor`, `content-reviewer` (render mode), `i18n-auditor`,
-`resilience-prober`, `leak-hunter` and `analytics-verifier`. Queue them; never
+`resilience-prober`, `leak-hunter`, `analytics-verifier`,
+`ux-heuristics-reviewer`, `exploratory-scout`, `websocket-prober`,
+`mobile-web-auditor` and `email-template-auditor`. Queue them; never
 start one while another is running. An agent's own "never alongside" list
 is a reminder, and this list is the rule.
 

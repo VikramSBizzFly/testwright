@@ -69,6 +69,14 @@ For `--content`, `--i18n`, `--notifications`, `--resilience` and `--memory`:
                     The demo serves a Mailpit-compatible outbox at /mailpit, so
                     set "notifications": { "outbox": "http://127.0.0.1:8731/mailpit" }
 
+For `--edge`:
+
+  /api/notes/export.csv   writes note titles as they were typed, so a title
+                          of =HYPERLINK(...) runs as a formula in Excel
+  POST /api/counter       reads, waits, then writes -- ten at once lose updates
+  POST /api/avatar        keeps the uploaded filename, ../ and all, and accepts
+                          any type and any size
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -100,6 +108,8 @@ NOTES = []                            # {"id", "title", "text"}
 NOTE_TEXT_LIMIT = 20                  # THE DATA BUG: the column is too short
 OUTBOX = []                           # what the demo "emails", read at /mailpit
 FEED_FAILS = [False]                  # flip with POST /api/feed/fail to test resilience
+COUNTER = [0]                         # THE RACE: read, sleep, write -- no lock
+AVATARS = []                          # stored names, exactly as uploaded
 
 # Every content bug at once, and a German version with i18n bugs of its own.
 WELCOME_EN = """<!doctype html><html lang=en><head><meta charset=utf-8><title>Welcome</title></head>
@@ -309,6 +319,21 @@ class Handler(http.server.BaseHTTPRequestHandler):
         if path == "/app.js":
             return self.reply(200, APP_JS, ctype="text/javascript")
 
+        if path == "/api/notes/export.csv":
+            if not role:
+                return self.reply(401, "unauthorized")
+            # THE EXPORT BUG. Titles go out exactly as typed; nothing escapes
+            # a leading = so Excel runs it.
+            lines = ["id,title,text"] + [f'{n["id"]},"{n["title"]}","{n["text"]}"' for n in NOTES]
+            return self.reply(200, "\n".join(lines) + "\n", [("Content-Disposition", "attachment; filename=notes.csv")],
+                              ctype="text/csv")
+
+        if path == "/api/counter":
+            return self.reply(200, json.dumps({"value": COUNTER[0]}), ctype="application/json")
+
+        if path == "/api/avatars":
+            return self.reply(200, json.dumps(AVATARS), ctype="application/json")
+
         if path == "/api/feed":
             if FEED_FAILS[0]:
                 return self.reply(500, '{"error": "feed unavailable"}', ctype="application/json")
@@ -494,6 +519,25 @@ class Handler(http.server.BaseHTTPRequestHandler):
                         f"<p><a href=\"http://127.0.0.1:8731/reset?token={token}\">Choose a new one</a></p>",
             })
             return self.reply(202, '{"ok": true}', ctype="application/json")
+
+        if path == "/api/counter":
+            # THE RACE. Read, think, write: two requests read the same value.
+            value = COUNTER[0]
+            time.sleep(0.05)
+            COUNTER[0] = value + 1
+            return self.reply(200, json.dumps({"value": COUNTER[0]}), ctype="application/json")
+
+        if path == "/api/avatar":
+            # THE UPLOAD BUGS. Any type, any size, and the stored name is the
+            # uploaded one -- ../ included. (Nothing is written to disk.)
+            name = ""
+            if "filename=" in raw.decode("latin-1", "replace"):
+                name = raw.decode("latin-1", "replace").split('filename="', 1)[1].split('"', 1)[0]
+            if not name:
+                return self.reply(400, '{"error": "no file"}', ctype="application/json")
+            stored = "uploads/avatars/" + name
+            AVATARS.append(stored)
+            return self.reply(201, json.dumps({"stored": stored, "bytes": len(raw)}), ctype="application/json")
 
         if path == "/api/feed/fail":
             FEED_FAILS[0] = not FEED_FAILS[0]

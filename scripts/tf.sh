@@ -62,7 +62,7 @@ BUG_HEADER='Bug No,Module,Bug Description,Steps to Reproduce,Expected Result,Act
 # always the matching version -- and fall back to the plugin root.
 TF_LIB="$(CDPATH= cd -- "$(dirname -- "$0")" 2>/dev/null && pwd)/lib"
 [ -f "$TF_LIB/core.sh" ] || TF_LIB="${CLAUDE_PLUGIN_ROOT:-}/scripts/lib"
-for _m in core progress store integrity discovery generate auth api seo perf checks headers links contract privacy content notifications postdeploy seed insight report migrate bugs xlsx; do
+for _m in core progress store integrity discovery generate auth api seo perf checks headers links contract privacy content notifications postdeploy files seed insight report migrate bugs xlsx; do
   [ -f "$TF_LIB/$_m.sh" ] || { echo "tf: missing module $TF_LIB/$_m.sh -- reinstall the plugin" >&2; exit 3; }
   # shellcheck disable=SC1090
   . "$TF_LIB/$_m.sh"
@@ -108,7 +108,8 @@ meta       version | help
   content cases|run              lorem ipsum, {{templates}}, undefined, missing translations, mojibake
   notifications mark|cases|run   the emails a run sent, from a sandbox outbox (python3)
   postdeploy [--yes]             read-only smoke of postdeploy.base_url; GET only, anonymous
-  audit-cases i18n|resilience|memory routes.txt   one agent-audited case per page
+  audit-cases i18n|resilience|memory|ux|mobile routes.txt   one agent-audited case per page
+  export-check <file> [--rows N] [--columns a,b]  is a downloaded CSV/XLSX/JSON/PDF real and safe
   trend [10] [--family seo]      pass rate over the last runs, per family
   release [--json]               GO / NO-GO against framework.json "release" (exit 1 = NO-GO)
   trace [--gaps]                 tests/requirements.txt against the cases
@@ -147,7 +148,7 @@ esac
 case "$sub" in
   help|-h|--help|version|-v|--version|check|restore|init-csv|migrate) ;;
   routes|forms|schemas|hash|cache-check|login|storage-state|preflight) ;;
-  junit|diff|render|summary|watch|latest|rbac|trend|postdeploy) ;;
+  junit|diff|render|summary|watch|latest|rbac|trend|postdeploy|export-check) ;;
   *) _tf_gate ;;
 esac
 
@@ -188,6 +189,7 @@ case "$sub" in
   notifications) cmd_notifications "$@" ;;
   postdeploy) cmd_postdeploy "$@" ;;
   audit-cases) cmd_audit_cases "$@" ;;
+  export-check) cmd_export_check "$@" ;;
   preconditions) cmd_preconditions "$@" ;;
   trend)     cmd_trend "$@" ;;
   release)   cmd_release "$@" ;;

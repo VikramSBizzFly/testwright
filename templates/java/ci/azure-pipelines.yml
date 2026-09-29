@@ -1,0 +1,37 @@
+# Opt-in CI for Tier 1/2 Java projects, the Azure Pipelines twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from a secret pipeline variable (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+trigger: none
+pr:
+  branches:
+    include: ['*']
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+  - task: JavaToolInstaller@0
+    inputs:
+      versionSpec: '17'
+  - script: mvn -q -DskipTests install com.microsoft.playwright:playwright:install
+  - script: mvn -q test
+    env:
+      BASE_URL: $(TEST_BASE_URL)
+  - script: java tests/JunitToCsv.java target/surefire-reports/TEST-*.xml tests/results/run-$(Build.BuildId).csv
+    condition: always()
+  - task: CopyFiles@2
+    condition: always()
+    inputs:
+      contents: |
+        tests/results/*.csv
+        target/surefire-reports/**
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      artifactName: test-results

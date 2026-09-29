@@ -60,6 +60,12 @@ the word "test" gets uninstalled.
 | "does it work in Safari/Firefox"                     | `/testwright:run --cross-browser` (Tier 1/2)          |
 | "is tracking still firing", "analytics events"       | `/testwright:run --analytics`                         |
 | "is the deploy healthy", "smoke test production"     | `/testwright:run --post-deploy` — read-only, asks first |
+| "test the exports", "uploads", "race conditions"     | `/testwright:run --edge --allow-destructive`          |
+| "check the UX basics", "double submit"               | `/testwright:run --ux`                                |
+| "poke around", "try to break it", "exploratory"      | `/testwright:run --explore`                           |
+| "test the websockets", "realtime"                    | `/testwright:run --realtime`                          |
+| "PWA", "offline", "mobile web"                       | `/testwright:run --mobile`                            |
+| "test the GraphQL API"                               | `/testwright:run` — `graphql-case-author` joins stage 2 |
 | "is it ready to ship", "go/no-go"                    | `/testwright:report --release`                        |
 | "which requirements are untested", "traceability"    | `/testwright:report --trace`                          |
 | "is quality getting better", "trend"                 | `/testwright:report --trend`                          |

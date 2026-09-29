@@ -1,0 +1,38 @@
+# Opt-in CI for Tier 1/2 .NET projects, the Azure Pipelines twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from a secret pipeline variable (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+trigger: none
+pr:
+  branches:
+    include: ['*']
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+  - task: UseDotNet@2
+    inputs:
+      version: '8.0.x'
+  - script: dotnet build
+  - script: pwsh bin/Debug/net8.0/playwright.ps1 install --with-deps
+  - script: dotnet test --logger "junit;LogFilePath=../../../tests/results/junit.xml"
+    env:
+      BASE_URL: $(TEST_BASE_URL)
+  - script: dotnet tests/JunitToCsv.cs tests/results/junit.xml tests/results/run-$(Build.BuildId).csv
+    condition: always()
+  - task: CopyFiles@2
+    condition: always()
+    inputs:
+      contents: |
+        tests/results/*.csv
+        tests/results/junit.xml
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      artifactName: test-results

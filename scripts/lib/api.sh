@@ -48,9 +48,12 @@ cmd_run_api() {
     --format csv 2>/dev/null |
     awk -v us="$US" "$AWKLIB"'NR > 1 { n = csvsplit($0, F); o = F[1]
       # A perf case times an endpoint and a contract case checks its body;
-      # `tf.sh perf` and `tf.sh contract` own those verdicts.
+      # `tf.sh perf` and `tf.sh contract` own those verdicts. Export, upload
+      # and concurrency cases are judged by their agents, which download,
+      # generate files or fire requests in parallel -- one curl call cannot.
       if (index("," F[5] ",", ",perf,") || index("," F[5] ",", ",contract,") || index("," F[5] ",", ",privacy,") || \
-          index("," F[5] ",", ",notifications,")) next
+          index("," F[5] ",", ",notifications,") || index("," F[5] ",", ",export,") || \
+          index("," F[5] ",", ",upload,") || index("," F[5] ",", ",concurrency,")) next
       for (i = 2; i <= 11; i++) o = o us F[i]; print o }' > "$work"
 
   roles="$(json_keys "$CREDS" roles 2>/dev/null | tr '\n' ' ')"

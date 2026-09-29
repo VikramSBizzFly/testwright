@@ -11,9 +11,20 @@ You put the suite in CI. Load the **ci** skill first — it owns the exit
 codes, the flags and environment, and which stages can actually run at each
 tier.
 
-Read `tests/framework.json` for `stack` and `runner`, then adapt
-`templates/<stack>/ci/github-actions.yml` into the target repo at
-`.github/workflows/`.
+Read `tests/framework.json` for `stack` and `runner`, then find which CI
+system the repo already uses, and adapt the matching template from
+`templates/<stack>/ci/`:
+
+| The repo has | Template | Goes to |
+| --- | --- | --- |
+| `.github/workflows/` (or nothing yet) | `github-actions.yml` | `.github/workflows/testwright.yml` |
+| `.gitlab-ci.yml` | `gitlab-ci.yml` | a `testwright` job **merged into** the existing `.gitlab-ci.yml`, with no second file |
+| `azure-pipelines.yml` | `azure-pipelines.yml` | `.azure/testwright-pipelines.yml`, for the user to register as a pipeline |
+| `bitbucket-pipelines.yml` | `bitbucket-pipelines.yml` | a step **merged into** the existing file's `pull-requests` and `custom` sections |
+
+GitLab and Bitbucket read one file per repo, so merge into it without
+replacing anything that is already there. Show the diff to the user before
+writing it. When the repo uses more than one CI system, ask which one.
 
 ## Wire the exit codes
 

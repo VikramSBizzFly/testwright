@@ -78,8 +78,9 @@ _chk_num() { _v="$(json_get "$FRAMEWORK" "$1" 2>/dev/null || true)"
   case "$_v" in ''|*[!0-9.]*) echo "$2" ;; *) echo "$_v" ;; esac; }
 
 # audit-cases <family> [routes] [privileged] -- one browser-audit case per page
-# for the families judged only by an agent: i18n, resilience, memory. They
-# cost nothing to write and one agent call each to run, like `responsive`.
+# for the families judged only by an agent: i18n, resilience, memory, ux and
+# mobile. They cost nothing to write and one agent call each to run, like
+# `responsive`.
 cmd_audit_cases() {
   _fam="${1:-}"; [ $# -gt 0 ] && shift
   case "$_fam" in
@@ -95,7 +96,15 @@ cmd_audit_cases() {
                 _sc="%s does not leak memory as you move around it"
                 _st="Open %s | move between its views ten times | measure the heap after garbage collection"
                 _ex="Heap after garbage collection does not keep rising (robustness.leak_mb, 5 MB); DOM nodes do not keep growing" ;;
-    *) die "audit-cases: expected i18n, resilience or memory" ;;
+    ux)         _pre=UX; _mod="Usability"
+                _sc="%s follows the basic usability rules"
+                _st="Open %s | check submit feedback, double-submit protection, confirmation of destructive actions, errors at the field, dialog focus and the page title"
+                _ex="Every rule holds; no form that does nothing visible, can be sent twice, or deletes without asking" ;;
+    mobile)     _pre=MOB; _mod="Mobile web"
+                _sc="%s works as a mobile web app"
+                _st="Open %s at 390px | read the viewport, manifest, input types and hover-only controls | go offline and reload"
+                _ex="Zoom allowed; a valid manifest when installable; the right keyboard per field; an offline page when a service worker exists; nothing hover-only" ;;
+    *) die "audit-cases: expected i18n, resilience, memory, ux or mobile" ;;
   esac
   _chk_header
   _n=0

@@ -1,0 +1,38 @@
+# Opt-in CI for Tier 1/2 Python projects, the Azure Pipelines twin of github-actions.yml.
+# Copied in by the ci-wirer agent, never auto-enabled -- commit it yourself once
+# you're ready for the native suite to run in CI.
+#
+# Credentials come from a secret pipeline variable (TEST_BASE_URL), never from a committed
+# tests/credentials.json. The job's exit code is the suite's verdict.
+
+trigger: none
+pr:
+  branches:
+    include: ['*']
+
+pool:
+  vmImage: ubuntu-latest
+
+steps:
+  - checkout: self
+  - task: UsePythonVersion@0
+    inputs:
+      versionSpec: '3.11'
+  - script: pip install -r requirements.txt
+  - script: playwright install --with-deps
+  - script: pytest tests/specs --junitxml=tests/results/junit.xml
+    env:
+      BASE_URL: $(TEST_BASE_URL)
+  - script: python tests/junit_to_csv.py tests/results/junit.xml tests/results/run-$(Build.BuildId).csv
+    condition: always()
+  - task: CopyFiles@2
+    condition: always()
+    inputs:
+      contents: |
+        tests/results/*.csv
+        test-results/**
+      targetFolder: $(Build.ArtifactStagingDirectory)
+  - task: PublishBuildArtifacts@1
+    condition: always()
+    inputs:
+      artifactName: test-results
