@@ -49,9 +49,9 @@ not run is not a Critical bug. Nothing here starts as a finding.
 | 24 | Integration / End-to-End | 208-216 | 9 | 5/4/0/0 | flows run end to end |
 | 27 | Responsive & Resolution | 232-236 | 5 | 0/1/4/0 | `--responsive` |
 | 29 | Accessibility | 243-251 | 9 | 0/5/4/0 | `--a11y` |
-| 38 | Regression | 305-310 | 6 | 3/3/0/0 | the run itself; `--only-failing`, and the flake list |
-| 40 | Defect Management | 316-321 | 6 | 1/2/3/0 | `tests/bug-report.xlsx` via `/testwright:report --bug` |
-| 41 | Release Readiness / Exit Criteria | 322-329 | 8 | 6/2/0/0 | the run verdict and its exit code |
+| 38 | Regression | 305-310 | 6 | 3/3/0/0 | the run itself; `--only-failing`, the flake list, `--impact` for what a change can break, and `tf.sh trend` |
+| 40 | Defect Management | 316-321 | 6 | 1/2/3/0 | `tests/bug-report.xlsx` via `/testwright:report --bug`; `--dedupe` for one defect per cause, `--sync` for the issue tracker |
+| 41 | Release Readiness / Exit Criteria | 322-329 | 8 | 6/2/0/0 | the run verdict and its exit code; `tf.sh release` GO/NO-GO against the team's criteria, and the `release-gate` sign-off |
 
 ## Partly covered — say which part
 
@@ -59,7 +59,7 @@ Claiming these whole is the easiest way to make a report dishonest.
 
 | # | Category | IDs | n | C/H/M/L | Covered / not covered |
 | --- | --- | --- | --- | --- | --- |
-| 2 | Test Design & Coverage | 008-015 | 8 | 3/5/0/0 | authoring covers the design rules; sign-off and traceability to requirements are human |
+| 2 | Test Design & Coverage | 008-015 | 8 | 3/5/0/0 | authoring covers the design rules; `--trace` maps requirements to cases (**traceability** skill). Sign-off stays human |
 | 11 | UI / Visual Verification | 087-101 | 15 | 0/4/10/1 | layout and rendering yes, via `page` and opt-in visual regression; brand and design-comp fidelity no |
 | 12 | UX / Usability | 102-109 | 8 | 0/3/5/0 | mechanical checks only — focus order, feedback on submit. Whether a flow *feels* right is a human judgement |
 | 19 | Database & Data Verification | 162-168 | 7 | 4/2/1/0 | what the app exposes, through `--data` round-trip reads; a single read-only `SELECT` when `db.readonly_url` is given. Schema, index and constraint checks stay out |

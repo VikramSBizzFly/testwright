@@ -51,6 +51,13 @@ the word "test" gets uninstalled.
 | "does it leak personal data", "GDPR", "consent"      | `/testwright:run --privacy` — mostly curl             |
 | "is data saved correctly", "can I cancel a shipped…" | `/testwright:run --data` — writes cases, runs on `--allow-destructive` |
 | "we need test data", "seed it"                       | `/testwright:run --seed` — plans, then asks           |
+| "what does this PR affect", "what should I test"     | `/testwright:run --impact <base or PR>`               |
+| "is it ready to ship", "go/no-go"                    | `/testwright:report --release`                        |
+| "which requirements are untested", "traceability"    | `/testwright:report --trace`                          |
+| "is quality getting better", "trend"                 | `/testwright:report --trend`                          |
+| "clean up the tests", "too many duplicates"          | `/testwright:report --garden`                         |
+| "duplicate bugs", "file these as issues"             | `/testwright:report --dedupe` / `--sync`              |
+| "what does this test do", "why did it fail"          | `/testwright:report --explain <id>` — the **explain** skill |
 | "what isn't tested"                                  | `/testwright:report --coverage`                       |
 | "why does this keep failing"                         | `/testwright:report --flakes`                         |
 | "file a bug for that"                                | `/testwright:report --bug <id>`                       |

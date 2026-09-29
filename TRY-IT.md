@@ -182,6 +182,14 @@ it everything still works — your tests just stay in
 | `/testwright:report --flakes`       | Show the tests that keep changing their mind                             |
 | `/testwright:report --bug AUTH-003` | Write a failure into the bug report                                      |
 | `/testwright:report --publish`      | Put the last result on a page you can share                              |
+| `/testwright:report --trend`        | Say whether things are getting better or worse                           |
+| `/testwright:report --release`      | Say whether it is ready to ship, and write the sign-off page             |
+| `/testwright:report --trace`        | Show which requirements have no test, or a failing one                   |
+| `/testwright:report --garden`       | Suggest tests to merge or retire                                         |
+| `/testwright:report --dedupe`       | Group bugs that have the same cause                                      |
+| `/testwright:report --sync`         | Turn bugs into GitHub issues, after asking                               |
+| `/testwright:report --explain API-004` | Explain a test or a failure in plain words                            |
+| `/testwright:run --impact main`     | Test only what this branch can break                                     |
 
 **How much to run.** Pick one; it uses `--changed` if you say nothing:
 

@@ -101,6 +101,13 @@ same name, and `/testwright:` never does.
 /testwright:report --flakes    cases that flip verdict without a code change
 /testwright:report --bug <id>  record a failure in tests/bug-report.xlsx
 /testwright:report --publish   the last result as a shareable page
+/testwright:report --trend     is quality rising or falling, per check family
+/testwright:report --release   GO / NO-GO against your criteria, and a sign-off page
+/testwright:report --trace     which requirements are untested or failing
+/testwright:report --garden    duplicate, dead and never-run cases to clean up
+/testwright:report --dedupe    open bugs grouped by root cause
+/testwright:report --sync      file open bugs as GitHub issues (asks first)
+/testwright:report --explain <id>  a case or failure in plain words
 ```
 
 **What `/testwright:run` runs** — one of these, `--changed` if you say nothing:
@@ -110,6 +117,7 @@ same name, and `/testwright:` never does.
 --all               the whole suite
 --feature <name>    one area, e.g. --feature invoices
 --only-failing      just what failed last time
+--impact <base|PR>  what a branch or pull request can break, rated by risk
 ```
 
 **What it adds to the run** — each one is optional:
@@ -439,9 +447,9 @@ real terminal, throttled plain lines in Claude Code and CI (capped at 10 per run
 nothing under `--quiet`. A crossed privilege boundary prints the moment it's
 found. `tf.sh watch` renders a live bar in a second terminal.
 
-Above the engine sit **18 skills** — the rules for each stage, loaded only when
+Above the engine sit **20 skills** — the rules for each stage, loaded only when
 that stage runs, addressed as `testwright:discovery`, `testwright:triage` and so
-on — and **27 agents**, one per stage:
+on — and **34 agents**, one per stage:
 
 | Stage                                            | Agent                                                                      |
 | ------------------------------------------------ | -------------------------------------------------------------------------- |
@@ -460,6 +468,10 @@ on — and **27 agents**, one per stage:
 | trackers, consent and browser storage            | `privacy-auditor`                                                          |
 | state machines and saved-data round trips        | `state-machine-mapper`, `data-verifier`                                    |
 | the data cases need                              | `test-data-seeder`                                                         |
+| what a change can break                          | `pr-impact-analyst`                                                        |
+| requirements to cases                            | `requirements-tracer`                                                      |
+| release sign-off, quality over time              | `release-gate`, `trend-reporter`                                           |
+| keep the suite and the bug sheet lean            | `suite-gardener`, `bug-deduper`, `issue-syncer`                            |
 | diagnose a failure                               | `test-triager`, `flake-analyst`                                            |
 | promote to native specs                          | `spec-writer`                                                              |
 | report                                           | `bug-reporter`, `coverage-analyst`                                         |
@@ -513,7 +525,9 @@ validator was also run against a set of schema edge cases. The `--privacy`
 engine checks and `tf.sh preconditions` were run against the fixture. The
 `privacy-auditor`'s storage script and network capture were run in a real
 browser. `state-machine-mapper` was run once as an agent against the fixture,
-and the other Phase 2 agents have not yet been run end to end.
+and the other Phase 2 agents have not yet been run end to end. The Phase 3
+reports (`tf.sh trend`, `release`, `trace`, `dupes`) were run against a
+scratch suite. Its seven agents have not yet been run end to end.
 
 ## Playwright MCP naming
 

@@ -9,6 +9,64 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.6.0] - 2026-09-28
+
+A **minor** release: one new run flag, seven report flags, four engine
+subcommands, seven agents and two skills. Existing suites keep working
+untouched.
+
+This is phase 3 of the roadmap: what the suite says over time, and what a
+team does with it.
+
+### Added
+
+- **Four free engine reports** (`scripts/lib/insight.sh`):
+  - `tf.sh trend [N] [--family F]` shows each run's pass rate, grouped by
+    check family, with a sparkline.
+  - `tf.sh release [--json]` returns GO or NO-GO (exit 1) against
+    `"release"` in `framework.json`. It takes its facts from the store and
+    the bug sheet, not from one result file:
+    - the pass rate of judged cases;
+    - no failing security case;
+    - every smoke case passing;
+    - the open Critical and High bugs;
+    - the age of the last run.
+  - `tf.sh trace [--gaps]` reads `tests/requirements.txt` and marks each
+    requirement passing, failing, not run or uncovered.
+  - `tf.sh dupes [0.7]` lists near-duplicate cases: same type, route and
+    role, with most words shared.
+- **`/testwright:run --impact <base|PR>`**. The `pr-impact-analyst` agent
+  starts from `tf.sh impacted` and follows the change outward, through
+  callers and flow code paths, two hops. It rates the risk and writes the
+  selection to run. The selection always includes the smoke cases, and on a
+  high-risk change every security case.
+- **`/testwright:report --trend`**: `trend-reporter` says per family whether
+  quality is rising, falling or flat, with an optional self-contained HTML
+  dashboard.
+- **`--release`**: `release-gate` writes the sign-off page. A NO-GO stays a
+  NO-GO unless a named person waives each failed criterion.
+- **`--trace`**: `requirements-tracer` reads the PRD, stories or a ticket
+  export into `tests/requirements.txt` and maps the cases whose pass proves
+  each requirement (the **traceability** skill).
+- **`--garden`**: `suite-gardener` proposes what to merge, retire, repoint,
+  restore or promote. It applies only what is approved, and never deletes a
+  row.
+- **`--dedupe`**: `bug-deduper` groups open bugs by a nameable root cause
+  and links duplicates through QA Comments on approval.
+- **`--sync`**: `issue-syncer` files GitHub issues for open bugs on
+  approval, redacted, and records the link. It reads linked issues back to
+  find bugs closed upstream that need a retest.
+- **`--explain <id>`**: the **explain** skill answers "what does this test,
+  why did it fail, what now" in plain words.
+- **`"release"` in `framework.json`**: `min_pass_rate`, `max_open_critical`,
+  `max_open_high`, `require_security_clean`, `require_smoke_pass`,
+  `max_age_hours`.
+
+### Changed
+
+- The QA checklist credits categories 2, 38, 40 and 41. The `qa` skill and
+  the prompt hint know the new report questions.
+
 ## [2.5.0] - 2026-09-28
 
 A **minor** release: three new flags, two engine subcommands, four agents

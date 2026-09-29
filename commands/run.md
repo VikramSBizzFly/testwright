@@ -9,7 +9,13 @@ Run the tests. Arguments: `$ARGUMENTS`
 Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`
 `--seo` `--perf` `--load` `--headers` `--links` `--contract` `--privacy`
-`--data` `--seed`.
+`--data` `--seed` `--impact <base|PR>`.
+
+**`--impact <base|PR>`** replaces the selection. First call the
+`pr-impact-analyst` agent with the base branch, commit or PR number
+(**traceability** skill). Then run only the ids it writes to
+`tests/.cache/impact.txt`, through every stage below. On a `high` risk
+rating, say so before the run starts.
 
 **Bare `/testwright:run` means `--changed`**, falling back to `smoke`-tagged cases when
 nothing has changed. A full browser run takes minutes, so the whole suite is
