@@ -10,7 +10,8 @@ Flags: `--changed` `--all` `--feature <area>` `--only-failing` `--headed`
 `--fresh` `--allow-destructive` `--crawl` `--a11y` `--security` `--responsive`
 `--seo` `--perf` `--load` `--headers` `--links` `--contract` `--privacy`
 `--data` `--seed` `--impact <base|PR>` `--content` `--i18n` `--notifications`
-`--resilience` `--memory` `--analytics` `--cross-browser` `--post-deploy`.
+`--resilience` `--memory` `--analytics` `--cross-browser` `--post-deploy`
+`--edge` `--ux` `--explore` `--realtime` `--mobile`.
 
 **`--impact <base|PR>`** replaces the selection. First call the
 `pr-impact-analyst` agent with the base branch, commit or PR number
@@ -107,6 +108,21 @@ tf.sh merge /tmp/new.csv
     4, run `tf.sh notifications mark`.
 16. On `--analytics`: one `analytics-verifier` call per feature. It writes
     and runs its own cases.
+17. **A GraphQL endpoint** (a `/graphql` route, `.graphql` schema files, or a
+    GraphQL server library in the dependencies): one `graphql-case-author`
+    call, alongside `api-case-author`. Its cases run on curl in `run-api`
+    (**api-protocols** skill).
+18. `tf.sh audit-cases ux` on `--ux`, for pages with forms or actions;
+    `tf.sh audit-cases mobile` on `--mobile`, for the key routes. Merge each.
+19. On `--edge` (**edge-cases** skill), per feature:
+    - `export-verifier`, where the feature has downloads;
+    - `upload-prober`, where it takes files;
+    - `concurrency-prober`, where it writes.
+
+    The last two write data, so they run only with `--allow-destructive`
+    and only on a local target. On `--explore`, one `exploratory-scout`
+    call, after the rest of the run: its oddities become cases for the next
+    one.
 
 ```sh
 tf.sh prune --apply
@@ -183,7 +199,12 @@ step leaves `test-runner` with nothing to replay.
    `content-reviewer review`. For each `tags=i18n`, `resilience` or `memory`
    case (`tf.sh select --tag <tag>`), make one call to `i18n-auditor`,
    `resilience-prober` or `leak-hunter` respectively. The `leak-hunter` call
-   also needs the view steps to move between. Fold their rows back with
+   also needs the view steps to move between. The same goes for `tags=ux`
+   (`ux-heuristics-reviewer`) and `tags=mobile` (`mobile-web-auditor`). On
+   `--realtime`, make one `websocket-prober` call per channel found in the
+   client code. On `--notifications`, after `tf.sh notifications run`, make
+   one `email-template-auditor` call per distinct email in
+   `tests/.cache/notifications/messages.tsv`. Fold their rows back with
    `tf.sh setmany` as for `test-runner`: a review returns only the cases it
    fails.
 4. **Failures only** get further attention: the `test-triager` agent, one
