@@ -20,5 +20,11 @@
   "release": {
     "min_pass_rate": 95, "max_open_critical": 0, "max_open_high": 0,
     "require_security_clean": true, "require_smoke_pass": true, "max_age_hours": 24
-  }
+  },
+  "content": { "skip": [] },
+  "i18n": { "locales": [], "switch": "query" },
+  "notifications": { "outbox": "http://localhost:8025" },
+  "robustness": { "require_retry": false, "leak_mb": 5, "leak_nodes": 500 },
+  "analytics": { "plan": "" },
+  "postdeploy": { "base_url": "", "routes": [], "max_requests": 30, "max_ms": 3000, "min_cert_days": 14 }
 }

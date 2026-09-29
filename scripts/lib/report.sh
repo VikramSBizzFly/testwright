@@ -24,10 +24,14 @@ cmd_cost() {
       if (index("," tags ",", ",perf,")) return "perf"
       # headers, links and contract: curl families run by their own tf.sh
       # subcommand (lib/checks.sh).
-      # Privacy browser cases need one privacy-auditor call each.
+      # Privacy browser cases, and the families only an agent judges, need
+      # one audit call each -- never a page model or a recipe.
       if (index("," tags ",", ",privacy,") && index("," tags ",", ",browser,")) return (status == "Skipped") ? "skip" : "vitals"
+      if (index("," tags ",", ",i18n,") || index("," tags ",", ",resilience,") || \
+          index("," tags ",", ",memory,") || index("," tags ",", ",analytics,")) return (status == "Skipped") ? "skip" : "vitals"
       if (index("," tags ",", ",headers,") || index("," tags ",", ",links,") || \
-          index("," tags ",", ",contract,") || index("," tags ",", ",privacy,")) return "checks"
+          index("," tags ",", ",contract,") || index("," tags ",", ",privacy,") || \
+          index("," tags ",", ",content,") || index("," tags ",", ",notifications,")) return "checks"
       if (type == "api")        return "api"
       # SEO cases are page cases a curl request answers: `tf.sh seo run`.
       if (index("," tags ",", ",seo,")) return "seo"
@@ -248,7 +252,7 @@ cmd_summary() {
     id = $1; type = $2; role = $3; route = $4; actual = $6; verdict = $7
     # Not a verdict on the app: listed apart, and left out of the pass rate.
     if (verdict == "UNJUDGED") {
-      NUNJ++; if (type == "seo") NUNJSEO++; if (type == "perf") NUNJPERF++; if (index(",headers,links,contract,privacy,", "," type ",")) NUNJCHK++; if (type == "privacy") NUNJPRIV++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
+      NUNJ++; if (type == "seo") NUNJSEO++; if (type == "perf") NUNJPERF++; if (index(",headers,links,contract,privacy,content,notifications,", "," type ",")) NUNJCHK++; if (type == "content") NUNJCONT++; if (type == "privacy") NUNJPRIV++; if (NUNJ <= 5) UNJ[NUNJ] = sprintf("%-15s %-28s %s", id, route, $5)
       next
     }
     total++; V[verdict]++; TT[type]++
@@ -270,7 +274,7 @@ cmd_summary() {
         OTHC[NOTH] = actual
       }
     }
-    if (index(",api,seo,perf,headers,links,contract,privacy,", "," type ",")) FREE++
+    if (index(",api,seo,perf,headers,links,contract,privacy,content,notifications,postdeploy,", "," type ",")) FREE++
     dur += $8 + 0
     next
   }
@@ -420,6 +424,8 @@ cmd_summary() {
         sect("     \035Web Vitals need a browser: hand tests/.cache/perf/vitals.txt to perf-auditor\030")
       if (NUNJPRIV > 0)
         sect("     \035trackers and storage need a browser: hand tests/.cache/privacy/browser.txt to privacy-auditor\030")
+      if (NUNJCONT > 0)
+        sect("     \035client-rendered text: hand tests/.cache/content/render.txt to content-reviewer\030")
     }
     if (skipped > 0) {
       if (!warned) sect("")

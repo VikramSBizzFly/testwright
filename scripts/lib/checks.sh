@@ -77,6 +77,39 @@ _chk_list() {
 _chk_num() { _v="$(json_get "$FRAMEWORK" "$1" 2>/dev/null || true)"
   case "$_v" in ''|*[!0-9.]*) echo "$2" ;; *) echo "$_v" ;; esac; }
 
+# audit-cases <family> [routes] [privileged] -- one browser-audit case per page
+# for the families judged only by an agent: i18n, resilience, memory. They
+# cost nothing to write and one agent call each to run, like `responsive`.
+cmd_audit_cases() {
+  _fam="${1:-}"; [ $# -gt 0 ] && shift
+  case "$_fam" in
+    i18n)       _pre=I18N; _mod="Localization"
+                _sc="%s works in every language the app offers"
+                _st="Open %s in each locale | compare it with the base locale"
+                _ex="Nothing clipped or overflowing that fits in the base locale; right-to-left locales mirrored; lang set; dates, numbers and currency in the locale's format; no untranslated strings" ;;
+    resilience) _pre=RES; _mod="Resilience"
+                _sc="%s fails gracefully when its API does"
+                _st="Open %s with its API answering 500, then dropping the connection, then answering slowly"
+                _ex="An error the visitor can read and a way to retry; never a spinner that never stops, a blank page or undefined; a loading state while slow" ;;
+    memory)     _pre=MEM; _mod="Memory"
+                _sc="%s does not leak memory as you move around it"
+                _st="Open %s | move between its views ten times | measure the heap after garbage collection"
+                _ex="Heap after garbage collection does not keep rising (robustness.leak_mb, 5 MB); DOM nodes do not keep growing" ;;
+    *) die "audit-cases: expected i18n, resilience or memory" ;;
+  esac
+  _chk_header
+  _n=0
+  _chk_pages "${1:-$CACHE/routes.txt}" "${2:-}" > "$CACHE/.audit-pages.$$"
+  while IFS="$(printf '\t')" read -r _r _who; do
+    _n=$((_n + 1))
+    # shellcheck disable=SC2059
+    _chk_row "$(printf '%s-%03d' "$_pre" "$_n")" "$_mod" "$(printf "$_sc" "$_r")" "" "$_who" \
+      "$(printf "$_st" "$_r")" "$_ex" page "$_r" "$_fam"
+  done < "$CACHE/.audit-pages.$$"
+  rm -f "$CACHE/.audit-pages.$$"
+  echo "audit-cases: $_n $_fam case(s); one agent call each" >&2
+}
+
 # ------------------------------------------------------------------ fetching
 
 # _chk_get <path-or-url> <role> [--follow] [extra curl args...] -- one request.

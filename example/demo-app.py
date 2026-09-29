@@ -55,6 +55,20 @@ For `--privacy`, `--data` and `--seed`:
   /api/notes        POST saves a note, and silently keeps only the first 20
                     characters of its text
 
+For `--content`, `--i18n`, `--notifications`, `--resilience` and `--memory`:
+
+  /welcome          "Hello, {{ user.name }}", "undefined new messages", lorem
+                    ipsum, a raw i18n key and garbled "CafÃ©"; ?lang=de has a
+                    missing translation and a German label clipped by a
+                    fixed-width button
+  /app              loads /api/feed with no error handling: when the API
+                    fails, the spinner spins forever; and every route change
+                    (#/a, #/b) starts a timer and keeps 1 MB it never frees
+  password reset    POST /api/password-reset "emails" a reset link that 404s,
+                    with the new password in clear and no plain-text part.
+                    The demo serves a Mailpit-compatible outbox at /mailpit, so
+                    set "notifications": { "outbox": "http://127.0.0.1:8731/mailpit" }
+
 You only need Python for THIS demo app. The test framework itself does not
 need Python, or Node, or anything else.
 """
@@ -84,6 +98,35 @@ TRANSITIONS = {
 }
 NOTES = []                            # {"id", "title", "text"}
 NOTE_TEXT_LIMIT = 20                  # THE DATA BUG: the column is too short
+OUTBOX = []                           # what the demo "emails", read at /mailpit
+FEED_FAILS = [False]                  # flip with POST /api/feed/fail to test resilience
+
+# Every content bug at once, and a German version with i18n bugs of its own.
+WELCOME_EN = """<!doctype html><html lang=en><head><meta charset=utf-8><title>Welcome</title></head>
+<body><h1>Hello, {{ user.name }}</h1>
+<p>You have undefined new messages.</p>
+<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit.</p>
+<p>See today's CafÃ© menu.</p>
+<button>welcome.cta.label</button></body></html>"""
+WELCOME_DE = """<!doctype html><html lang=de><head><meta charset=utf-8><title>Willkommen</title></head>
+<body><h1>Willkommen zurück</h1>
+<p>[missing: de.welcome.footer]</p>
+<button style="width:90px;white-space:nowrap;overflow:hidden">Benachrichtigungseinstellungen</button>
+</body></html>"""
+
+# A tiny single-page app. The feed has no error handling and each route
+# change leaks: the two faults resilience-prober and leak-hunter find.
+APP_JS = r"""
+document.getElementById('root').innerHTML = '<h1>App</h1><nav><a href="#/a">A</a> <a href="#/b">B</a></nav><div id=feed>Loading...</div>';
+fetch('/api/feed').then(function (r) { return r.json(); }).then(function (items) {
+  document.getElementById('feed').textContent = items.length + ' items';
+});
+window.__cache = window.__cache || [];
+window.addEventListener('hashchange', function () {
+  window.__cache.push(new Array(131072).fill(location.hash));      // ~1 MB, never freed
+  setInterval(function () { return location.hash; }, 1000);          // never cleared
+});
+"""
 TWOFA_FAILS = {}                      # session id -> wrong codes so far
 USERS = {"a@x.com": ("pw1", "admin"), "u@x.com": ("pw2", "user")}
 
@@ -228,10 +271,11 @@ class Handler(http.server.BaseHTTPRequestHandler):
         self.send_response(code)
         for key, value in headers:
             self.send_header(key, value)
-        self.send_header("Content-Type", ctype)
-        self.send_header("Content-Length", str(len(body)))
+        data = body.encode("utf-8")          # the length is in bytes, not characters
+        self.send_header("Content-Type", ctype + ("; charset=utf-8" if ctype.startswith("text/") else ""))
+        self.send_header("Content-Length", str(len(data)))
         self.end_headers()
-        self.wfile.write(body.encode())
+        self.wfile.write(data)
 
     def do_GET(self):
         path = urllib.parse.urlparse(self.path).path
@@ -263,8 +307,34 @@ class Handler(http.server.BaseHTTPRequestHandler):
             return self.reply(200, APP_SHELL)
 
         if path == "/app.js":
-            return self.reply(200, "document.getElementById('root').innerHTML = '<h1>App</h1>'",
-                              ctype="text/javascript")
+            return self.reply(200, APP_JS, ctype="text/javascript")
+
+        if path == "/api/feed":
+            if FEED_FAILS[0]:
+                return self.reply(500, '{"error": "feed unavailable"}', ctype="application/json")
+            return self.reply(200, json.dumps([{"id": i} for i in range(3)]), ctype="application/json")
+
+        if path == "/welcome":
+            lang = urllib.parse.parse_qs(urllib.parse.urlparse(self.path).query).get("lang", ["en"])[0]
+            return self.reply(200, WELCOME_DE if lang == "de" else WELCOME_EN)
+
+        # A Mailpit-compatible outbox, so --notifications has something to read.
+        if path == "/mailpit/api/v1/messages":
+            msgs = [{"ID": m["ID"], "Created": m["Created"], "Subject": m["Subject"],
+                     "From": {"Address": "noreply@demo.example"}, "To": [{"Address": m["To"]}]}
+                    for m in reversed(OUTBOX)]
+            return self.reply(200, json.dumps({"messages": msgs, "total": len(msgs)}), ctype="application/json")
+        if path.startswith("/mailpit/api/v1/message/"):
+            rest = path[len("/mailpit/api/v1/message/"):]
+            mid, _, tail = rest.partition("/")
+            msg = next((m for m in OUTBOX if m["ID"] == mid), None)
+            if not msg:
+                return self.reply(404, '{"error": "no such message"}', ctype="application/json")
+            if tail == "headers":
+                return self.reply(200, json.dumps({"Subject": [msg["Subject"]], "To": [msg["To"]]}),
+                                  ctype="application/json")
+            return self.reply(200, json.dumps({"ID": mid, "Subject": msg["Subject"], "Text": msg["Text"],
+                                               "HTML": msg["HTML"]}), ctype="application/json")
 
         if path == "/robots.txt":
             return self.reply(200, ROBOTS, ctype="text/plain")
@@ -404,6 +474,30 @@ class Handler(http.server.BaseHTTPRequestHandler):
         path = urllib.parse.urlparse(self.path).path
         length = int(self.headers.get("Content-Length", 0))
         raw = self.rfile.read(length)
+
+        if path == "/api/password-reset":
+            # THE EMAIL BUGS. The new password is in the mail in clear, the
+            # link goes to a page that does not exist, and there is no
+            # plain-text part.
+            try:
+                email = json.loads(raw or b"{}").get("email", "")
+            except ValueError:
+                email = ""
+            if email not in USERS:
+                return self.reply(202, '{"ok": true}', ctype="application/json")
+            token = uuid.uuid4().hex[:12]
+            OUTBOX.append({
+                "ID": uuid.uuid4().hex[:10],
+                "Created": time.strftime("%Y-%m-%dT%H:%M:%SZ", time.gmtime()),
+                "To": email, "Subject": "Reset your password", "Text": "",
+                "HTML": f"<p>Your temporary password: Temp-{token[:6]}</p>"
+                        f"<p><a href=\"http://127.0.0.1:8731/reset?token={token}\">Choose a new one</a></p>",
+            })
+            return self.reply(202, '{"ok": true}', ctype="application/json")
+
+        if path == "/api/feed/fail":
+            FEED_FAILS[0] = not FEED_FAILS[0]
+            return self.reply(200, json.dumps({"failing": FEED_FAILS[0]}), ctype="application/json")
 
         # POST-only JSON endpoints, for run-api's method/body/header cases.
         if path == "/api/items":

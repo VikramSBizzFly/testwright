@@ -30,9 +30,13 @@ for the manifest/runtime/runner table and the exact JSON shape.
 ## Write
 
 `tests/framework.json`, in the shape from `references/detection-table.md`,
-seeded from `templates/shared/framework.example.json`. Do not overwrite an
-existing file's `max_tokens_per_run`, `perf_budget_ms`, `perf`, `seo`, `headers`, `links`, `contract`, `privacy`, `release` or `allow_remote` — those
-are the user's settings. `allow_remote` stays `false`; only a human turns it on.
+seeded from `templates/shared/framework.example.json`. You own only `tier`,
+`stack`, `runner`, `spec_dir` and `report`. **Every other key in an existing
+file is the user's setting**: budgets, check-family blocks (`perf`, `seo`,
+`headers`, `privacy`, `release`, `postdeploy` and the rest) and
+`allow_remote`. Keep them exactly as they are, and add a missing block from
+the template without touching the ones that exist. `allow_remote` stays
+`false`; only a human turns it on.
 
 Tiers: **0** no binding · **1** binding present, specs run in the project's own
 runner · **2** Tier 1 and the runner emits JUnit XML.

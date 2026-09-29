@@ -9,6 +9,96 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.7.0] - 2026-09-29
+
+A **minor** release: eight new flags, four engine subcommands, seven agents
+and three skills. Existing suites keep working untouched.
+
+This is phase 4 of the roadmap: the words, the emails, and what happens when
+things go wrong or wear on.
+
+### Added
+
+- **`--content`** (`tf.sh content cases|run`, `scripts/lib/content.sh`):
+  - `CONTENT-NNN`, one per page, reads the visible text for placeholder
+    copy, markers, unfilled templates, leaked `undefined`/`NaN`/`[object
+    Object]`, missing translations, raw i18n keys, mojibake and server
+    warnings. A blank page fails too.
+  - Each check has a name `content.skip` can switch off.
+  - The **`content-reviewer`** agent reads client-rendered pages in a
+    browser. Its review fails only copy defects: developer-speak errors,
+    empty empty-states, clear typos, two names for one thing, and controls
+    that don't say what they do.
+- **`--i18n`**: the **`i18n-auditor`** agent opens each page in every locale
+  and fails on:
+  - labels clipped or overflowing, but only where the base locale fits;
+  - right-to-left locales that are not mirrored;
+  - a wrong `lang`;
+  - base-locale date and number formats;
+  - untranslated strings.
+- **`--notifications`** (`tf.sh notifications mark|cases|run`,
+  `scripts/lib/notifications.sh`, `scripts/tf-outbox.py`). It reads a
+  local sandbox outbox, Mailpit or MailHog, and never a remote one.
+  - `NOTIF-SITE-001` judges every email since the mark. Each needs a
+    subject and a plain-text part, and must contain no password, key,
+    token, card number or unfilled template. Its same-site links must
+    resolve.
+  - The **`outbox-checker`** agent writes one `NOTIF-NNN` per
+    email-sending flow (`to: ... | subject: ...`), plus its trigger case.
+- **`--resilience`**: the **`resilience-prober`** agent fails each page's
+  API in the browser only: a 500, a dropped connection, a slow answer. It
+  expects a readable error, not a stuck spinner, a blank page or
+  `undefined`.
+- **`--memory`**: the **`leak-hunter`** agent moves between an SPA's views
+  ten times and measures the heap after forced garbage collection (Chrome
+  DevTools Protocol). It fails a steady rise over `robustness.leak_mb`, or
+  DOM nodes that keep growing.
+- **`--cross-browser`**: the **`cross-browser-runner`** agent runs the
+  promoted specs in Chromium, Firefox and WebKit through the project's own
+  Playwright config, and reports only the verdicts that differ (Tier 1/2).
+- **`--analytics`**: the **`analytics-verifier`** agent checks each tracked
+  event fires once, with its properties and no personal data. The events
+  come from a tracking plan or from the code's `track()` calls.
+- **`--post-deploy`** (`tf.sh postdeploy [--yes]`, `scripts/lib/postdeploy.sh`):
+  a read-only, anonymous smoke check of `postdeploy.base_url`. It checks:
+  - each route answers 2xx within `max_ms`;
+  - each page has a title and no stack trace;
+  - the TLS certificate has more than `min_cert_days` left.
+
+  GET only, capped and paced; without `--yes` it only prints the plan. It
+  is the one engine command that reaches a remote host on purpose, fenced
+  by its own settings.
+- **`tf.sh audit-cases i18n|resilience|memory`**: one agent-audited case per
+  page, written for free.
+- **Skills**: **localization**, **notifications** and **robustness**.
+- **`framework.json`** gains `content`, `i18n`, `notifications`,
+  `robustness`, `analytics` and `postdeploy` blocks.
+- **The demo app** has new faults, and the demo serves a Mailpit-compatible
+  outbox:
+  - a `/welcome` page with every content bug, and a German version with a
+    clipped label;
+  - an SPA feed that spins forever when its API fails and leaks about 1 MB
+    per navigation;
+  - a password-reset email with the password in clear, no text part, and a
+    link that 404s.
+
+### Changed
+
+- **The execution skill lists every browser agent in one place.** The rule
+  is one at a time; the lists in individual agents are reminders.
+- `stack-detector` now owns only the keys it detects, and keeps every other
+  `framework.json` key as the user's setting. This replaces a list of
+  protected keys that grew with every release.
+- The QA checklist now credits categories 15, 22, 30, 35 and 36. Its
+  out-of-scope notes for 25 (browsers) and 42 (post-deploy) say what is now
+  covered.
+
+### Fixed
+
+- **The demo app sent the wrong `Content-Length` for non-ASCII pages.** It
+  counted characters, not bytes, which truncated any page with a character
+  like `ü`.
+
 ## [2.6.0] - 2026-09-28
 
 A **minor** release: one new run flag, seven report flags, four engine

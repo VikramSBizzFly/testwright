@@ -60,6 +60,7 @@ kw=$kw'page speed|page load|load time|slow page|slow pages|slow endpoint|web vit
 kw=$kw'security headers|clickjacking|cookie flags|cors misconfiguration|broken link|broken links|dead link|dead links|mixed content|api contract|schema drift|contract test|contract testing|matches the spec|match the spec|'
 kw=$kw'privacy audit|privacy check|personal data leak|leaks personal data|pii leak|gdpr|ccpa|cookie consent|consent banner|trackers before consent|data integrity|illegal transition|state machine test|test data|seed data|seed the test|'
 kw=$kw'ready to ship|ready to release|release readiness|go/no-go|go no-go|sign-off|signoff|traceability|untested requirements|requirements coverage|test impact|what does this pr affect|what should i test|quality trend|pass rate|duplicate bugs|duplicate test cases|file the bugs|'
+kw=$kw'lorem ipsum|check the copy|typos on|check the translations|test the translations|localization test|rtl layout|test the emails|password reset email|mailpit|mailhog|when the api is down|if the api is down|tab gets slow|work in safari|works in safari|work in firefox|works in firefox|cross-browser test|cross browser test|analytics events|tracking plan|post-deploy check|smoke test production|deploy is healthy|'
 kw=$kw'visual regression|baseline|baselines|screenshot diff|pixel|'
 kw=$kw'endpoint|endpoints|curl|api test|'
 kw=$kw'playwright|selenium|cypress|browser test|headless|'

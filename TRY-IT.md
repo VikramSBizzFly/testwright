@@ -218,6 +218,14 @@ it everything still works — your tests just stay in
 | `--privacy`           | Looks for personal data and secrets the app gives away      |
 | `--data`              | Checks saved data is really saved, and states change safely |
 | `--seed`              | Plans the test data your tests need, and asks before making it |
+| `--content`           | Finds placeholder text, broken text and sloppy copy         |
+| `--i18n`              | Checks every language fits and reads the right way round    |
+| `--notifications`     | Checks the emails the app sends, in a safe test mailbox     |
+| `--resilience`        | Checks what a page does when the server behind it fails     |
+| `--memory`            | Checks the app doesn't eat memory the longer you use it     |
+| `--cross-browser`     | Runs your saved tests in Firefox and Safari's engine too    |
+| `--analytics`         | Checks your tracking still records what you think it does   |
+| `--post-deploy`       | Takes a quick, read-only look at your live site (asks first) |
 | `--allow-destructive` | Also runs the tests that delete things                      |
 | `--fresh`             | Rewrites the tests even if nothing changed                  |
 
@@ -315,6 +323,25 @@ data, so they only run when you add `--allow-destructive`.
 shipped", "a thousand notes") and plans how to create it the way your app
 would. It shows you the plan and makes nothing until you say yes.
 
+**`--content`** reads your pages like a picky editor: leftover "lorem ipsum",
+"Hello, {{ name }}", "You have undefined messages", garbled letters like
+"CafÃ©", error messages only a developer understands.
+
+**`--i18n`** opens each page in every language you offer and looks for the
+German label that no longer fits its button, the Arabic page that doesn't
+read right to left, the date still written the American way.
+
+**`--notifications`** reads the emails your app sends, in a pretend mailbox
+on your own machine, and checks each one arrived, its links work, and it
+doesn't contain a password in plain text.
+
+**`--resilience`** pretends the server behind a page is broken or slow,
+inside the browser only, and checks the page says so kindly instead of
+spinning forever. **`--memory`** clicks back and forth through your app and
+checks it doesn't keep eating memory. **`--post-deploy`** takes a quick,
+look-only walk around your live site after a release, and asks before it
+starts.
+
 All of them are optional. Ask for them when you want them:
 
 ```
@@ -328,6 +355,10 @@ All of them are optional. Ask for them when you want them:
 /testwright:run --privacy
 /testwright:run --data --allow-destructive
 /testwright:run --seed
+/testwright:run --content --i18n
+/testwright:run --notifications
+/testwright:run --resilience --memory
+/testwright:run --post-deploy
 ```
 
 ---

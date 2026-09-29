@@ -22,8 +22,8 @@ list and worked examples. Do not improvise a verb that is not in the grammar.
    first.
 2. Read the cases with
    `tf.sh select --route <route> --type page --cols id,role,route,preconditions,steps,data,expected --format plain`.
-   Never `cat` `tests/testcases.csv`. Skip `tags=seo`, `perf`, `headers`, `links`, `contract` and `privacy` cases:
-   their own `tf.sh` subcommands judge those, and they never get a recipe.
+   Never `cat` `tests/testcases.csv`. Skip `tags=seo`, `perf`, `headers`, `links`, `contract`, `privacy`, `content`, `notifications`, `i18n`, `resilience`, `memory` and `analytics` cases:
+   the engine or an audit agent judges those, and they never get a recipe.
 3. For each case, emit `tests/.cache/recipes/<id>.rcp`: the action lines, then
    the trailing `expect` line(s). One file per case.
 4. Write the path back with `tf.sh setmany` —
