@@ -1,10 +1,27 @@
 {
   "name": "testwright",
-  "version": "2.8.0",
+  "version": "2.9.0",
   "description": "Point Claude at any web app: it maps the routes, writes a QA test suite into an Excel workbook, and runs it in a real browser and with curl. Most cases execute with zero model tokens.",
   "author": {
     "name": "rahul"
   },
   "homepage": "https://github.com/VikramSBizzFly/testwright",
-  "repository": "https://github.com/VikramSBizzFly/testwright"
+  "repository": "https://github.com/VikramSBizzFly/testwright",
+  "userConfig": {
+    "bugsheet_client_id": {
+      "type": "string",
+      "title": "Bug sheet: Google OAuth client ID",
+      "description": "Client ID of a Google Cloud OAuth client of type Desktop app, with the Google Sheets API enabled.",
+      "required": false,
+      "default": ""
+    },
+    "bugsheet_client_secret": {
+      "type": "string",
+      "title": "Bug sheet: Google OAuth client secret",
+      "description": "Client secret of the same OAuth client. Stored in your system's secure credential store.",
+      "required": false,
+      "sensitive": true,
+      "default": ""
+    }
+  }
 }

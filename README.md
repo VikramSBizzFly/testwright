@@ -412,6 +412,23 @@ Optional passes that ride on cases you already have:
 - **Visual regression** — opt-in, per page. Worth it where markup is stable and a
   pixel change is the whole risk; a waste on anything driven by live data.
 
+## Bug sheet
+
+For teams whose QA logs bugs in a Google Sheet. A small MCP server, with no
+dependencies, reads and updates that sheet:
+
+- **`/testwright:bugsheet-setup "<sheet link>"`** — sign in to Google and link
+  every bug tab. Set the OAuth client ID and secret first, in `/plugin` →
+  testwright.
+- **`/testwright:bugsheet-status`** — what is open, per tab.
+- **`/testwright:bugsheet-verify`** — after fixing bugs, checks each open row
+  twice, in the code (the `bug-verifier` agent) and in the browser, and updates
+  the sheet only where both agree. Every update is shown first and needs a yes.
+- **`/testwright:bugsheet-mark <bugs>`** — mark bugs without checking.
+
+Sign-in and the sheet link live in `.bugsheet/` in your project. Never commit
+it. Full guide: [bugsheet/README.md](bugsheet/README.md).
+
 ## What it knows about a field
 
 A page tells you a field exists and what the DOM admits to — `required`,

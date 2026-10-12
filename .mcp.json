@@ -3,6 +3,15 @@
     "playwright": {
       "command": "npx",
       "args": ["-y", "@playwright/mcp@latest"]
+    },
+    "bugsheet": {
+      "command": "node",
+      "args": ["${CLAUDE_PLUGIN_ROOT}/bugsheet/server/index.mjs"],
+      "env": {
+        "BUGSHEET_CLIENT_ID": "${user_config.bugsheet_client_id}",
+        "BUGSHEET_CLIENT_SECRET": "${user_config.bugsheet_client_secret}",
+        "BUGSHEET_HOME": "${CLAUDE_PROJECT_DIR}/.bugsheet"
+      }
     }
   }
 }
