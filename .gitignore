@@ -4,3 +4,5 @@ __pycache__/
 docs
 .claude/tmp/
 .claude/memory/
+.bugsheet/
+bugsheet/test/.tmp-home/

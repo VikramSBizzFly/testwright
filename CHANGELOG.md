@@ -9,6 +9,22 @@ version you have installed.
 of reviewed pull requests (#1-#6), split by area: the engine and workbook, the
 agents, the skills, plain-language activation, command wiring, and docs.
 
+## [2.9.0] - 2026-10-12
+
+A **minor** release: the bug sheet feature, moved in from its own plugin.
+Existing suites keep working untouched.
+
+### Added
+
+- **Bug sheet** (`bugsheet/`): a Google Sheets MCP server with no dependencies,
+  for teams whose QA logs bugs in a sheet.
+- **New commands**: `/testwright:bugsheet-setup`, `-status`, `-mark` and
+  `-verify`, plus the `bugsheet` skill.
+- **`bug-verifier` agent**: decides from the code and git history whether one
+  bug is fixed.
+- **Settings**: `bugsheet_client_id` and `bugsheet_client_secret`, set in
+  `/plugin` → testwright.
+
 ## [2.8.0] - 2026-09-29
 
 A **minor** release: five new flags, one engine subcommand, nine agents, two
